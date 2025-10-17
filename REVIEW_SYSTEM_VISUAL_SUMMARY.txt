@@ -1,0 +1,235 @@
+================================================================================
+HIPOP MARKETS - REVIEW SYSTEM VISUAL SUMMARY
+================================================================================
+
+CORE RELATIONSHIP MATRIX
+================================================================================
+
+SHOPPER Reviews:
+  ┌─────────────────────────────────────────┐
+  │ SHOPPER → VENDOR                        │
+  │ Via QR Code (QR Review Flow)            │
+  │ ├─ Shows active popups                  │
+  │ ├─ Optional market selection            │
+  │ └─ Aspects: quality, selection, value   │
+  │              service, presentation      │
+  └─────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────┐
+  │ SHOPPER → MARKET                        │
+  │ Via QR Code (Market QR Review Flow)     │
+  │ ├─ Direct review form                   │
+  │ ├─ QR verified badge                    │
+  │ └─ Aspects: atmosphere, variety,        │
+  │              organization, facilities,  │
+  │              accessibility              │
+  └─────────────────────────────────────────┘
+
+VENDOR Reviews:
+  ┌─────────────────────────────────────────┐
+  │ VENDOR → MARKET                         │
+  │ Via App (Vendor Market Reviews)         │
+  │ ├─ Select from past markets             │
+  │ ├─ Pending markets tab                  │
+  │ └─ Aspects: organization, communication│
+  │              marketing, facilities, ROI │
+  └─────────────────────────────────────────┘
+
+ORGANIZER Reviews:
+  ┌─────────────────────────────────────────┐
+  │ ORGANIZER → VENDOR                      │
+  │ [NOT YET IMPLEMENTED]                   │
+  │ ├─ Should support QR scanning?          │
+  │ ├─ Could use vendor dashboard           │
+  │ └─ Aspects: professionalism, reliability│
+  │              presentation, engagement   │
+  └─────────────────────────────────────────┘
+
+
+QR CODE FLOW COMPARISON
+================================================================================
+
+VENDOR REVIEW QR FLOW              MARKET REVIEW QR FLOW
+┌────────────────────────┐         ┌─────────────────────┐
+│ 1. Shopper scans QR    │         │ 1. Shopper scans QR │
+│ 2. Auth check          │         │ 2. Auth check       │
+│ 3. Load vendor profile │         │ 3. Load market info │
+│ 4. Show active popups  │         │ 4. Show verification│
+│ 5. Select market OR    │         │ 5. Rating form      │
+│    general review      │         │ 6. Submit review    │
+│ 6. Review form         │         │ 7. Navigate to      │
+│ 7. Submit review       │         │    market/reviews   │
+│ 8. Navigate to vendor  │         │                     │
+│    /reviews            │         │                     │
+└────────────────────────┘         └─────────────────────┘
+   MORE COMPLEX                         SIMPLER
+
+
+REVIEW DISPLAY HIERARCHY
+================================================================================
+
+/vendor/:vendorId/reviews
+├─ Review Stats Card
+│  ├─ Average rating
+│  ├─ Total count
+│  ├─ Star distribution
+│  └─ Top tags
+├─ Write Review Button (if can review)
+├─ Filter Menu (vendor owner only)
+│  ├─ All Reviews
+│  └─ Needs Response
+└─ Reviews List
+   ├─ Review Card (each)
+   │  ├─ Reviewer name/avatar
+   │  ├─ Rating + text
+   │  ├─ QR verification badge
+   │  ├─ Helpful votes
+   │  └─ Vendor response (if exists)
+   └─ Pagination (20 per page)
+
+/market/:marketId/reviews
+├─ Review Stats Card
+├─ Write Review Button
+└─ Tabbed View
+   ├─ All Reviews (with scrolling)
+   ├─ Shopper Reviews
+   └─ Vendor Reviews
+
+/vendor/market-reviews
+├─ Tabbed View
+│  ├─ My Reviews (reviews by vendor)
+│  ├─ Community (reviews by others)
+│  │  └─ Grouped by market
+│  └─ Pending (markets to review)
+└─ FAB: Rate Market
+
+
+FIRESTORE STORAGE
+================================================================================
+
+universal_reviews/
+├─ {reviewId}
+│  ├─ reviewerId, reviewerType, reviewerName
+│  ├─ reviewedId, reviewedType, reviewedName
+│  ├─ overallRating, reviewText
+│  ├─ aspectRatings {}, tags []
+│  ├─ photos [], isVerified, verificationMethod
+│  ├─ responseText, responseDate
+│  ├─ helpfulCount, helpfulVoters
+│  ├─ createdAt, updatedAt, editCount
+│  └─ matchingSignals {}
+
+review_stats/
+├─ vendor_{vendorId}
+├─ market_{marketId}
+└─ organizer_{organizerId}
+   ├─ totalReviews, averageRating
+   ├─ aspectAverages {}, ratingDistribution {}
+   ├─ reviewerTypeBreakdown {}
+   ├─ topTags [], verifiedCount, photoCount
+   ├─ responseRate, averageResponseTime
+   └─ lastUpdated
+
+
+REVIEW ELIGIBILITY RULES
+================================================================================
+
+SHOPPER can review VENDOR:
+  ✓ Always allowed (no special requirements)
+  ✓ Can re-review after 30 days
+
+SHOPPER can review MARKET:
+  ✓ Always allowed for past markets
+  ✓ Market event date must be past
+  ✓ Can re-review after 30 days
+
+VENDOR can review MARKET:
+  ✓ Must have ManagedVendor record
+  ✓ Market event date must be past
+  ✓ Can re-review after 30 days
+
+VENDOR can review VENDOR:
+  ✓ Both must have ManagedVendor for same market
+  ✓ Cannot review self
+  ✓ Market event date must be past
+
+ORGANIZER can review VENDOR:
+  ✓ Must be vendor's organizer
+  ✓ Market event date must be past
+  [NOT FULLY IMPLEMENTED]
+
+
+VERIFICATION METHODS
+================================================================================
+
+Implemented:
+  ✓ QR - Shopper vendor/market QR review flows
+  
+Defined but Not Implemented:
+  ? GPS - GPS check-in verification
+  ? PURCHASE - Purchase history validation
+  ? REGISTRATION - Registration/signup verification
+
+
+KNOWN ISSUES & GAPS
+================================================================================
+
+CRITICAL:
+  ⚠ Vendor QR flow only shows ACTIVE popups
+    → Past markets won't appear for review
+    → Should show last 90 days of markets
+
+HIGH:
+  ⚠ Missing organizer review flows completely
+  ⚠ "General review" removes market context
+  ⚠ QR code vendorId lookup assumes user_profiles collection
+
+MEDIUM:
+  ⚠ Vendor-to-vendor review too restrictive
+  ⚠ No Firestore indexes pre-created
+  ⚠ Limited response UI/UX for vendors
+
+LOW:
+  ⚠ Photo handling optimization needed
+  ⚠ Review streaks partially implemented
+  ⚠ No AI/sentiment analysis
+
+
+STATS CALCULATION
+================================================================================
+
+ReviewStats includes:
+
+  Aggregated (from reviews):
+    • totalReviews
+    • averageRating (of overallRating)
+    • ratingDistribution (count by 1-5 stars)
+    • aspectAverages (average of each aspect)
+    • topTags (5 most common tags)
+    • verifiedCount (reviews with isVerified=true)
+    • photoCount (reviews with photos)
+    • responseRate (% with responseText)
+    • averageResponseTime
+
+  Cached in: review_stats/{type}_{id}
+  Updated: After each review submission
+
+
+PAGE ROUTES
+================================================================================
+
+QR Review Entry Points:
+  /review/vendor/:vendorId      → QRReviewFlowScreen
+  /review/market/:marketId      → MarketQRReviewFlowScreen
+
+Review Display:
+  /vendor/:vendorId/reviews     → VendorReviewsScreen
+  /market/:marketId/reviews     → MarketReviewsScreen
+  /my-reviews                   → MyReviewsScreen
+  /vendor/market-reviews        → VendorMarketReviewsScreen
+
+Auth requirement:
+  → All redirect to /login if unauthenticated
+  → Return path preserved for navigation back
+
+================================================================================

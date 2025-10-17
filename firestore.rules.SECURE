@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isVendor() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.userType == 'vendor';
+    }
+    
+    function isOrganizer() {
+      return isAuthenticated() && 
+        get(/databases/$(database)/documents/user_profiles/$(request.auth.uid)).data.userType == 'market_organizer';
+    }
+    
+    // User profiles - users can only edit their own
+    match /user_profiles/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+    }
+    
+    // Subscriptions - read own, write via cloud functions only
+    match /user_subscriptions/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Only cloud functions can write
+    }
+    
+    // Vendor posts - vendors edit own, all can read
+    match /vendor_posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isVendor() && request.auth.uid == resource.data.vendorId;
+      allow update, delete: if isVendor() && request.auth.uid == resource.data.vendorId;
+    }
+    
+    // Market posts - organizers edit own
+    match /organizer_vendor_posts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isOrganizer() && request.auth.uid == resource.data.organizerId;
+      allow update, delete: if isOrganizer() && request.auth.uid == resource.data.organizerId;
+    }
+    
+    // Markets - organizers manage own
+    match /markets/{marketId} {
+      allow read: if isAuthenticated();
+      allow write: if isOrganizer() && request.auth.uid == resource.data.organizerId;
+    }
+    
+    // Applications - vendors manage own
+    match /vendor_applications/{appId} {
+      allow read: if isOwner(resource.data.vendorId) || isOwner(resource.data.organizerId);
+      allow create: if isVendor() && request.auth.uid == resource.data.vendorId;
+      allow update: if isOwner(resource.data.vendorId) || isOwner(resource.data.organizerId);
+    }
+    
+    // Usage tracking - read own only
+    match /usage_tracking/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if false; // Cloud functions only
+    }
+    
+    // Analytics - write only via cloud functions
+    match /analytics/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if false;
+    }
+    
+    // Vendor directory analytics - cloud functions only
+    match /vendor_directory_analytics/{document=**} {
+      allow read: if isOrganizer();
+      allow write: if false;
+    }
+  }
+}

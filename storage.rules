@@ -1,0 +1,83 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // Helper function to check file size (max 10MB)
+    function isValidSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // Market photos - organizers can upload to their markets
+    match /markets/{marketId}/{allPaths=**} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Event photos - organizers can upload to their events
+    match /events/{eventId}/{allPaths=**} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Vendor product photos
+    match /vendor_products/{vendorId}/{allPaths=**} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Vendor post photos
+    match /vendor_posts/{postId}/{allPaths=**} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Profile photos
+    match /profile_photos/{userId}/{allPaths=**} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated()
+                   && request.auth.uid == userId
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Review photos
+    match /review_photos/{userId}/{allPaths=**} {
+      allow read: if true; // Public read
+      allow write: if isAuthenticated()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Flyers for AI extraction
+    match /flyers/{allPaths=**} {
+      allow read: if true; // Public read (needed for Cloud Function to access)
+      allow write: if isAuthenticated()
+                   && isImage()
+                   && isValidSize();
+    }
+
+    // Default deny all other paths
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

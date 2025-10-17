@@ -1,0 +1,321 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.triggerSquareSync = exports.syncSquarePayments = void 0;
+const functions = __importStar(require("firebase-functions"));
+const admin = __importStar(require("firebase-admin"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
+/**
+ * Scheduled function to sync Square payments for all connected vendors
+ * Runs every 15 minutes
+ */
+exports.syncSquarePayments = functions.pubsub
+    .schedule('every 15 minutes')
+    .onRun(async () => {
+    console.log('🟦 [Square Sync] Starting scheduled payment sync...');
+    try {
+        // Get all vendor integrations with Square connected
+        const integrationsSnapshot = await admin.firestore()
+            .collection('vendor_integrations')
+            .where('square.accessToken', '!=', null)
+            .get();
+        console.log(`🟦 [Square Sync] Found ${integrationsSnapshot.size} vendors with Square connected`);
+        if (integrationsSnapshot.empty) {
+            console.log('✅ [Square Sync] No Square integrations to sync');
+            return null;
+        }
+        let totalSynced = 0;
+        let totalErrors = 0;
+        // Sync payments for each vendor
+        for (const doc of integrationsSnapshot.docs) {
+            const vendorId = doc.id;
+            const data = doc.data();
+            const squareData = data.square;
+            if (!squareData?.accessToken) {
+                console.warn(`⚠️ [Square Sync] No access token for vendor ${vendorId}`);
+                continue;
+            }
+            try {
+                const synced = await syncVendorPayments(vendorId, squareData);
+                totalSynced += synced;
+            }
+            catch (error) {
+                console.error(`❌ [Square Sync] Error syncing vendor ${vendorId}:`, error);
+                totalErrors++;
+            }
+        }
+        console.log(`✅ [Square Sync] Complete: ${totalSynced} payments synced, ${totalErrors} errors`);
+        return null;
+    }
+    catch (error) {
+        console.error('❌ [Square Sync] Scheduled sync failed:', error);
+        return null;
+    }
+});
+/**
+ * Sync payments for a single vendor
+ */
+async function syncVendorPayments(vendorId, squareData) {
+    console.log(`🟦 [Square Sync] Syncing payments for vendor ${vendorId}...`);
+    try {
+        const accessToken = squareData.accessToken;
+        const merchantId = squareData.merchantId;
+        // Get last sync timestamp for this vendor
+        const lastSyncDoc = await admin.firestore()
+            .collection('vendor_integrations')
+            .doc(vendorId)
+            .collection('sync_status')
+            .doc('square_payments')
+            .get();
+        const lastSyncData = lastSyncDoc.data();
+        const lastSyncTime = lastSyncData?.lastSyncAt?.toDate() || new Date(Date.now() - 24 * 60 * 60 * 1000); // Default: last 24 hours
+        console.log(`🟦 [Square Sync] Last sync: ${lastSyncTime.toISOString()}`);
+        // Fetch payments from Square API
+        const payments = await fetchSquarePayments(accessToken, merchantId, lastSyncTime);
+        console.log(`🟦 [Square Sync] Fetched ${payments.length} new payments from Square`);
+        if (payments.length === 0) {
+            // Update last sync time even if no new payments
+            await lastSyncDoc.ref.set({
+                lastSyncAt: admin.firestore.FieldValue.serverTimestamp(),
+                lastPaymentCount: 0,
+            }, { merge: true });
+            return 0;
+        }
+        // Get vendor's popups for matching
+        const popupsSnapshot = await admin.firestore()
+            .collection('vendor_popups')
+            .where('vendorId', '==', vendorId)
+            .get();
+        const popups = popupsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        console.log(`🟦 [Square Sync] Found ${popups.length} popups for vendor`);
+        // Process each payment
+        let syncedCount = 0;
+        const batch = admin.firestore().batch();
+        for (const payment of payments) {
+            try {
+                // Match payment to popup by timestamp
+                const paymentDate = new Date(payment.created_at);
+                const matchedPopup = findMatchingPopup(popups, paymentDate);
+                if (!matchedPopup) {
+                    console.warn(`⚠️ [Square Sync] No matching popup for payment ${payment.id} at ${paymentDate.toISOString()}`);
+                    // Still save payment but mark as unassigned
+                }
+                // Fetch order details if order_id exists to get line items
+                let lineItems = [];
+                if (payment.order_id) {
+                    try {
+                        const order = await fetchSquareOrder(accessToken, payment.order_id);
+                        if (order?.line_items && order.line_items.length > 0) {
+                            lineItems = order.line_items.map(item => ({
+                                name: item.name,
+                                quantity: parseFloat(item.quantity) || 1,
+                                unitPrice: item.base_price_money ? item.base_price_money.amount / 100 : 0,
+                                totalPrice: item.total_money ? item.total_money.amount / 100 : 0,
+                                variationName: item.variation_name || null,
+                            }));
+                            console.log(`🟦 [Square Sync] Fetched ${lineItems.length} line items for order ${payment.order_id}`);
+                        }
+                    }
+                    catch (orderError) {
+                        console.warn(`⚠️ [Square Sync] Could not fetch order details for ${payment.order_id}:`, orderError);
+                    }
+                }
+                // Create sales record
+                const salesRecord = {
+                    vendorId,
+                    paymentId: payment.id,
+                    source: 'square',
+                    amount: payment.amount_money.amount / 100,
+                    currency: payment.amount_money.currency,
+                    status: payment.status,
+                    paymentMethod: payment.source_type,
+                    timestamp: admin.firestore.Timestamp.fromDate(paymentDate),
+                    // Popup/market attribution
+                    popupId: matchedPopup?.id || null,
+                    marketId: matchedPopup?.marketId || null,
+                    marketName: matchedPopup?.marketName || null,
+                    location: matchedPopup?.location || null,
+                    organizerId: matchedPopup?.organizerId || null,
+                    // Product line items
+                    lineItems: lineItems.length > 0 ? lineItems : null,
+                    // Metadata
+                    squareOrderId: payment.order_id || null,
+                    squareLocationId: payment.location_id || null,
+                    isAssigned: !!matchedPopup,
+                    // Timestamps
+                    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                    syncedAt: admin.firestore.FieldValue.serverTimestamp(),
+                };
+                const salesRef = admin.firestore()
+                    .collection('vendor_sales')
+                    .doc(`${vendorId}_${payment.id}`);
+                batch.set(salesRef, salesRecord, { merge: true });
+                syncedCount++;
+            }
+            catch (error) {
+                console.error(`❌ [Square Sync] Error processing payment ${payment.id}:`, error);
+            }
+        }
+        // Commit batch write
+        await batch.commit();
+        // Update sync status
+        await lastSyncDoc.ref.set({
+            lastSyncAt: admin.firestore.FieldValue.serverTimestamp(),
+            lastPaymentCount: syncedCount,
+            totalPaymentsSynced: admin.firestore.FieldValue.increment(syncedCount),
+        }, { merge: true });
+        console.log(`✅ [Square Sync] Synced ${syncedCount} payments for vendor ${vendorId}`);
+        return syncedCount;
+    }
+    catch (error) {
+        console.error(`❌ [Square Sync] Error syncing vendor ${vendorId}:`, error);
+        throw error;
+    }
+}
+/**
+ * Fetch payments from Square API
+ */
+async function fetchSquarePayments(accessToken, merchantId, since) {
+    try {
+        const response = await (0, node_fetch_1.default)('https://connect.squareup.com/v2/payments', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Square-Version': '2024-10-17',
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Square API error: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        const payments = data.payments || [];
+        // Filter payments by date (Square API doesn't have a direct date filter for list endpoint)
+        return payments.filter((payment) => {
+            const paymentDate = new Date(payment.created_at);
+            return paymentDate >= since && payment.status === 'COMPLETED';
+        });
+    }
+    catch (error) {
+        console.error('❌ [Square Sync] Error fetching Square payments:', error);
+        throw error;
+    }
+}
+/**
+ * Fetch order details from Square API to get line items
+ */
+async function fetchSquareOrder(accessToken, orderId) {
+    try {
+        const response = await (0, node_fetch_1.default)(`https://connect.squareup.com/v2/orders/${orderId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Square-Version': '2024-10-17',
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Square Orders API error: ${response.status} - ${errorText}`);
+        }
+        const data = await response.json();
+        return data.order || null;
+    }
+    catch (error) {
+        console.error(`❌ [Square Sync] Error fetching order ${orderId}:`, error);
+        throw error;
+    }
+}
+/**
+ * Find matching popup for a payment timestamp
+ */
+function findMatchingPopup(popups, paymentDate) {
+    // Check if payment date matches any popup's date
+    for (const popup of popups) {
+        const popupDate = popup.date.toDate();
+        // Check if same day
+        if (popupDate.getFullYear() === paymentDate.getFullYear() &&
+            popupDate.getMonth() === paymentDate.getMonth() &&
+            popupDate.getDate() === paymentDate.getDate()) {
+            // If popup has start/end times, check if payment is within window
+            if (popup.startTime && popup.endTime) {
+                const startTime = popup.startTime.toDate();
+                const endTime = popup.endTime.toDate();
+                if (paymentDate >= startTime && paymentDate <= endTime) {
+                    return popup;
+                }
+            }
+            else {
+                // No specific time window, just match by date
+                return popup;
+            }
+        }
+    }
+    return null;
+}
+/**
+ * Manual trigger to force sync for a specific vendor
+ * Callable function for testing or manual sync
+ */
+exports.triggerSquareSync = functions.https.onCall(async (data, context) => {
+    console.log('🟦 [Square Sync] Manual sync triggered');
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'User must be authenticated');
+    }
+    const vendorId = data.vendorId || context.auth.uid;
+    try {
+        // Get vendor's Square integration
+        const integrationDoc = await admin.firestore()
+            .collection('vendor_integrations')
+            .doc(vendorId)
+            .get();
+        if (!integrationDoc.exists) {
+            throw new functions.https.HttpsError('not-found', 'No Square integration found');
+        }
+        const squareData = integrationDoc.data()?.square;
+        if (!squareData?.accessToken) {
+            throw new functions.https.HttpsError('failed-precondition', 'Square not connected');
+        }
+        // Sync payments
+        const syncedCount = await syncVendorPayments(vendorId, squareData);
+        return {
+            success: true,
+            paymentsSynced: syncedCount,
+            message: `Synced ${syncedCount} payments successfully`,
+        };
+    }
+    catch (error) {
+        console.error('❌ [Square Sync] Manual sync failed:', error);
+        throw new functions.https.HttpsError('internal', error.message);
+    }
+});
+//# sourceMappingURL=square-payments-sync.js.map

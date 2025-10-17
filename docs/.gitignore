@@ -1,0 +1,14 @@
+# Ignore temporary documentation files
+*.tmp
+*.temp
+*~
+.DS_Store
+
+# Ignore drafts and work-in-progress files
+*draft*
+*wip*
+*temp*
+
+# Ignore auto-generated files
+*.log
+*.cache

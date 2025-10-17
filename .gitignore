@@ -1,0 +1,158 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+.env
+.firebaserc
+*.json
+Firestore.rules
+
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# Environment and secrets
+.env
+.env.local
+.env.development
+.env.staging
+.env.production
+*.env
+
+# API Keys and sensitive data
+lib/config/api_keys.dart
+lib/config/secrets.dart
+
+# Firebase configuration files (keep these secret)
+GoogleService-Info.plist
+google-services.json
+firebase_options.dart
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
+ios/firebase_app_id_file.json
+android/app/firebase_app_id_file.json
+
+# User uploaded content and temporary files
+assets/vendor/photos/
+assets/temp/
+assets/uploads/
+*.tmp
+*.temp
+
+# Cache and generated files
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+pubspec.lock
+
+# IDE and editor files
+.vscode/settings.json
+.vscode/launch.json
+*.code-workspace
+
+# Platform specific build files
+ios/Pods/
+ios/Podfile.lock
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/app.flx
+ios/Flutter/app.zip
+ios/Flutter/flutter_assets/
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+
+# Testing and coverage
+coverage/
+test/.test_coverage.dart
+.test_coverage.dart
+
+# Debugging and profiling
+*.trace
+*.profile
+*.heapsnapshot
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+crash-reports/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# Documentation and migration files
+*.md
+!README.md
