@@ -152,7 +152,7 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
           if (_isValidLocation(post.latitude, post.longitude)) {
             // Determine vendor category
             List<String> vendorItems = [
-              post.description,
+              if (post.description != null) post.description!,
               post.vendorName,
               if (post.locationName != null) post.locationName!,
             ];
@@ -815,9 +815,9 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
               const SizedBox(height: 16),
               
               // Description
-              if (post.description.isNotEmpty) ...[
+              if (post.description != null && post.description!.isNotEmpty) ...[
                 Text(
-                  post.description,
+                  post.description!,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: HiPopColors.darkTextSecondary,
                   ),
@@ -850,7 +850,7 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      post.locationName ?? post.location,
+                      post.locationName ?? 'Location unavailable',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: HiPopColors.darkTextSecondary,
                       ),
@@ -868,7 +868,7 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
                     child: OutlinedButton.icon(
                       onPressed: () async {
                         await UrlLauncherService.launchMaps(
-                          post.location,
+                          post.locationName ?? 'Location unavailable',
                           context: context,
                         );
                       },

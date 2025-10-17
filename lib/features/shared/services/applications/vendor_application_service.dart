@@ -111,6 +111,22 @@ class VendorApplicationService {
   // ORGANIZER METHODS
   // ============================================================================
 
+  /// Static method to get approved applications for a market
+  static Future<List<VendorApplication>> getApprovedApplicationsForMarket(
+    String marketId,
+  ) async {
+    final firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore
+        .collection('vendor_applications')
+        .where('marketId', isEqualTo: marketId)
+        .where('status', whereIn: ['approved', 'confirmed'])
+        .get();
+
+    return snapshot.docs
+        .map((doc) => VendorApplication.fromFirestore(doc))
+        .toList();
+  }
+
   /// Get all applications for a specific market (real-time stream)
   Stream<List<VendorApplication>> getMarketApplications(
     String marketId, {

@@ -38,6 +38,15 @@ class VendorMarket extends Equatable {
     );
   }
 
+  /// Factory constructor from Firestore DocumentSnapshot
+  factory VendorMarket.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data is null');
+    }
+    return VendorMarket.fromMap(data, doc.id);
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'vendorId': vendorId,
@@ -48,6 +57,11 @@ class VendorMarket extends Equatable {
       'status': status,
       'metadata': metadata,
     };
+  }
+
+  /// Convert to Firestore document
+  Map<String, dynamic> toFirestore() {
+    return toMap();
   }
 
   @override

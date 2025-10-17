@@ -373,17 +373,14 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
           category: item.product.category,
           basePrice: item.product.price,
           photoUrls: item.product.imageUrls,
-          tags: item.product.tags,
-          isActive: item.product.isActive,
           createdAt: item.product.createdAt,
-          updatedAt: item.product.updatedAt,
         );
 
         // Create reservation
         final reservation = await _reservationService.createReservation(
           product: vendorProduct,
           vendorPost: vendorPost,
-          vendorProfile: vendorProfile,
+          vendorProfile: vendorProfile.toFirestore(),
           quantity: item.quantity,
           customerNotes: '${item.notes ?? ''}\nPickup Time: ${item.selectedPickupSlot?.label ?? 'Flexible'}',
           customerPhone: event.customerPhone,

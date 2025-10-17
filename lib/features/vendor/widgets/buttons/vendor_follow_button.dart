@@ -5,12 +5,14 @@ import 'package:flutter/material.dart';
 
 class VendorFollowButton extends StatelessWidget {
   final String vendorId;
+  final String? vendorName; // Optional vendor name for display
   final bool isFollowing;
   final VoidCallback? onPressed;
 
   const VendorFollowButton({
     super.key,
     required this.vendorId,
+    this.vendorName,
     this.isFollowing = false,
     this.onPressed,
   });

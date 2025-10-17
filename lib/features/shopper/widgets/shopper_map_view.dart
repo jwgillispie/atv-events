@@ -100,8 +100,8 @@ class _ShopperMapViewState extends State<ShopperMapView> {
             // Get vendor items for category determination
             // For now, use description and vendor name to determine category
             List<String> vendorItems = [];
-            if (post.description.isNotEmpty) {
-              vendorItems.add(post.description);
+            if (post.description != null && post.description!.isNotEmpty) {
+              vendorItems.add(post.description!);
             }
             if (post.vendorName.isNotEmpty) {
               vendorItems.add(post.vendorName);

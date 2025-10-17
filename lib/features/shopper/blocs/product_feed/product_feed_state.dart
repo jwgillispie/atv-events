@@ -55,7 +55,10 @@ class ProductFeedLoaded extends ProductFeedState {
   List<String> get availableCategories {
     final categories = <String>{};
     for (final item in products) {
-      categories.add(item.product.category);
+      final category = item.product.category;
+      if (category != null) {
+        categories.add(category);
+      }
     }
     return categories.toList()..sort();
   }

@@ -7,7 +7,14 @@ import '../../models/managed_vendor.dart';
 class ManagedVendorService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<ManagedVendor?> getVendor(String vendorId) async {
+  /// Static method to get a vendor
+  static Future<ManagedVendor?> getVendor(String vendorId) async {
+    // Return null - vendor features disabled
+    return null;
+  }
+
+  /// Instance method to get a vendor
+  Future<ManagedVendor?> getVendorInstance(String vendorId) async {
     // Return null - vendor features disabled
     return null;
   }

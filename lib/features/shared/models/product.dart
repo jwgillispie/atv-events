@@ -137,7 +137,7 @@ class Product extends Equatable {
       vendorName: vendorName ?? 'Unknown Vendor',
       vendorImageUrl: vendorImageUrl ?? '',
       name: vendorProduct.name,
-      category: vendorProduct.category,
+      category: vendorProduct.category ?? 'Other',
       description: vendorProduct.description,
       price: vendorProduct.basePrice,
       imageUrls: vendorProduct.photoUrls.isNotEmpty
@@ -145,7 +145,7 @@ class Product extends Equatable {
           : (vendorProduct.imageUrl != null ? [vendorProduct.imageUrl!] : []),
       tags: vendorProduct.tags,
       createdAt: vendorProduct.createdAt,
-      updatedAt: vendorProduct.updatedAt,
+      updatedAt: vendorProduct.updatedAt ?? vendorProduct.createdAt,
       isActive: vendorProduct.isActive,
       marketId: marketId,
       marketName: marketName,

@@ -137,6 +137,9 @@ dependencies:
   # CSV parsing
   csv: ^6.0.0
 
+  # Environment configuration
+  flutter_dotenv: ^5.2.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -43,6 +43,43 @@ class VendorPost extends Equatable {
   }) : popUpStartDateTime = popUpStartDateTime ?? createdAt,
        popUpEndDateTime = popUpEndDateTime ?? createdAt;
 
+  /// Getter for backward compatibility with location field
+  String get location => locationName ?? '';
+
+  /// Getter to check if the popup is upcoming (not in the past)
+  bool get isUpcoming => popUpEndDateTime.isAfter(DateTime.now());
+
+  /// Getter to check if the event is currently happening
+  bool get isHappening {
+    final now = DateTime.now();
+    return now.isAfter(popUpStartDateTime) && now.isBefore(popUpEndDateTime);
+  }
+
+  /// Getter for formatted date/time string
+  String get formattedDateTime {
+    final start = popUpStartDateTime;
+    final end = popUpEndDateTime;
+
+    // Format: "Mon, Jan 1 • 10:00 AM - 5:00 PM"
+    final dateStr = '${_monthName(start.month)} ${start.day}';
+    final startTime = _formatTime(start);
+    final endTime = _formatTime(end);
+
+    return '$dateStr • $startTime - $endTime';
+  }
+
+  String _monthName(int month) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month - 1];
+  }
+
+  String _formatTime(DateTime time) {
+    final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
+  }
+
   factory VendorPost.fromMap(Map<String, dynamic> map, String id) {
     return VendorPost(
       id: id,
@@ -62,6 +99,15 @@ class VendorPost extends Equatable {
       instagramHandle: map['instagramHandle'] as String?,
       marketId: map['marketId'] as String?,
     );
+  }
+
+  /// Factory constructor from Firestore DocumentSnapshot
+  factory VendorPost.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data is null');
+    }
+    return VendorPost.fromMap(data, doc.id);
   }
 
   Map<String, dynamic> toMap() {
