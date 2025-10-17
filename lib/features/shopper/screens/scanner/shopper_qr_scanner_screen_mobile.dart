@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import 'dart:async';
 import 'dart:io';
 

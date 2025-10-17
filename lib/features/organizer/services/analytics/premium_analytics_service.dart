@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/services/user/customer_loyalty_service.dart';
+import 'package:atv_events/features/shared/services/user/customer_loyalty_service.dart';
 import 'dart:math';
 
 import '../../../vendor/services/products/vendor_sales_service.dart';

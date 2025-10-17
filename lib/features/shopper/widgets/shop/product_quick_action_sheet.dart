@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/product.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_bloc.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_event.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/product.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_bloc.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
 
 /// Bottom sheet for quick product actions (Add to Cart, Buy Now)
 /// Clean Amazon/Etsy-style product action modal

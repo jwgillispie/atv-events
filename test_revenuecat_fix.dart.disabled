@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 /// Test script to verify RevenueCat null check fix and cache clearing
 /// 
 /// Run this script with: flutter run test_revenuecat_fix.dart

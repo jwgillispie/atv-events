@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Loading overlay widget that blocks user interaction
 class LoadingOverlay extends StatelessWidget {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/organizer/screens/post_management_screen.dart';
-import 'package:hipop/features/organizer/screens/vendors/organizer_vendors_tab.dart';
-import 'package:hipop/features/organizer/screens/ratings/organizer_ratings_tab.dart';
-import 'package:hipop/features/organizer/screens/profile/organizer_profile_tab.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/organizer/screens/post_management_screen.dart';
+import 'package:atv_events/features/organizer/screens/vendors/organizer_vendors_tab.dart';
+import 'package:atv_events/features/organizer/screens/ratings/organizer_ratings_tab.dart';
+import 'package:atv_events/features/organizer/screens/profile/organizer_profile_tab.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 
 /// Main organizer screen with 5-tab bottom navigation
 /// Implements Material Design 3 principles with HiPop's organizer-focused design system

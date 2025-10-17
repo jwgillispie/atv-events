@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/features/shared/models/analytics.dart';
-import 'package:hipop/features/shared/services/analytics/analytics_service.dart';
-import 'package:hipop/features/vendor/widgets/charts/vendor_registrations_chart.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/premium/services/market_intelligence_service.dart';
-import 'package:hipop/features/premium/services/advanced_reporting_service.dart';
-import 'package:hipop/features/premium/widgets/upgrade_to_premium_button.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/features/shared/models/analytics.dart';
+import 'package:atv_events/features/shared/services/analytics/analytics_service.dart';
+import 'package:atv_events/features/vendor/widgets/charts/vendor_registrations_chart.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/premium/services/market_intelligence_service.dart';
+import 'package:atv_events/features/premium/services/advanced_reporting_service.dart';
+import 'package:atv_events/features/premium/widgets/upgrade_to_premium_button.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:hipop/core/widgets/hipop_app_bar.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/widgets/hipop_app_bar.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class OrganizerAnalyticsScreen extends StatefulWidget {
   const OrganizerAnalyticsScreen({super.key});

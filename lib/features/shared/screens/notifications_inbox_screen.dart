@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/widgets/hipop_app_bar.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/widgets/hipop_app_bar.dart';
 import '../widgets/common/loading_widget.dart';
 
 /// Premium Notifications Inbox Screen for HiPop Markets

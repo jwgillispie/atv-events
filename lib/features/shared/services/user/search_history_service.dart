@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 

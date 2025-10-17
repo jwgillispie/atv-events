@@ -3,15 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
-import 'package:hipop/features/shopper/blocs/basket/basket_event.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_state.dart';
-import 'package:hipop/features/shopper/models/basket_item.dart';
-import 'package:hipop/features/shopper/services/product_reservation_service.dart';
-import 'package:hipop/features/vendor/models/vendor_product.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_state.dart';
+import 'package:atv_events/features/shopper/models/basket_item.dart';
+import 'package:atv_events/features/shopper/services/product_reservation_service.dart';
+import 'package:atv_events/features/vendor/models/vendor_product.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
-import 'package:hipop/features/shared/models/product.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/models/product.dart';
 
 /// BLoC for managing the reservation basket
 class BasketBloc extends Bloc<BasketEvent, BasketState> {

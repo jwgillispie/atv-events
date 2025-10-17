@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/organizer/screens/profile/organizer_profile_screen.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/features/organizer/screens/profile/organizer_profile_screen.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Profile Tab - Wrapper for existing organizer profile screen
 /// Maintains consistency with vendor and shopper profile tabs

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:csv/csv.dart';
-import '../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Debug widget to import Community Market ATL markets from CSV
 class DebugCsvMarketImporter extends StatefulWidget {

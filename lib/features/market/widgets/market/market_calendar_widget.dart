@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
 
 class MarketCalendarWidget extends StatefulWidget {
   final List<VendorPost> posts;

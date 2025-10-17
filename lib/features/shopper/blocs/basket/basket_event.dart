@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:hipop/features/shared/models/product.dart';
-import 'package:hipop/features/shopper/models/basket_item.dart';
+import 'package:atv_events/features/shared/models/product.dart';
+import 'package:atv_events/features/shopper/models/basket_item.dart';
 
 abstract class BasketEvent extends Equatable {
   const BasketEvent();

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'hipop_colors.dart';
+import 'atv_colors.dart';
 
-/// HiPop Marketplace Theme System
-/// Material Design 3 compliant theme with nature-inspired colors
-/// Optimized for marketplace conversion and user trust
-class HiPopTheme {
+/// ATV Events Theme System
+/// Material Design 3 compliant theme with professional black and white aesthetics
+/// Optimized for clarity, accessibility, and Atlanta Tech Village branding
+class ATVTheme {
   
   // ======= Light Theme Configuration =======
   static ThemeData get lightTheme {
@@ -790,30 +790,30 @@ class HiPopTheme {
 }
 
 /// Theme Extension for custom properties
-extension HiPopThemeExtension on ThemeData {
-  /// Get vendor-specific colors
+extension ATVThemeExtension on ThemeData {
+  /// Get vendor-specific colors (not used in ATV Events - kept for compatibility)
   Color get vendorAccent => brightness == Brightness.light
       ? HiPopColors.vendorAccent
       : HiPopColors.vendorAccentLight;
-  
-  /// Get organizer-specific colors
+
+  /// Get organizer-specific colors (ATV Staff)
   Color get organizerAccent => brightness == Brightness.light
       ? HiPopColors.organizerAccent
       : HiPopColors.organizerAccentLight;
-  
-  /// Get shopper-specific colors
+
+  /// Get shopper-specific colors (Event Attendees)
   Color get shopperAccent => brightness == Brightness.light
       ? HiPopColors.shopperAccent
       : HiPopColors.shopperAccentLight;
-  
-  /// Get premium/gold colors
+
+  /// Get premium/gold colors (not used in ATV Events - kept for compatibility)
   Color get premiumColor => brightness == Brightness.light
       ? HiPopColors.premiumGold
       : HiPopColors.premiumGoldLight;
-  
+
   /// Get background muted gray
   Color get backgroundMuted => HiPopColors.backgroundMutedGray;
-  
+
   /// Get background warm gray
   Color get backgroundWarm => HiPopColors.backgroundWarmGray;
 }

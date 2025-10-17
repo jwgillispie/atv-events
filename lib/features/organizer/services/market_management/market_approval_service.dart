@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/features/organizer/models/approval_request.dart';
-import 'package:hipop/features/shared/services/analytics/real_time_analytics_service.dart';
+import 'package:atv_events/features/organizer/models/approval_request.dart';
+import 'package:atv_events/features/shared/services/analytics/real_time_analytics_service.dart';
 
 /// Service for managing vendor approval requests - keeping it simple like existing services
 class MarketApprovalService {

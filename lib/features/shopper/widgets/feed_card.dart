@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/constants/ui_constants.dart';
-import 'package:hipop/features/shared/widgets/common/favorite_button.dart';
-import 'package:hipop/features/shared/widgets/share_button.dart';
-import 'package:hipop/features/vendor/widgets/buttons/vendor_follow_button.dart';
-import 'package:hipop/features/shared/widgets/feed_map_preview.dart';
-import 'package:hipop/features/shared/widgets/common/vendor_items_widget.dart';
-import 'package:hipop/features/shared/widgets/reviews/review_indicator.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/constants/ui_constants.dart';
+import 'package:atv_events/features/shared/widgets/common/favorite_button.dart';
+import 'package:atv_events/features/shared/widgets/share_button.dart';
+import 'package:atv_events/features/vendor/widgets/buttons/vendor_follow_button.dart';
+import 'package:atv_events/features/shared/widgets/feed_map_preview.dart';
+import 'package:atv_events/features/shared/widgets/common/vendor_items_widget.dart';
+import 'package:atv_events/features/shared/widgets/reviews/review_indicator.dart';
 
 /// Feed card types
 enum FeedCardType { market, vendor, event }

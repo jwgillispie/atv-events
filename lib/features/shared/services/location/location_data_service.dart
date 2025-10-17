@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/models/location_data.dart';
+import 'package:atv_events/features/shared/models/location_data.dart';
 import 'dart:math' as math;
 
 /// Service for handling location data parsing, geohash generation, and search optimization

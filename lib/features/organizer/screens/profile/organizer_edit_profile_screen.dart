@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_event.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
-import 'package:hipop/features/shared/services/user/user_profile_service.dart';
-import 'package:hipop/features/shared/widgets/profile/profile_photo_upload_widget.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_event.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
+import 'package:atv_events/features/shared/widgets/profile/profile_photo_upload_widget.dart';
 
 class OrganizerEditProfileScreen extends StatefulWidget {
   const OrganizerEditProfileScreen({super.key});

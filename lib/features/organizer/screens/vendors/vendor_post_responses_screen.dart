@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/features/organizer/models/organizer_vendor_post.dart';
-import 'package:hipop/features/organizer/models/vendor_post_response.dart';
-import 'package:hipop/features/organizer/services/vendor_management/vendor_post_service.dart';
-import 'package:hipop/features/shared/widgets/common/error_widget.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/features/organizer/models/organizer_vendor_post.dart';
+import 'package:atv_events/features/organizer/models/vendor_post_response.dart';
+import 'package:atv_events/features/organizer/services/vendor_management/vendor_post_service.dart';
+import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 
 class VendorPostResponsesScreen extends StatefulWidget {
   final String postId;

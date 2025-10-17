@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/models/user_feedback.dart';
+import 'package:atv_events/features/shared/models/user_feedback.dart';
 
 /// Service for managing user feedback submissions and admin responses
 /// All feedback is stored centrally and accessible via CEO verification dashboard

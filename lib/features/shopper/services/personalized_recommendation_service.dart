@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math' as math;
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/shared/services/user/search_history_service.dart';
-import 'package:hipop/features/vendor/services/engagement/vendor_following_service.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/shared/services/user/search_history_service.dart';
+import 'package:atv_events/features/vendor/services/engagement/vendor_following_service.dart';
 
 /// Types of user interactions for building recommendations
 enum InteractionType {

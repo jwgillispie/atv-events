@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/providers/theme_provider.dart';
-import 'package:hipop/features/shared/services/theme_preferences_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/providers/theme_provider.dart';
+import 'package:atv_events/features/shared/services/theme_preferences_service.dart';
 
 class ThemeToggleTile extends StatelessWidget {
   const ThemeToggleTile({super.key});

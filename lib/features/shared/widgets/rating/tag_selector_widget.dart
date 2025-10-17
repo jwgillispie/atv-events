@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Reusable tag selector widget for rating screens
 class TagSelectorWidget extends StatelessWidget {

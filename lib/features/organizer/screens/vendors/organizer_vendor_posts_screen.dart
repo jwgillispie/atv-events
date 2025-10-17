@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/features/organizer/models/organizer_vendor_post.dart';
+import 'package:atv_events/features/organizer/models/organizer_vendor_post.dart';
 import '../../services/vendor_management/vendor_post_service.dart';
 import '../../../shared/widgets/common/loading_widget.dart';
 import '../../../shared/widgets/common/error_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
 import '../../../../core/widgets/hipop_app_bar.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class OrganizerVendorPostsScreen extends StatefulWidget {
   const OrganizerVendorPostsScreen({super.key});

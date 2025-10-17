@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../../shared/widgets/common/loading_widget.dart';
 
 /// Organizer Earnings Dashboard

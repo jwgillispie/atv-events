@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hipop/features/vendor/models/vendor_product.dart';
+import 'package:atv_events/features/vendor/models/vendor_product.dart';
 
 // Payment options removed - everything is preorder only
 

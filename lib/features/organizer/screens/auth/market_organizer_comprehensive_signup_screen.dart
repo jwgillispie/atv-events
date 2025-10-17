@@ -5,7 +5,7 @@ import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/auth/auth_event.dart';
 import '../../../../blocs/auth/auth_state.dart';
 import '../../../shared/services/user/user_profile_service.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class MarketOrganizerComprehensiveSignupScreen extends StatefulWidget {
   const MarketOrganizerComprehensiveSignupScreen({super.key});

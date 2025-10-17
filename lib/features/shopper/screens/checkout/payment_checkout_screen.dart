@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/premium/services/payment_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/premium/services/payment_service.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:hipop/features/shopper/models/basket_item.dart';
-import 'package:hipop/features/shared/widgets/common/loading_overlay.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
+import 'package:atv_events/features/shopper/models/basket_item.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_overlay.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
 import 'package:go_router/go_router.dart';
 
 /// Payment checkout screen for basket items

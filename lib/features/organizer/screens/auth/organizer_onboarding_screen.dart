@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/features/auth/services/onboarding_service.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/features/auth/services/onboarding_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class OrganizerOnboardingScreen extends StatefulWidget {
   const OrganizerOnboardingScreen({super.key});

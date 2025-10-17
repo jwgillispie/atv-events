@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/core/widgets/hipop_app_bar.dart';
-import 'package:hipop/features/organizer/models/bulk_message.dart';
-import 'package:hipop/features/organizer/models/message_template.dart';
-import 'package:hipop/features/organizer/services/communication/bulk_messaging_service.dart';
-import 'package:hipop/features/premium/models/user_subscription.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/core/widgets/hipop_app_bar.dart';
+import 'package:atv_events/features/organizer/models/bulk_message.dart';
+import 'package:atv_events/features/organizer/models/message_template.dart';
+import 'package:atv_events/features/organizer/services/communication/bulk_messaging_service.dart';
+import 'package:atv_events/features/premium/models/user_subscription.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 
 
 class OrganizerBulkMessagingScreen extends StatefulWidget {

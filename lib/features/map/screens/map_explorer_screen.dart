@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hipop/features/market/models/market.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
-import 'package:hipop/features/shared/models/event.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/constants/ui_constants.dart';
-import 'package:hipop/features/shopper/widgets/custom_map_markers.dart';
-import 'package:hipop/features/shared/services/utilities/url_launcher_service.dart';
-import 'package:hipop/core/utils/date_time_utils.dart';
+import 'package:atv_events/features/market/models/market.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shared/models/event.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/constants/ui_constants.dart';
+import 'package:atv_events/features/shopper/widgets/custom_map_markers.dart';
+import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
+import 'package:atv_events/core/utils/date_time_utils.dart';
 
 /// Full-screen map explorer with advanced features
 class MapExplorerScreen extends StatefulWidget {

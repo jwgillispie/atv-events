@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Screen that handles the OAuth callback from Square
 /// Exchanges authorization code for access token via Cloud Function

@@ -4,12 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/constants/ui_constants.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_bloc.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_event.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_state.dart';
-import 'package:hipop/features/shopper/models/basket_item.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/constants/ui_constants.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_bloc.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_state.dart';
+import 'package:atv_events/features/shopper/models/basket_item.dart';
 
 /// Simplified reservation basket screen showing grouped items by popup
 class ReservationBasketScreen extends StatelessWidget {

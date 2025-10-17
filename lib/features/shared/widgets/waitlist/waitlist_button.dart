@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/waitlist_models.dart';
-import 'package:hipop/features/shared/services/waitlist_service.dart' hide debugPrint;
-import 'package:hipop/features/shared/widgets/waitlist/waitlist_join_sheet.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/waitlist_models.dart';
+import 'package:atv_events/features/shared/services/waitlist_service.dart' hide debugPrint;
+import 'package:atv_events/features/shared/widgets/waitlist/waitlist_join_sheet.dart';
 
 /// Waitlist button widget that shows join status and waitlist count
 /// Uses warning amber color scheme and shows disabled state if user already joined

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 /// Centralized premium UI components for consistent design across the app

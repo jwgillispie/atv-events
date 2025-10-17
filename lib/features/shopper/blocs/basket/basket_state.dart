@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:hipop/features/shopper/models/basket_item.dart';
+import 'package:atv_events/features/shopper/models/basket_item.dart';
 
 abstract class BasketState extends Equatable {
   const BasketState();

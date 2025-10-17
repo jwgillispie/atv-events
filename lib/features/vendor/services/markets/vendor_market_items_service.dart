@@ -1,0 +1,30 @@
+// TODO: Removed for ATV Events demo - Vendor features disabled
+// This is a stub to maintain compilation
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class VendorMarketItemsService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<List<Map<String, dynamic>>> getMarketItems(String marketId) async {
+    // Return empty list - vendor features disabled
+    return [];
+  }
+
+  Stream<List<Map<String, dynamic>>> getMarketItemsStream(String marketId) {
+    // Return empty stream - vendor features disabled
+    return Stream.value([]);
+  }
+
+  Future<void> addMarketItem(String marketId, Map<String, dynamic> item) async {
+    // Do nothing - vendor features disabled
+  }
+
+  Future<void> updateMarketItem(String marketId, String itemId, Map<String, dynamic> updates) async {
+    // Do nothing - vendor features disabled
+  }
+
+  Future<void> deleteMarketItem(String marketId, String itemId) async {
+    // Do nothing - vendor features disabled
+  }
+}

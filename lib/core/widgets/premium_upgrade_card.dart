@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Premium Upgrade Card Widget
 /// Consistent premium upgrade prompts across the app

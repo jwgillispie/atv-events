@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_event.dart';
-import 'package:hipop/features/premium/services/stripe_service.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_event.dart';
+import 'package:atv_events/features/premium/services/stripe_service.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
 
 import 'user_data_deletion_service.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hipop/features/shared/services/data/event_service.dart';
+import 'package:atv_events/features/shared/services/data/event_service.dart';
 import '../../models/event.dart';
 
 part 'event_detail_event.dart';

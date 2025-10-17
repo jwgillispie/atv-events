@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/universal_review.dart';
-import 'package:hipop/features/shared/services/universal_review_service.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
-import 'package:hipop/features/shared/widgets/rating/star_rating_widget.dart';
-import 'package:hipop/features/shared/widgets/rating/quick_rating_bottom_sheet.dart';
-import 'package:hipop/features/vendor/models/managed_vendor.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/universal_review.dart';
+import 'package:atv_events/features/shared/services/universal_review_service.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/features/shared/widgets/rating/star_rating_widget.dart';
+import 'package:atv_events/features/shared/widgets/rating/quick_rating_bottom_sheet.dart';
+import 'package:atv_events/features/vendor/models/managed_vendor.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
 import 'package:intl/intl.dart';
 
 /// Combined organizer vendor reviews screen

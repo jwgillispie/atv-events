@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:hipop/features/vendor/models/vendor_product.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/vendor/models/vendor_product.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
 
 /// Product Feed Item combining product, vendor info, and availability
 /// This model represents a product in the shopper feed with all necessary context

@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/features/vendor/models/managed_vendor.dart';
-import 'package:hipop/features/vendor/models/unified_vendor.dart';
-import 'package:hipop/features/vendor/models/vendor_application.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/features/vendor/models/managed_vendor.dart';
+import 'package:atv_events/features/vendor/models/unified_vendor.dart';
+import 'package:atv_events/features/vendor/models/vendor_application.dart';
 import '../../market/models/market.dart';
 import '../../market/services/market_service.dart';
 import '../../premium/services/subscription_service.dart';
@@ -21,7 +21,7 @@ import '../../shared/widgets/common/simple_places_widget.dart';
 import '../../shared/widgets/common/photo_upload_widget.dart';
 import '../../../core/constants/ui_utils.dart';
 import '../../../core/constants/constants.dart';
-import '../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import 'market_vendor_recruitment_form.dart';
 
 class MarketFormDialog extends StatefulWidget {

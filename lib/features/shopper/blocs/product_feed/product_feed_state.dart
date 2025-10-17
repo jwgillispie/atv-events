@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hipop/features/shopper/models/product_feed_item.dart';
+import 'package:atv_events/features/shopper/models/product_feed_item.dart';
 
 abstract class ProductFeedState extends Equatable {
   const ProductFeedState();

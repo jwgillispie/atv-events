@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/customer_feedback.dart';
 import '../../constants/rating_constants.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../common/loading_widget.dart';
 
 /// Base class for all rating forms to extend

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/features/shared/services/data/event_service.dart';
+import 'package:atv_events/features/shared/services/data/event_service.dart';
 import 'package:intl/intl.dart';
 import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/auth/auth_state.dart';
@@ -12,7 +12,7 @@ import '../../../shared/widgets/common/simple_places_widget.dart';
 import '../../../shared/widgets/common/photo_upload_widget.dart';
 import '../../../shared/services/location/places_service.dart';
 import '../../../shared/services/utilities/photo_service.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../../shared/widgets/ai_flyer_upload_widget.dart';
 
 class CreateEventScreen extends StatefulWidget {

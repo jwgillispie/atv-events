@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/market/models/market.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/market/models/market.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 import 'package:intl/intl.dart';
 
 /// Markets Tab - Market and event creation/management

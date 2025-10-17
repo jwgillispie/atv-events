@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shopper/screens/home/shopper_home.dart';
-import 'package:hipop/features/shopper/screens/shop/shop_feed_screen.dart';
-import 'package:hipop/features/shopper/screens/profile/shopper_profile_screen.dart';
-import 'package:hipop/features/shopper/screens/basket/reservation_basket_screen.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_bloc.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_state.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shopper/screens/home/shopper_home.dart';
+import 'package:atv_events/features/shopper/screens/shop/shop_feed_screen.dart';
+import 'package:atv_events/features/shopper/screens/profile/shopper_profile_screen.dart';
+import 'package:atv_events/features/shopper/screens/basket/reservation_basket_screen.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_bloc.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_state.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 
 /// Main shopper screen with bottom navigation
 /// Implements adaptive navigation based on user type:

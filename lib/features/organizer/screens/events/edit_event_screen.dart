@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/data/event_service.dart';
+import 'package:atv_events/features/shared/services/data/event_service.dart';
 import 'package:intl/intl.dart';
 import '../../../shared/models/event.dart';
 import '../../../market/models/market.dart';
 import '../../../shared/widgets/common/photo_upload_widget.dart';
 import '../../../shared/services/utilities/photo_service.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../../shared/widgets/common/simple_places_widget.dart';
 import '../../../shared/services/location/places_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

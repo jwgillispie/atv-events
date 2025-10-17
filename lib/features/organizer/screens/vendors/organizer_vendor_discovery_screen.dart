@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/widgets/hipop_app_bar.dart';
-import 'package:hipop/features/organizer/services/analytics/discovery_analytics_service.dart';
-import 'package:hipop/features/organizer/services/vendor_management/vendor_discovery_service.dart';
-import 'package:hipop/features/organizer/services/vendor_management/vendor_invitation_service.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
-import 'package:hipop/features/shared/widgets/common/error_widget.dart';
-import 'package:hipop/features/shared/widgets/common/hipop_text_field.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
-import 'package:hipop/features/vendor/services/engagement/vendor_contact_service.dart';
+import 'package:atv_events/core/widgets/hipop_app_bar.dart';
+import 'package:atv_events/features/organizer/services/analytics/discovery_analytics_service.dart';
+import 'package:atv_events/features/organizer/services/vendor_management/vendor_discovery_service.dart';
+import 'package:atv_events/features/organizer/services/vendor_management/vendor_invitation_service.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/hipop_text_field.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/features/vendor/services/engagement/vendor_contact_service.dart';
 
 
 class OrganizerVendorDiscoveryScreen extends StatefulWidget {

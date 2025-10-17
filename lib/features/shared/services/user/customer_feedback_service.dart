@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/features/shared/models/customer_feedback.dart';
-import 'package:hipop/features/shared/models/universal_review.dart';
-import 'package:hipop/features/shared/services/universal_review_service.dart';
+import 'package:atv_events/features/shared/models/customer_feedback.dart';
+import 'package:atv_events/features/shared/models/universal_review.dart';
+import 'package:atv_events/features/shared/services/universal_review_service.dart';
 
 /// Service for managing customer feedback data
 /// DEPRECATED: This service is being replaced by UniversalReviewService

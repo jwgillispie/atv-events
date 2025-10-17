@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-import 'package:hipop/features/shared/services/user/search_history_service.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/shared/services/user/user_profile_service.dart';
+import 'package:atv_events/features/shared/services/user/search_history_service.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
 
 /// Enhanced search service for premium shoppers
 class EnhancedSearchService {

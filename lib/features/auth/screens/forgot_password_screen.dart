@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/auth/services/password_reset_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/auth/services/password_reset_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   final String? userType;

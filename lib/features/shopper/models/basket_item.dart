@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:hipop/features/shared/models/product.dart';
+import 'package:atv_events/features/shared/models/product.dart';
 
 /// Represents an item in the reservation basket
 class BasketItem extends Equatable {

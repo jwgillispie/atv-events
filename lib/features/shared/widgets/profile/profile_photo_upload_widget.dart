@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/services/utilities/photo_service.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
-import 'package:hipop/features/shared/services/user/user_profile_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/services/utilities/photo_service.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
 
 class ProfilePhotoUploadWidget extends StatefulWidget {
   final UserProfile? userProfile;

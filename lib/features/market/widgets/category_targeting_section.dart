@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../vendor/models/vendor_categories.dart';
 
 /// Advanced category targeting widget for vendor recruitment

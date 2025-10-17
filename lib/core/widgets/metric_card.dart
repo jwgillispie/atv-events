@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Metric Card Widget for Analytics Displays
 /// Provides consistent styling for metric cards across the app

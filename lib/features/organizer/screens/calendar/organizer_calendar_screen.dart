@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/core/theme/hipop_colors.dart' show HiPopColors;
-import 'package:hipop/features/market/models/market.dart';
-import 'package:hipop/features/market/services/market_batch_service.dart';
-import 'package:hipop/features/market/services/market_calendar_service.dart';
-import 'package:hipop/features/shared/widgets/common/error_widget.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/core/theme/atv_colors.dart' show HiPopColors;
+import 'package:atv_events/features/market/models/market.dart';
+import 'package:atv_events/features/market/services/market_batch_service.dart';
+import 'package:atv_events/features/market/services/market_calendar_service.dart';
+import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../../../../core/widgets/hipop_app_bar.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class OrganizerCalendarScreen extends StatefulWidget {
   const OrganizerCalendarScreen({super.key});

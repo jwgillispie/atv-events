@@ -1,0 +1,33 @@
+// TODO: Removed for ATV Events demo - Vendor features disabled
+// This is a stub to maintain compilation
+
+import 'package:equatable/equatable.dart';
+
+class VendorMarketRelationship extends Equatable {
+  final String id;
+  final String vendorId;
+  final String marketId;
+  final String status;
+  final Map<String, dynamic>? metadata;
+
+  const VendorMarketRelationship({
+    required this.id,
+    required this.vendorId,
+    required this.marketId,
+    required this.status,
+    this.metadata,
+  });
+
+  factory VendorMarketRelationship.fromMap(Map<String, dynamic> map, String id) {
+    return VendorMarketRelationship(
+      id: id,
+      vendorId: map['vendorId'] as String? ?? '',
+      marketId: map['marketId'] as String? ?? '',
+      status: map['status'] as String? ?? 'inactive',
+      metadata: map['metadata'] as Map<String, dynamic>?,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, vendorId, marketId, status, metadata];
+}

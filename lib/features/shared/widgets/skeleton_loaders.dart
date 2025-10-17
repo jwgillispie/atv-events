@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../../core/constants/ui_constants.dart';
 
 /// World-class skeleton loader for feed cards

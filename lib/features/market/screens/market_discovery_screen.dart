@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/constants/place_utils.dart';
-import 'package:hipop/features/market/screens/market_detail_screen.dart';
-import 'package:hipop/features/market/services/market_service.dart';
-import 'package:hipop/features/shared/services/location/places_service.dart';
-import 'package:hipop/features/shared/widgets/common/error_widget.dart';
-import 'package:hipop/features/shared/widgets/common/google_places_widget.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
-import 'package:hipop/features/shared/widgets/common/settings_dropdown.dart';
-import 'package:hipop/features/vendor/models/vendor_market.dart';
-import 'package:hipop/repositories/vendor/vendor_posts_repository.dart';
+import 'package:atv_events/core/constants/place_utils.dart';
+import 'package:atv_events/features/market/screens/market_detail_screen.dart';
+import 'package:atv_events/features/market/services/market_service.dart';
+import 'package:atv_events/features/shared/services/location/places_service.dart';
+import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/google_places_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/settings_dropdown.dart';
+import 'package:atv_events/features/vendor/models/vendor_market.dart';
+import 'package:atv_events/repositories/vendor/vendor_posts_repository.dart';
 import '../../market/models/market.dart';
 
 

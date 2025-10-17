@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/features/shared/services/user/specialized_account_deletion_service.dart';
-import 'package:hipop/features/shared/services/user/user_feedback_service.dart';
+import 'package:atv_events/features/shared/services/user/specialized_account_deletion_service.dart';
+import 'package:atv_events/features/shared/services/user/user_feedback_service.dart';
 import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/auth/auth_event.dart';
 import '../../../../blocs/auth/auth_state.dart';

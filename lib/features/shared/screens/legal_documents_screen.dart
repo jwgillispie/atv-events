@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/utilities/url_launcher_service.dart';
-import '../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class LegalDocumentsScreen extends StatelessWidget {
   const LegalDocumentsScreen({super.key});

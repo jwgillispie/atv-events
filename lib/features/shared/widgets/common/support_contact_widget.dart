@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/communication/support_service.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/features/shared/services/communication/support_service.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// A reusable widget for displaying support contact options
 class SupportContactWidget extends StatelessWidget {

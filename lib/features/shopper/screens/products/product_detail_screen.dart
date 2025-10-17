@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/constants/ui_constants.dart';
-import 'package:hipop/features/shopper/models/product_feed_item.dart';
-import 'package:hipop/features/shopper/models/basket_item.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_bloc.dart';
-import 'package:hipop/features/shopper/blocs/basket/basket_event.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/constants/ui_constants.dart';
+import 'package:atv_events/features/shopper/models/product_feed_item.dart';
+import 'package:atv_events/features/shopper/models/basket_item.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_bloc.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:hipop/features/shared/services/utilities/url_launcher_service.dart';
+import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
 
 /// Product Detail Screen
 /// Shows detailed information about a product including all photos,

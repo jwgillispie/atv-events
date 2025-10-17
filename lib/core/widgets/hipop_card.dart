@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Custom card widget with HiPop marketplace styling
 /// Provides consistent elevation, borders, and interaction states

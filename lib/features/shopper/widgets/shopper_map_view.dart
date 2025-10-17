@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/features/market/models/market.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
-import 'package:hipop/features/shared/models/event.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/utils/date_time_utils.dart';
-import 'package:hipop/features/shared/services/utilities/url_launcher_service.dart';
-import 'package:hipop/features/shopper/widgets/custom_map_markers.dart';
+import 'package:atv_events/features/market/models/market.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shared/models/event.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/utils/date_time_utils.dart';
+import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
+import 'package:atv_events/features/shopper/widgets/custom_map_markers.dart';
 
 class ShopperMapView extends StatefulWidget {
   final List<Market> markets;
@@ -123,7 +123,7 @@ class _ShopperMapViewState extends State<ShopperMapView> {
                 icon: vendorIcon,
                 infoWindow: InfoWindow(
                   title: post.vendorName,
-                  snippet: post.locationName ?? post.location,
+                  snippet: post.locationName ?? '',
                 ),
                 // Add zIndex to ensure markers appear on top
                 zIndex: 0.5,
@@ -584,7 +584,7 @@ class _ShopperMapViewState extends State<ShopperMapView> {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      post.locationName ?? post.location,
+                      post.locationName ?? 'Location not specified',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: HiPopColors.darkTextSecondary,
                       ),
@@ -600,10 +600,13 @@ class _ShopperMapViewState extends State<ShopperMapView> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () async {
-                        await UrlLauncherService.launchMaps(
-                          post.location,
-                          context: context,
-                        );
+                        // TODO: Removed for ATV MVP - vendor posts don't have direct location
+                        if (post.locationName != null) {
+                          await UrlLauncherService.launchMaps(
+                            post.locationName!,
+                            context: context,
+                          );
+                        }
                       },
                       icon: const Icon(Icons.directions, size: 16),
                       label: const Text('Directions'),

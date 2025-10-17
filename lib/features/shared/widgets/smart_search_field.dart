@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/user/search_history_service.dart';
+import 'package:atv_events/features/shared/services/user/search_history_service.dart';
 import 'dart:async';
 import '../../shopper/services/enhanced_search_service.dart';
 

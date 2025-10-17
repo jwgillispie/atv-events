@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/product.dart';
-import 'package:hipop/features/shopper/widgets/shop/product_quick_action_sheet.dart';
-import 'package:hipop/features/shared/widgets/waitlist/waitlist_button.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/product.dart';
+import 'package:atv_events/features/shopper/widgets/shop/product_quick_action_sheet.dart';
+import 'package:atv_events/features/shared/widgets/waitlist/waitlist_button.dart';
 
 /// Compact Amazon/Etsy-style product card for grid layout
 /// Clean design with white background image and clear pricing

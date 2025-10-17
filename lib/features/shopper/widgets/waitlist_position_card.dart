@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/waitlist_models.dart';
-import 'package:hipop/features/shared/services/waitlist_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/waitlist_models.dart';
+import 'package:atv_events/features/shared/services/waitlist_service.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 

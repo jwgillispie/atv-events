@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/waitlist_models.dart';
-import 'package:hipop/features/shared/services/waitlist_service.dart' hide debugPrint;
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/waitlist_models.dart';
+import 'package:atv_events/features/shared/services/waitlist_service.dart' hide debugPrint;
 import 'package:intl/intl.dart';
 
 /// Bottom sheet for joining a product waitlist

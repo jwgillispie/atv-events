@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/market/screens/market_management_screen.dart';
-import 'package:hipop/features/organizer/screens/events/organizer_event_management_screen.dart';
-import 'package:hipop/features/organizer/widgets/organizer_calendar_modal.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/market/screens/market_management_screen.dart';
+import 'package:atv_events/features/organizer/screens/events/organizer_event_management_screen.dart';
+import 'package:atv_events/features/organizer/widgets/organizer_calendar_modal.dart';
 
 /// PostManagementScreen - Container for Markets and Events with Material Design 3 TabBar
 ///

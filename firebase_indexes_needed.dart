@@ -1,5 +1,6 @@
 // Firebase Firestore Indexes Required for Account Verification System
 // Run this file to see the indexes you need to create in Firebase Console
+// ignore_for_file: avoid_print
 
 void main() {
   print('=== FIREBASE FIRESTORE INDEXES REQUIRED ===\n');

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../../shared/widgets/common/loading_widget.dart';
 import '../../../shared/widgets/common/error_widget.dart' as common_error;
 import '../../../shared/models/order.dart' as app_order;

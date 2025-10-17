@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_event.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_event.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
 
 
 class DebugAccountSwitcher extends StatelessWidget {

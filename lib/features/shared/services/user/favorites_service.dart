@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/market/models/market.dart';
-import 'package:hipop/features/market/services/market_service.dart';
-import 'package:hipop/features/shared/models/event.dart';
-import 'package:hipop/features/shared/models/user_favorite.dart';
-import 'package:hipop/features/shared/services/data/event_service.dart';
-import 'package:hipop/features/shared/widgets/common/favorite_button.dart' hide FavoriteType;
-import 'package:hipop/features/vendor/models/managed_vendor.dart';
-import 'package:hipop/features/vendor/services/core/managed_vendor_service.dart';
-import 'package:hipop/features/shared/services/analytics/real_time_analytics_service.dart';
+import 'package:atv_events/features/market/models/market.dart';
+import 'package:atv_events/features/market/services/market_service.dart';
+import 'package:atv_events/features/shared/models/event.dart';
+import 'package:atv_events/features/shared/models/user_favorite.dart';
+import 'package:atv_events/features/shared/services/data/event_service.dart';
+import 'package:atv_events/features/shared/widgets/common/favorite_button.dart' hide FavoriteType;
+import 'package:atv_events/features/vendor/models/managed_vendor.dart';
+import 'package:atv_events/features/vendor/services/core/managed_vendor_service.dart';
+import 'package:atv_events/features/shared/services/analytics/real_time_analytics_service.dart';
 
 
 class FavoritesService {

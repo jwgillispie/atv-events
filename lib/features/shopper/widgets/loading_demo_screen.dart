@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/core/constants/ui_constants.dart';
-import 'package:hipop/features/shared/widgets/skeleton_loaders.dart';
-import 'package:hipop/features/shopper/widgets/feed_card.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/core/constants/ui_constants.dart';
+import 'package:atv_events/features/shared/widgets/skeleton_loaders.dart';
+import 'package:atv_events/features/shopper/widgets/feed_card.dart';
 
 /// Demo screen to showcase world-class loading experience
 /// Demonstrates Instagram, LinkedIn, and Twitter-style loading patterns

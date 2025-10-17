@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/services/location/location_data_service.dart';
+import 'package:atv_events/features/shared/services/location/location_data_service.dart';
 
 /// Service to migrate existing posts and markets to use optimized LocationData
 class LocationDataMigrationService {

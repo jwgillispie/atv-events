@@ -2,9 +2,9 @@ import 'dart:developer' as developer;
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/organizer/services/market_management/market_tracking_service.dart';
-import 'package:hipop/features/shared/models/event.dart';
-import 'package:hipop/features/shared/services/analytics/real_time_analytics_service.dart';
+import 'package:atv_events/features/organizer/services/market_management/market_tracking_service.dart';
+import 'package:atv_events/features/shared/models/event.dart';
+import 'package:atv_events/features/shared/services/analytics/real_time_analytics_service.dart';
 
 
 class EventService {

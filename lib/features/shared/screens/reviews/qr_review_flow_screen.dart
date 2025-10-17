@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
-import 'package:hipop/features/shared/services/universal_review_service.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
-import 'package:hipop/features/shared/widgets/common/error_widget.dart';
-import 'package:hipop/features/market/models/market.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/services/universal_review_service.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
+import 'package:atv_events/features/market/models/market.dart';
 
 /// Screen that handles the QR code review flow
 /// Allows users to select which market they're at before leaving a review

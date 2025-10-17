@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/models/waitlist_models.dart';
-import 'package:hipop/features/shared/services/waitlist_service.dart';
-import 'package:hipop/features/shopper/widgets/waitlist_position_card.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/models/waitlist_models.dart';
+import 'package:atv_events/features/shared/services/waitlist_service.dart';
+import 'package:atv_events/features/shopper/widgets/waitlist_position_card.dart';
 
 /// Screen showing all shopper's waitlist entries
 /// Displays current position, status, and allows management

@@ -4,11 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/market/models/market.dart';
-import 'package:hipop/features/shared/models/event.dart';
-import 'package:hipop/features/shared/services/data/event_service.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/market/models/market.dart';
+import 'package:atv_events/features/shared/models/event.dart';
+import 'package:atv_events/features/shared/services/data/event_service.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 
 /// OrganizerCalendarModal - Premium calendar view for market organizers
 /// Displays both markets and events in an elegant Material Design 3 interface

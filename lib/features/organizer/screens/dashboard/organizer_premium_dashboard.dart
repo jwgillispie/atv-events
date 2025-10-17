@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/vendor/models/vendor_post.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
-import 'package:hipop/core/widgets/hipop_app_bar.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/core/widgets/hipop_app_bar.dart';
 
 class OrganizerPremiumDashboard extends StatefulWidget {
   const OrganizerPremiumDashboard({super.key});

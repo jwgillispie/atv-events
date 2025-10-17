@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
 
 abstract class IUserProfileService {
   Future<UserProfile?> getUserProfile(String userId);

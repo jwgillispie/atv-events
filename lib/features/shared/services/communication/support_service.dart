@@ -1,6 +1,6 @@
 import 'package:url_launcher/url_launcher.dart';
-import 'package:hipop/features/shared/services/utilities/url_launcher_service.dart';
-import 'package:hipop/features/shared/models/user_profile.dart';
+import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
+import 'package:atv_events/features/shared/models/user_profile.dart';
 
 /// Support contact context types
 enum SupportContext {

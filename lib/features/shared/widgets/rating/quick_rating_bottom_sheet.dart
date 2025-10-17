@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// Quick rating bottom sheet for simplified 2-step review process
 class QuickRatingBottomSheet extends StatefulWidget {

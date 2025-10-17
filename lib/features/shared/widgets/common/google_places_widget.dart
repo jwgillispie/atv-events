@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/location/places_service.dart';
+import 'package:atv_events/features/shared/services/location/places_service.dart';
 
 class GooglePlacesWidget extends StatefulWidget {
   final Function(PlaceDetails) onPlaceSelected;

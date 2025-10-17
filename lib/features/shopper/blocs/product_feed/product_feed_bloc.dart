@@ -2,10 +2,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hipop/features/shopper/blocs/product_feed/product_feed_event.dart';
-import 'package:hipop/features/shopper/blocs/product_feed/product_feed_state.dart';
-import 'package:hipop/features/shopper/models/product_feed_item.dart';
-import 'package:hipop/features/shopper/services/product_feed_service.dart';
+import 'package:atv_events/features/shopper/blocs/product_feed/product_feed_event.dart';
+import 'package:atv_events/features/shopper/blocs/product_feed/product_feed_state.dart';
+import 'package:atv_events/features/shopper/models/product_feed_item.dart';
+import 'package:atv_events/features/shopper/services/product_feed_service.dart';
 
 /// BLoC for managing product feed state and business logic
 /// Handles product loading, filtering, pagination, and caching

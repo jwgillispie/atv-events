@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/services/universal_review_service.dart';
-import 'package:hipop/features/shared/models/universal_review.dart';
-import 'package:hipop/features/shared/widgets/reviews/review_card.dart';
-import 'package:hipop/features/shared/widgets/reviews/no_reviews_prompt.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/services/universal_review_service.dart';
+import 'package:atv_events/features/shared/models/universal_review.dart';
+import 'package:atv_events/features/shared/widgets/reviews/review_card.dart';
+import 'package:atv_events/features/shared/widgets/reviews/no_reviews_prompt.dart';
 
 class MyReviewsScreen extends StatefulWidget {
   final String? filterType;

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/features/vendor/models/vendor_market.dart';
+import 'package:atv_events/features/vendor/models/vendor_market.dart';
 import '../../market/models/market.dart';
 
 class MarketService {

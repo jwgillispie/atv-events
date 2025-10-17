@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/location/places_service.dart';
+import 'package:atv_events/features/shared/services/location/places_service.dart';
 import '../../../../core/constants/constants.dart';
 
 /// Unified location search widget that consolidates the functionality

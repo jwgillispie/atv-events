@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/shared/services/user/user_profile_service.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
 
 
 /// Service for managing organizer monthly event tracking

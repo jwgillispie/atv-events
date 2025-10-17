@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hipop/features/shared/services/user/user_profile_service.dart';
+import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
 import '../../market/services/market_service.dart';
 import '../../vendor/services/core/managed_vendor_service.dart';
 import '../../market/models/market.dart';

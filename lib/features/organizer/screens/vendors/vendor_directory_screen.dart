@@ -7,7 +7,7 @@ import '../../../shared/widgets/common/loading_widget.dart';
 import '../../../shared/widgets/common/error_widget.dart';
 import '../../../shared/widgets/common/hipop_text_field.dart';
 import '../../../../core/widgets/hipop_app_bar.dart';
-import '../../../../core/theme/hipop_colors.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 class VendorDirectoryScreen extends StatefulWidget {
   const VendorDirectoryScreen({super.key});

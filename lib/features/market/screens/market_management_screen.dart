@@ -4,16 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/features/shared/services/user/user_profile_service.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
 import '../../market/models/market.dart';
 import '../../market/services/market_service.dart';
 import '../../premium/services/subscription_service.dart';
 import '../../shared/services/analytics/real_time_analytics_service.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/organizer/services/vendor_management/vendor_post_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/organizer/services/vendor_management/vendor_post_service.dart';
 
 class MarketManagementScreen extends StatefulWidget {
   final bool isEmbedded;

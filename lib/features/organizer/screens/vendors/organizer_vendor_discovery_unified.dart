@@ -4,22 +4,22 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hipop/blocs/auth/auth_bloc.dart';
-import 'package:hipop/blocs/auth/auth_state.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/organizer/models/organizer_vendor_post.dart';
-import 'package:hipop/features/organizer/services/vendor_management/vendor_directory_service.dart';
-import 'package:hipop/features/organizer/services/vendor_management/vendor_post_service.dart';
-import 'package:hipop/features/shared/widgets/common/error_widget.dart';
-import 'package:hipop/features/shared/widgets/common/loading_widget.dart';
-import 'package:hipop/features/shared/widgets/common/hipop_text_field.dart';
-import 'package:hipop/features/vendor/services/engagement/vendor_contact_service.dart';
-import 'package:hipop/features/shopper/screens/shopper_main_screen.dart';
-import 'package:hipop/features/shared/blocs/application/application_bloc.dart';
-import 'package:hipop/features/shared/blocs/application/application_event.dart';
-import 'package:hipop/features/shared/blocs/application/application_state.dart';
-import 'package:hipop/features/shared/models/vendor_application.dart';
-import 'package:hipop/features/shared/widgets/applications/application_status_card.dart';
+import 'package:atv_events/blocs/auth/auth_bloc.dart';
+import 'package:atv_events/blocs/auth/auth_state.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/organizer/models/organizer_vendor_post.dart';
+import 'package:atv_events/features/organizer/services/vendor_management/vendor_directory_service.dart';
+import 'package:atv_events/features/organizer/services/vendor_management/vendor_post_service.dart';
+import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
+import 'package:atv_events/features/shared/widgets/common/hipop_text_field.dart';
+import 'package:atv_events/features/vendor/services/engagement/vendor_contact_service.dart';
+import 'package:atv_events/features/shopper/screens/shopper_main_screen.dart';
+import 'package:atv_events/features/shared/blocs/application/application_bloc.dart';
+import 'package:atv_events/features/shared/blocs/application/application_event.dart';
+import 'package:atv_events/features/shared/blocs/application/application_state.dart';
+import 'package:atv_events/features/shared/models/vendor_application.dart';
+import 'package:atv_events/features/shared/widgets/applications/application_status_card.dart';
 
 // View Mode Management
 enum ViewMode { recruitment, directory, applications }

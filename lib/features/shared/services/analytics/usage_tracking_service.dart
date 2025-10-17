@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/premium/services/subscription_service.dart';
-import 'package:hipop/features/shared/models/usage_tracking.dart';
+import 'package:atv_events/features/premium/services/subscription_service.dart';
+import 'package:atv_events/features/shared/models/usage_tracking.dart';
 
 class UsageTrackingService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;

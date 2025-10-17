@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/services/user/favorites_service.dart';
-import 'package:hipop/features/shared/models/user_favorite.dart';
-import 'package:hipop/repositories/shopper/favorites_repository.dart';
+import 'package:atv_events/features/shared/services/user/favorites_service.dart';
+import 'package:atv_events/features/shared/models/user_favorite.dart';
+import 'package:atv_events/repositories/shopper/favorites_repository.dart';
 
 
 class FavoritesMigrationService {

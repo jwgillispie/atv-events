@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/models/analytics.dart';
-import 'package:hipop/features/vendor/models/vendor_application.dart';
+import 'package:atv_events/features/shared/models/analytics.dart';
+import 'package:atv_events/features/vendor/models/vendor_application.dart';
 
 class AnalyticsService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;

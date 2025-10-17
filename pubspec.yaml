@@ -101,11 +101,7 @@ dependencies:
   image_gallery_saver: ^2.0.3
   screen_brightness: ^1.0.1
 
-  # Stripe payments
-  flutter_stripe: ^11.1.0
-
-  # Environment variables
-  flutter_dotenv: ^5.1.0
+  # Cloud Functions
   cloud_functions: ^5.6.2
 
   # Cryptographic functions
@@ -122,7 +118,6 @@ dependencies:
   flutter_inappwebview: ^6.0.0
   intl_phone_field: ^3.2.0
   pin_code_fields: ^8.0.1
-  purchases_flutter: ^9.2.1
   shimmer: ^3.0.0
 
   # Biometric authentication
@@ -213,30 +208,30 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/hipop_logo.PNG"
+  image_path: "assets/images/atv_events_logo.png"
   min_sdk_android: 21
   web:
     generate: true
-    image_path: "assets/images/hipop_logo.PNG"
-    background_color: "#F5F0E8"
-    theme_color: "#F5F0E8"
+    image_path: "assets/images/atv_events_logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#000000"
   windows:
     generate: true
-    image_path: "assets/images/hipop_logo.PNG"
+    image_path: "assets/images/atv_events_logo.png"
     icon_size: 48
   macos:
     generate: true
-    image_path: "assets/images/hipop_logo.PNG"
+    image_path: "assets/images/atv_events_logo.png"
 
 # Native splash screen configuration
 flutter_native_splash:
-  color: "#F5F0E8"
-  image: assets/images/hipop_logo.PNG
+  color: "#FFFFFF"
+  image: assets/images/atv_events_logo.png
 
   # Android 12+ splash screen
   android_12:
-    color: "#F5F0E8"
-    image: assets/images/hipop_logo.PNG
+    color: "#FFFFFF"
+    image: assets/images/atv_events_logo.png
 
   # iOS splash screen
   ios: true

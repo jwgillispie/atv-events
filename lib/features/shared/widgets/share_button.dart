@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:hipop/features/shared/services/communication/share_service.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
+import 'package:atv_events/features/shared/services/communication/share_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
 
 /// A reusable share button widget with consistent UI and functionality
 class ShareButton extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:hipop/core/theme/hipop_colors.dart';
-import 'package:hipop/features/shared/services/utilities/remote_config_service.dart';
-import 'package:hipop/features/shared/services/utilities/url_launcher_service.dart';
+import 'package:atv_events/core/theme/atv_colors.dart';
+import 'package:atv_events/features/shared/services/utilities/remote_config_service.dart';
+import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
 
 /// A Strava-style preview widget that shows a map and photos
 /// in a horizontal layout for all types of feed cards (markets, events, vendors)

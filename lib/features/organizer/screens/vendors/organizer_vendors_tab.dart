@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hipop/features/organizer/screens/vendors/organizer_vendor_discovery_unified.dart';
+import 'package:atv_events/features/organizer/screens/vendors/organizer_vendor_discovery_unified.dart';
 
 /// Vendors Tab - Unified vendor discovery and recruitment hub
 /// World-class marketplace experience combining recruitment posts and vendor directory

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hipop/features/shared/models/analytics.dart';
+import 'package:atv_events/features/shared/models/analytics.dart';
 import 'real_time_analytics_service.dart';
 
 /// Comprehensive Analytics Dashboard Service for HiPop Platform
