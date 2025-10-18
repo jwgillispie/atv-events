@@ -54,6 +54,15 @@ class ManagedVendor extends Equatable {
     };
   }
 
+  // Add missing getters for compatibility
+  String get businessName => name;
+  String get categoriesDisplay => category ?? 'Uncategorized';
+  bool get isFeatured => metadata?['isFeatured'] == true;
+  List<dynamic> get products => metadata?['products'] ?? [];
+  String? get email => contactEmail;
+  String? get website => metadata?['website'] as String?;
+  String? get instagramHandle => metadata?['instagramHandle'] as String?;
+
   @override
   List<Object?> get props => [
         id,

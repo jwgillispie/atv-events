@@ -194,35 +194,36 @@ class _EditMarketScreenState extends State<EditMarketScreen> {
   
   Future<void> _loadVendorData() async {
     setState(() => _isLoadingVendors = true);
-    
+
     try {
-      _approvedApplications = await VendorApplicationService.getApprovedApplicationsForMarket(widget.marketId);
-      _existingManagedVendors = await ManagedVendorService.getVendorsForMarketAsync(widget.marketId);
-      
+      // VENDOR FEATURES DISABLED FOR WEB BUILD
+      // _approvedApplications = await VendorApplicationService.getApprovedApplicationsForMarket(widget.marketId);
+      // _existingManagedVendors = await ManagedVendorService.getVendorsForMarketAsync(widget.marketId);
+
       // Create unified list
-      _unifiedVendors = _createUnifiedVendorList(_approvedApplications, _existingManagedVendors);
+      _unifiedVendors = []; // _createUnifiedVendorList(_approvedApplications, _existingManagedVendors);
     } finally {
       setState(() => _isLoadingVendors = false);
     }
   }
-  
+
   List<UnifiedVendor> _createUnifiedVendorList(
     List<VendorApplication> applications,
     List<ManagedVendor> managedVendors,
   ) {
     final Map<String, UnifiedVendor> vendorMap = {};
-    
+
     for (final vendor in managedVendors) {
-      final vendorUserId = vendor.metadata['vendorUserId'] as String? ?? vendor.id;
+      final vendorUserId = (vendor.metadata ?? {})['vendorUserId'] as String? ?? vendor.id;
       vendorMap[vendorUserId] = UnifiedVendor.fromManagedVendor(vendor);
     }
-    
+
     for (final application in applications) {
       if (!vendorMap.containsKey(application.vendorId)) {
         vendorMap[application.vendorId] = UnifiedVendor.fromApplication(application);
       }
     }
-    
+
     return vendorMap.values.toList();
   }
   
@@ -1133,7 +1134,7 @@ class _EditMarketScreenState extends State<EditMarketScreen> {
                         style: TextStyle(color: HiPopColors.darkTextPrimary),
                       ),
                       subtitle: Text(
-                        vendor.email,
+                        vendor.email ?? '',
                         style: TextStyle(color: HiPopColors.darkTextSecondary),
                       ),
                       activeColor: HiPopColors.organizerAccent,

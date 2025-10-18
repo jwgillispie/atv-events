@@ -24,4 +24,10 @@ class TicketPurchaseService {
     // Return empty stream - ticket features disabled
     return Stream.value([]);
   }
+
+  /// Get cached upcoming ticket count for user
+  static Future<int> getCachedUpcomingTicketCount(String userId) async {
+    // Stub implementation - returns 0
+    return 0;
+  }
 }

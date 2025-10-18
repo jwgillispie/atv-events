@@ -9,6 +9,7 @@ class UpgradeToPremiumButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool isCompact;
   final String? userType; // Optional user type for customization
+  final VoidCallback? onSuccess; // Add onSuccess parameter for compatibility
 
   const UpgradeToPremiumButton({
     super.key,
@@ -16,6 +17,7 @@ class UpgradeToPremiumButton extends StatelessWidget {
     this.onPressed,
     this.isCompact = false,
     this.userType,
+    this.onSuccess,
   });
 
   @override

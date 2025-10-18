@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 class VendorRegistrationsChart extends StatelessWidget {
   final List<Map<String, dynamic>> data;
   final String? marketId; // Optional market ID for filtering
+  final int? monthsBack; // Add monthsBack parameter for compatibility
 
   const VendorRegistrationsChart({
     super.key,
     required this.data,
     this.marketId,
+    this.monthsBack,
   });
 
   @override

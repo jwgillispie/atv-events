@@ -11,13 +11,21 @@ class AdvancedReportingService {
       : _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// Static method to generate market report
-  static Future<Map<String, dynamic>> generateMarketReport(
-    String marketId,
-    {DateTime? startDate, DateTime? endDate}
-  ) async {
-    // Stub implementation - returns empty data
+  static Future<Map<String, dynamic>> generateMarketReport({
+    required String organizerId,
+    required String marketId,
+    required String reportType,
+    DateTime? startDate,
+    DateTime? endDate,
+    String? format,
+  }) async {
+    // Stub implementation - returns success with mock data
     return {
+      'success': true,
+      'reportId': 'report_${DateTime.now().millisecondsSinceEpoch}',
       'marketId': marketId,
+      'reportType': reportType,
+      'format': format ?? 'pdf',
       'period': {
         'start': startDate?.toIso8601String() ?? '',
         'end': endDate?.toIso8601String() ?? '',

@@ -29,7 +29,13 @@ class ManagedVendorService {
     return Stream.value([]);
   }
 
-  Future<void> createVendor(ManagedVendor vendor) async {
+  /// Static method to create a vendor - stub for web build compatibility
+  static Future<void> createVendor(dynamic vendorData) async {
+    // Stub implementation - vendor features disabled
+  }
+
+  /// Instance method to create a vendor - stub
+  Future<void> createVendorInstance(ManagedVendor vendor) async {
     // Do nothing - vendor features disabled
   }
 
@@ -39,5 +45,21 @@ class ManagedVendorService {
 
   Future<void> deleteVendor(String vendorId) async {
     // Do nothing - vendor features disabled
+  }
+
+  /// Static methods for compatibility
+  static Future<List<ManagedVendor>> getVendorsForMarketAsync(String marketId) async {
+    // Return empty list - vendor features disabled
+    return [];
+  }
+
+  static Stream<List<ManagedVendor>> getVendorsForMarket(String marketId) {
+    // Return empty stream - vendor features disabled
+    return Stream.value([]);
+  }
+
+  static Stream<List<ManagedVendor>> getActiveVendorsForMarket(String marketId) {
+    // Return empty stream - vendor features disabled
+    return Stream.value([]);
   }
 }

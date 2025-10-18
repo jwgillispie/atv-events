@@ -4,11 +4,17 @@
 import 'package:flutter/material.dart';
 
 class EventTicketsSection extends StatelessWidget {
-  final String eventId;
+  final String? eventId;
+  final String? marketId; // Optional market ID parameter
+  final dynamic event; // Flexible event parameter
+  final dynamic currentUser; // Flexible user parameter
 
   const EventTicketsSection({
     super.key,
-    required this.eventId,
+    this.eventId,
+    this.marketId,
+    this.event,
+    this.currentUser,
   });
 
   @override

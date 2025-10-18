@@ -425,7 +425,7 @@ class _FavoritesScreenState extends State<FavoritesScreen>
               ),
               const SizedBox(height: 12),
               Text(
-                vendor.description,
+                vendor.description ?? '',
                 style: const TextStyle(fontSize: 14),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

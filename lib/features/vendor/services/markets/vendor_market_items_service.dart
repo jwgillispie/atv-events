@@ -27,4 +27,23 @@ class VendorMarketItemsService {
   Future<void> deleteMarketItem(String marketId, String itemId) async {
     // Do nothing - vendor features disabled
   }
+
+  /// Static method for compatibility
+  static Future<List<Map<String, dynamic>>> getMarketVendorItems(String marketId) async {
+    // Return empty list - vendor features disabled
+    return [];
+  }
+
+  /// Get vendor market items stub
+  static Future<VendorMarketItems?> getVendorMarketItems(String vendorId, String marketId) async {
+    // Return null - vendor features disabled
+    return null;
+  }
+}
+
+/// Stub class for vendor market items
+class VendorMarketItems {
+  final List<String>? itemList;
+
+  VendorMarketItems({this.itemList});
 }

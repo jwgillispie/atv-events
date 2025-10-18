@@ -87,9 +87,12 @@ class _OrganizerAnalyticsScreenState extends State<OrganizerAnalyticsScreen>
     if (!_hasPremiumAccess || _currentMarketId == null || !mounted) return;
 
     try {
+      final authState = context.read<AuthBloc>().state;
+      if (authState is! Authenticated) return;
+
       final marketIntelligence =
           await MarketIntelligenceService.getCrossMarketPerformance(
-            vendorId: _currentMarketId!,
+            authState.user.uid,
             startDate: DateTime.now().subtract(const Duration(days: 90)),
             endDate: DateTime.now(),
           );
@@ -824,6 +827,7 @@ class _OrganizerAnalyticsScreenState extends State<OrganizerAnalyticsScreen>
         ),
         const SizedBox(height: 16),
         VendorRegistrationsChart(
+          data: [], // Empty data for stub
           marketId: _currentMarketId ?? '',
           monthsBack:
               _selectedTimeRange == AnalyticsTimeRange.week

@@ -25,6 +25,9 @@ class UserSubscription extends Equatable {
 
   bool get isActive => status == 'active';
 
+  // Stub getter for web build compatibility
+  bool get isPremium => false; // Always false for ATV Events demo
+
   factory UserSubscription.fromMap(Map<String, dynamic> map, String id) {
     return UserSubscription(
       id: id,

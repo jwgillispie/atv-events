@@ -339,10 +339,11 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
               
               for (final marketEvent in vendorMarketEvents) {
                 // Check if vendor operates on this day
-                final dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 
+                final dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday',
                                   'thursday', 'friday', 'saturday'][marketEvent.eventDate.weekday % 7];
-                if (relationship.operatingDays.isEmpty || 
-                    relationship.operatingDays.contains(dayOfWeek)) {
+                if (relationship.operatingDays == null ||
+                    relationship.operatingDays!.isEmpty ||
+                    relationship.operatingDays!.contains(dayOfWeek)) {
                   calendarEvents.add(CalendarEvent(
                     id: '${vendor.userId}_${marketEvent.marketId}_${marketEvent.eventDate.millisecondsSinceEpoch}',
                     name: '${vendor.businessName ?? vendor.displayName} at ${market.name}',

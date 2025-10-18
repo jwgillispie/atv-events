@@ -117,4 +117,11 @@ class VendorProductService {
       return null;
     }
   }
+
+
+  /// Get a single product by ID
+  static Future<dynamic> getProduct(String productId) async {
+    // TODO: Implement for ATV Events if needed
+    return null;
+  }
 }

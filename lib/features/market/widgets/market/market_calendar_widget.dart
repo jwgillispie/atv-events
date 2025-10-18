@@ -332,10 +332,10 @@ class _MarketCalendarWidgetState extends State<MarketCalendarWidget> {
               color: Colors.grey[600],
             ),
           ),
-          if (post.description.isNotEmpty) ...[
+          if (post.description != null && post.description!.isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              post.description,
+              post.description!,
               style: Theme.of(context).textTheme.bodySmall,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,

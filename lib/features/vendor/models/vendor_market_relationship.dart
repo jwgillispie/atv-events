@@ -9,6 +9,10 @@ class VendorMarketRelationship extends Equatable {
   final String marketId;
   final String status;
   final Map<String, dynamic>? metadata;
+  final List<String>? operatingDays;
+  final String? boothNumber;
+  final bool isActive;
+  final bool isApproved;
 
   const VendorMarketRelationship({
     required this.id,
@@ -16,6 +20,10 @@ class VendorMarketRelationship extends Equatable {
     required this.marketId,
     required this.status,
     this.metadata,
+    this.operatingDays,
+    this.boothNumber,
+    this.isActive = false,
+    this.isApproved = false,
   });
 
   factory VendorMarketRelationship.fromMap(Map<String, dynamic> map, String id) {
@@ -25,9 +33,22 @@ class VendorMarketRelationship extends Equatable {
       marketId: map['marketId'] as String? ?? '',
       status: map['status'] as String? ?? 'inactive',
       metadata: map['metadata'] as Map<String, dynamic>?,
+      operatingDays: (map['operatingDays'] as List?)?.cast<String>(),
+      boothNumber: map['boothNumber'] as String?,
+      isActive: map['isActive'] as bool? ?? false,
+      isApproved: map['isApproved'] as bool? ?? false,
     );
   }
 
+  /// Factory constructor from Firestore DocumentSnapshot
+  factory VendorMarketRelationship.fromFirestore(dynamic doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data is null');
+    }
+    return VendorMarketRelationship.fromMap(data, doc.id);
+  }
+
   @override
-  List<Object?> get props => [id, vendorId, marketId, status, metadata];
+  List<Object?> get props => [id, vendorId, marketId, status, metadata, operatingDays, boothNumber, isActive, isApproved];
 }

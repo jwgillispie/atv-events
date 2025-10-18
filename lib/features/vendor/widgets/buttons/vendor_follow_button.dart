@@ -8,6 +8,7 @@ class VendorFollowButton extends StatelessWidget {
   final String? vendorName; // Optional vendor name for display
   final bool isFollowing;
   final VoidCallback? onPressed;
+  final bool isCompact; // Compact display mode
 
   const VendorFollowButton({
     super.key,
@@ -15,6 +16,7 @@ class VendorFollowButton extends StatelessWidget {
     this.vendorName,
     this.isFollowing = false,
     this.onPressed,
+    this.isCompact = false,
   });
 
   @override

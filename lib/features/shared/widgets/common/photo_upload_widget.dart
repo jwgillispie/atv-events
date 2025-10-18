@@ -163,26 +163,28 @@ class _PhotoUploadWidgetState extends State<PhotoUploadWidget> {
   }
 
   void _showUpgradePrompt() {
-    ContextualUpgradePrompts.showLimitReachedPrompt(
-      context,
-      userId: widget.userId ?? FirebaseAuth.instance.currentUser?.uid ?? '',
-      userType: widget.userType ?? 'vendor',
-      limitName: 'photos per post',
-      currentUsage: (kIsWeb ? _selectedWebImages.length : _selectedImages.length) + _existingImageUrls.length,
-      limit: 3,
-    );
+    // TODO: Removed for ATV Events demo - Premium features disabled
+    // ContextualUpgradePrompts.showLimitReachedPrompt(
+    //   context,
+    //   userId: widget.userId ?? FirebaseAuth.instance.currentUser?.uid ?? '',
+    //   userType: widget.userType ?? 'vendor',
+    //   limitName: 'photos per post',
+    //   currentUsage: (kIsWeb ? _selectedWebImages.length : _selectedImages.length) + _existingImageUrls.length,
+    //   limit: 3,
+    // );
   }
 
   void _showUpgradePromptWithoutLimitCheck() {
+    // TODO: Removed for ATV Events demo - Premium features disabled
     // Show upgrade prompt without the "limit reached" message
     // This is called when user clicks "upgrade for unlimited photos" button
-    ContextualUpgradePrompts.showFeatureLockedPrompt(
-      context,
-      userId: widget.userId ?? FirebaseAuth.instance.currentUser?.uid ?? '',
-      userType: widget.userType ?? 'vendor',
-      featureName: 'unlimited_photos',
-      featureDisplayName: 'Unlimited Photos',
-    );
+    // ContextualUpgradePrompts.showFeatureLockedPrompt(
+    //   context,
+    //   userId: widget.userId ?? FirebaseAuth.instance.currentUser?.uid ?? '',
+    //   userType: widget.userType ?? 'vendor',
+    //   featureName: 'unlimited_photos',
+    //   featureDisplayName: 'Unlimited Photos',
+    // );
   }
 
   @override

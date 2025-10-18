@@ -276,9 +276,12 @@ class _AdminFixScreenState extends State<AdminFixScreen> {
 
       // Add to database
       final marketId = await MarketService.createMarket(tuckersMarket);
-      
+
       // Add sample vendors to make the market visible to shoppers
-      await _addSampleVendors(marketId);
+      // TODO: Vendor features disabled for ATV Events
+      // if (false) {
+      //   await _addSampleVendors(marketId);
+      // }
       
       String resultText = '🌟 TUCKER\'S FARMERS MARKET CREATED!\n\n';
       resultText += '📍 Market ID: $marketId\n';
@@ -350,9 +353,12 @@ class _AdminFixScreenState extends State<AdminFixScreen> {
 
       // Add to database
       final marketId = await MarketService.createMarket(afterDarkMarket);
-      
+
       // Add sample vendors for the June 13th event
-      await _addAfterDarkVendors(marketId);
+      // TODO: Vendor features disabled for ATV Events
+      // if (false) {
+      //   await _addAfterDarkVendors(marketId);
+      // }
       
       String resultText = '🌙 AFTER DARK BAZAAR CREATED!\\n\\n';
       resultText += '📍 Market ID: $marketId\\n';
@@ -393,7 +399,10 @@ class _AdminFixScreenState extends State<AdminFixScreen> {
     }
   }
 
+  // TODO: Vendor features completely disabled for ATV Events
+  /*
   Future<void> _addSampleVendors(String marketId) async {
+    if (false) {
     try {
       // Create realistic sample vendors for Tucker's Farmers Market
       final sampleVendors = [
@@ -477,9 +486,14 @@ class _AdminFixScreenState extends State<AdminFixScreen> {
     } catch (e) {
       // Don't throw - we still want the market creation to succeed
     }
+    } // End if (false)
   }
+  */
 
+  // TODO: Vendor features completely disabled for ATV Events
+  /*
   Future<void> _addAfterDarkVendors(String marketId) async {
+    if (false) {
     try {
       // Create vendors for After Dark Bazaar - June 13th event
       final afterDarkVendors = [
@@ -583,5 +597,7 @@ class _AdminFixScreenState extends State<AdminFixScreen> {
     } catch (e) {
       // Don't throw - we still want the market creation to succeed
     }
+    } // End if (false)
   }
+  */
 }

@@ -847,21 +847,32 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
           );
         }
 
-        return FutureBuilder<Map<String, List<String>>>(
-          future: VendorMarketItemsService.getMarketVendorItems(widget.market.id),
-          builder: (context, itemsSnapshot) {
-            final vendorItemsMap = itemsSnapshot.data ?? <String, List<String>>{};
-            
-            return ListView.builder(
-              padding: const EdgeInsets.all(16.0),
-              itemCount: vendors.length,
-              itemBuilder: (context, index) {
-                final vendor = vendors[index];
-                // Get market-specific items for this vendor
-                final vendorItems = vendorItemsMap[vendor.id] ?? <String>[];
-                return _buildVendorCard(vendor, vendorItems);
-              },
-            );
+        // VENDOR ITEMS SERVICE DISABLED FOR WEB BUILD
+        // return FutureBuilder<Map<String, List<String>>>(
+        //   future: VendorMarketItemsService.getMarketVendorItems(widget.market.id),
+        //   builder: (context, itemsSnapshot) {
+        //     final vendorItemsMap = itemsSnapshot.data ?? <String, List<String>>{};
+
+        //     return ListView.builder(
+        //       padding: const EdgeInsets.all(16.0),
+        //       itemCount: vendors.length,
+        //       itemBuilder: (context, index) {
+        //         final vendor = vendors[index];
+        //         // Get market-specific items for this vendor
+        //         final vendorItems = vendorItemsMap[vendor.id] ?? <String>[];
+        //         return _buildVendorCard(vendor, vendorItems);
+        //       },
+        //     );
+        //   },
+        // );
+
+        // For web build, just show vendors without market-specific items
+        return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: vendors.length,
+          itemBuilder: (context, index) {
+            final vendor = vendors[index];
+            return _buildVendorCard(vendor, <String>[]);
           },
         );
       },
@@ -962,10 +973,10 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
               ],
             ),
             
-            if (vendor.description.isNotEmpty) ...[
+            if (vendor.description?.isNotEmpty ?? false) ...[
               const SizedBox(height: 12),
               Text(
-                vendor.description,
+                vendor.description!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: HiPopColors.darkTextSecondary,
                 ),
@@ -973,9 +984,9 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            
+
             // Show market-specific items if available, otherwise show general products
-            if (marketItems.isNotEmpty || vendor.products.isNotEmpty) ...[
+            if (marketItems.isNotEmpty || (vendor.products?.isNotEmpty ?? false)) ...[
               const SizedBox(height: 12),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1001,7 +1012,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
                     ),
                     const SizedBox(height: 6),
                     VendorItemsWidget.full(items: marketItems),
-                  ] else if (vendor.products.isNotEmpty) ...[
+                  ] else if (vendor.products?.isNotEmpty ?? false) ...[
                     Row(
                       children: [
                         const Icon(
@@ -1021,7 +1032,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
                       ],
                     ),
                     const SizedBox(height: 6),
-                    VendorItemsWidget.full(items: vendor.products),
+                    VendorItemsWidget.full(items: vendor.products?.cast<String>() ?? []),
                   ],
                 ],
               ),
@@ -1204,15 +1215,15 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
     buffer.writeln('Check out ${vendor.businessName}!');
     buffer.writeln();
     
-    if (vendor.description.isNotEmpty) {
+    if (vendor.description?.isNotEmpty ?? false) {
       buffer.writeln(vendor.description);
       buffer.writeln();
     }
-    
+
     buffer.writeln('Categories: ${vendor.categoriesDisplay}');
-    
-    if (vendor.products.isNotEmpty) {
-      buffer.writeln('Products: ${vendor.products.take(5).join(", ")}${vendor.products.length > 5 ? "..." : ""}');
+
+    if (vendor.products?.isNotEmpty ?? false) {
+      buffer.writeln('Products: ${(vendor.products ?? []).take(5).join(", ")}${(vendor.products?.length ?? 0) > 5 ? "..." : ""}');
     }
     
     if (vendor.email != null) {

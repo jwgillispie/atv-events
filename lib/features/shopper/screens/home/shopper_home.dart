@@ -1028,7 +1028,7 @@ class _ShopperHomeState extends State<ShopperHome> {
             vendorName: post.vendorName,
             dateTime: DateTimeUtils.formatPostDateTime(post.popUpStartDateTime),
             location: post.location,
-            description: post.description,
+            description: post.description ?? '',
             photoUrls: post.photoUrls,
             latitude: post.latitude,
             longitude: post.longitude,
@@ -1368,9 +1368,9 @@ class _ShopperHomeState extends State<ShopperHome> {
     buffer.writeln();
     buffer.writeln(post.vendorName);
 
-    if (post.description.isNotEmpty) {
+    if (post.description != null && post.description!.isNotEmpty) {
       buffer.writeln();
-      buffer.writeln(post.description);
+      buffer.writeln(post.description!);
     }
 
     buffer.writeln();

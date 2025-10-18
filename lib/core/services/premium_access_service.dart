@@ -52,4 +52,9 @@ class PremiumAccessService {
     // Stub implementation - returns false
     return false;
   }
+
+  /// Clear cache - stub for web build compatibility
+  static void clearCache([String? userId]) {
+    // Stub implementation - does nothing
+  }
 }

@@ -56,4 +56,15 @@ class StripeService {
     // Stub implementation - returns false
     return false;
   }
+
+
+  /// Cancel subscription with enhanced features
+  static Future<bool> cancelSubscriptionEnhanced(
+    String userId, {
+    String? cancellationType,
+    String? feedback,
+  }) async {
+    // TODO: Implement for ATV Events if needed
+    return false;
+  }
 }

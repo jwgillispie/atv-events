@@ -12,7 +12,8 @@ class SubscriptionService {
     // Do nothing - premium features disabled
   }
 
-  Future<UserSubscription?> getUserSubscription(String userId) async {
+  // Make getUserSubscription static for compatibility
+  static Future<UserSubscription?> getUserSubscription(String userId) async {
     // Return null - premium features disabled
     return null;
   }
@@ -33,5 +34,20 @@ class SubscriptionService {
 
   Future<void> cancelSubscription(String userId) async {
     // Do nothing - premium features disabled
+  }
+
+  // Additional stub methods for compatibility
+  static Future<bool> hasFeature(String userId, String feature) async {
+    // Return false - premium features disabled
+    return false;
+  }
+
+  static Future<bool> canCreateMarket(String userId) async {
+    // Return true - no limits for MVP
+    return true;
+  }
+
+  static Future<void> incrementMarketCount(String userId) async {
+    // Do nothing - no tracking for MVP
   }
 }
