@@ -62,7 +62,7 @@ class AuthLandingScreen extends StatelessWidget {
                   children: [
                 const Spacer(),
                 const Text(
-                  'HiPop',
+                  'ATV Events',
                   style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
@@ -71,7 +71,7 @@ class AuthLandingScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Connect shoppers with local pop-up vendors',
+                  'Discover events at Atlanta Tech Village',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white.withOpacity( 0.9),
