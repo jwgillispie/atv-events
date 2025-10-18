@@ -79,78 +79,25 @@ class AuthLandingScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const Spacer(),
-                const Text(
-                  'Join as:',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                // Show all profile options
+                // Single login button
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => context.go('/login?type=shopper'),
+                    onPressed: () => context.go('/login'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: HiPopColors.accentMauve,  // Using mauve for shoppers
+                      backgroundColor: HiPopColors.primaryDeepSage,
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       elevation: 3,
                     ),
                     child: const Text(
-                      'Shopper',
+                      'Login',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => context.go('/login?type=vendor'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: HiPopColors.vendorAccent,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Vendor',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => context.go('/login?type=market_organizer'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: HiPopColors.organizerAccent,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: const Text(
-                      'Market Organizer',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
