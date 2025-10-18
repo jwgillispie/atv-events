@@ -787,7 +787,7 @@ class _EventDetailViewState extends State<EventDetailView> {
         endDate: event.endDateTime,
         iosParams: const calendar.IOSParams(
           reminder: Duration(hours: 1), // Reminder 1 hour before event
-          url: 'https://hipop-markets.web.app', // App URL
+          url: 'https://atv-events.web.app', // App URL
         ),
         androidParams: const calendar.AndroidParams(
           emailInvites: [], // No email invites needed
@@ -922,8 +922,8 @@ class _EventDetailViewState extends State<EventDetailView> {
     }
     
     buffer.writeln();
-    buffer.writeln('Discovered on HiPop Markets');
-    buffer.writeln('https://hipop-markets.web.app');
+    buffer.writeln('Discovered on ATV Events');
+    buffer.writeln('https://atv-events.web.app');
     
     return buffer.toString();
   }
@@ -938,7 +938,7 @@ class _EventDetailViewState extends State<EventDetailView> {
       
       final result = await Share.share(
         content,
-        subject: 'Check out this event on HiPop!',
+        subject: 'Check out this event on ATV Events!',
       );
 
       // Show success message if sharing was successful
@@ -990,10 +990,10 @@ class _EventDetailViewState extends State<EventDetailView> {
     buffer.writeln('Location: ${event.location}');
     buffer.writeln('When: ${_formatDateTime(event.startDateTime, event.endDateTime)}');
     buffer.writeln();
-    buffer.writeln('Discovered on HiPop - Discover local pop-ups and markets');
-    buffer.writeln('Download: https://apps.apple.com/us/app/hipop-markets/id6749876075');
+    buffer.writeln('Discovered on ATV Events - Discover local pop-ups and markets');
+    buffer.writeln('Download: https://apps.apple.com/us/app/atv-events/id6749876075');
     buffer.writeln();
-    buffer.writeln('#Event #LocalEvents #${event.location.replaceAll(' ', '')} #HiPop');
+    buffer.writeln('#Event #LocalEvents #${event.location.replaceAll(' ', '')} #ATVEvents');
     
     return buffer.toString();
   }

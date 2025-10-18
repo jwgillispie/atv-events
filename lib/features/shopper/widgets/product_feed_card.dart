@@ -621,8 +621,8 @@ class _ProductFeedCardState extends State<ProductFeedCard> {
     buffer.writeln();
     buffer.writeln('━━━━━━━━━━━━━━━');
     buffer.writeln('Discover amazing local products and vendors!');
-    buffer.writeln('Download HiPop Markets today');
-    buffer.writeln('🔗 hipopmarkets.com');
+    buffer.writeln('Download ATV Events today');
+    buffer.writeln('🔗 atv-events.com');
 
     await Share.share(buffer.toString());
 

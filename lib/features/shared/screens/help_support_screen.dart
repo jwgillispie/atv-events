@@ -11,7 +11,7 @@ class HelpSupportScreen extends StatelessWidget {
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: 'support@hipopmarkets.com', // TODO: Update with real support email
-      query: 'subject=HiPop Markets Support Request',
+      query: 'subject=ATV Events Support Request',
     );
 
     if (await canLaunchUrl(emailUri)) {

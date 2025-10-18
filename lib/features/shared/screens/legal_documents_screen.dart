@@ -107,7 +107,7 @@ class LegalDocumentsScreen extends StatelessWidget {
                       _buildDocumentCard(
                         context: context,
                         title: 'Terms of Service',
-                        description: 'Comprehensive terms for the HiPop three-sided marketplace platform',
+                        description: 'Comprehensive terms for the ATV Events three-sided marketplace platform',
                         icon: Icons.description_outlined,
                         color: HiPopColors.primaryDeepSage,
                         onTap: () => _navigateToDocument(context, 'terms'),
@@ -205,7 +205,7 @@ class LegalDocumentsScreen extends StatelessWidget {
                       // Footer
                       Center(
                         child: Text(
-                          '© 2025 HiPop Markets. All rights reserved.',
+                          '© 2025 ATV Events. All rights reserved.',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white.withOpacity( 0.8),
@@ -527,10 +527,10 @@ class LegalDocumentDetailScreen extends StatelessWidget {
   }
 
   String _getTermsOfService() {
-    return '''HiPop Markets Terms of Service
+    return '''ATV Events Terms of Service
 
-ABOUT HIPOP MARKETS
-HiPop is a comprehensive three-sided marketplace platform that connects vendors, shoppers, and market organizers in the local pop-up market ecosystem. Our app facilitates discovery, booking, payment processing, and analytics across all user types.
+ABOUT ATV EVENTS
+ATV Events is a comprehensive three-sided marketplace platform that connects vendors, shoppers, and market organizers in the local pop-up market ecosystem. Our app facilitates discovery, booking, payment processing, and analytics across all user types.
 
 USER TYPES AND FEATURES:
 
@@ -574,7 +574,7 @@ MARKETPLACE RULES:
 • Vendors must honor posted prices and availability
 • Market organizers must provide accurate event information
 • Users are responsible for their own transactions and agreements
-• HiPop facilitates connections but does not guarantee outcomes
+• ATV Events facilitates connections but does not guarantee outcomes
 
 PLATFORM RESPONSIBILITIES:
 • Maintain secure, reliable platform access
@@ -584,7 +584,7 @@ PLATFORM RESPONSIBILITIES:
 • Ensure platform compliance with applicable laws
 
 LIABILITY LIMITATIONS:
-• HiPop Markets is not responsible for disputes between users
+• ATV Events is not responsible for disputes between users
 • We do not guarantee vendor or market quality
 • Users participate at their own risk
 • Maximum liability limited to subscription fees paid
@@ -592,7 +592,7 @@ LIABILITY LIMITATIONS:
 
 INTELLECTUAL PROPERTY:
 • Users retain ownership of their content
-• HiPop has license to use content for platform operations
+• ATV Events has license to use content for platform operations
 • Respect copyright and trademark rights
 • Report violations to hipopmarkets@gmail.com
 
@@ -614,13 +614,13 @@ GOVERNING LAW:
 • Class action waiver applies
 • Legal notices to hipopmarkets@gmail.com
 
-By using HiPop, you agree to these terms, our Privacy Policy, and Payment Terms.
+By using ATV Events, you agree to these terms, our Privacy Policy, and Payment Terms.
 
 Last updated: January 2025''';
   }
 
   String _getPrivacyPolicy() {
-    return '''HiPop Markets Privacy Policy
+    return '''ATV Events Privacy Policy
 
 DATA COLLECTION:
 We collect information you provide directly, including:
@@ -727,7 +727,7 @@ Last updated: January 2025''';
   }
 
   String _getPaymentTerms() {
-    return '''HiPop Markets Payment Terms
+    return '''ATV Events Payment Terms
 
 SUBSCRIPTION TIERS:
 

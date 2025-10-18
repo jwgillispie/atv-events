@@ -66,7 +66,7 @@ class EmailService {
     buffer.writeln();
     buffer.writeln('Hello,');
     buffer.writeln();
-    buffer.writeln('We\'d like to invite you to join ${market.name} as a vendor on the HiPop platform!');
+    buffer.writeln('We\'d like to invite you to join ${market.name} as a vendor on the ATV Events platform!');
     buffer.writeln();
     buffer.writeln('Market Details:');
     buffer.writeln(market.name);
@@ -91,19 +91,19 @@ class EmailService {
 
     if (relationship.invitationToken != null) {
       buffer.writeln('To accept this invitation, please:');
-      buffer.writeln('1. Download the HiPop app: https://hipop-markets.web.app');
+      buffer.writeln('1. Download the ATV Events app: https://atv-events.web.app');
       buffer.writeln('2. Create or log into your vendor account');
       buffer.writeln('3. Use invitation code: ${relationship.invitationToken}');
       buffer.writeln();
     } else {
       buffer.writeln('To get started:');
-      buffer.writeln('1. Download the HiPop app: https://hipop-markets.web.app');
+      buffer.writeln('1. Download the ATV Events app: https://atv-events.web.app');
       buffer.writeln('2. Create a vendor account');
       buffer.writeln('3. Apply to join ${market.name}');
       buffer.writeln();
     }
 
-    buffer.writeln('Why join HiPop?');
+    buffer.writeln('Why join ATV Events?');
     buffer.writeln('• Connect with local customers');
     buffer.writeln('• Manage your pop-up events easily');
     buffer.writeln('• Get discovered by food lovers in your area');
@@ -112,11 +112,11 @@ class EmailService {
 
     buffer.writeln('Questions? Contact us at $_supportEmail');
     buffer.writeln();
-    buffer.writeln('Welcome to the HiPop community!');
-    buffer.writeln('The HiPop Team');
+    buffer.writeln('Welcome to the ATV Events community!');
+    buffer.writeln('The ATV Events Team');
     buffer.writeln();
     buffer.writeln('---');
-    buffer.writeln('HiPop - Discover Local Pop-ups and Markets');
+    buffer.writeln('ATV Events - Discover Local Pop-ups and Markets');
     buffer.writeln('This invitation was sent by $organizerName on behalf of ${market.name}.');
 
     return buffer.toString();
@@ -146,7 +146,7 @@ class EmailService {
         scheme: 'mailto',
         path: _supportEmail,
         query: Uri.encodeFull(
-          'subject=[HiPop Support] $subject&body=$emailContent',
+          'subject=[ATV Events Support] $subject&body=$emailContent',
         ),
       );
 
@@ -155,7 +155,7 @@ class EmailService {
         await launchUrl(emailUri);
       } else {
         // Fallback: try with a simpler URI
-        final fallbackUri = Uri.parse('mailto:$_supportEmail?subject=[HiPop Support] $subject');
+        final fallbackUri = Uri.parse('mailto:$_supportEmail?subject=[ATV Events Support] $subject');
         if (await canLaunchUrl(fallbackUri)) {
           await launchUrl(fallbackUri);
         } else {
@@ -249,9 +249,9 @@ class EmailService {
     buffer.writeln('Email: $vendorEmail');
     buffer.writeln('Market: $marketName');
     buffer.writeln();
-    buffer.writeln('Please log into the HiPop app to review this application.');
+    buffer.writeln('Please log into the ATV Events app to review this application.');
     buffer.writeln();
-    buffer.writeln('The HiPop Team');
+    buffer.writeln('The ATV Events Team');
     buffer.writeln('Contact: $_supportEmail');
 
     return buffer.toString();

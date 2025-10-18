@@ -263,7 +263,7 @@ class _ShopperHomeState extends State<ShopperHome> {
         },
       ) : null,
       title: const Text(
-        'HiPop Markets',
+        'ATV Events',
         style: TextStyle(
           color: HiPopColors.darkTextPrimary,
           fontWeight: FontWeight.bold,
@@ -1331,8 +1331,8 @@ class _ShopperHomeState extends State<ShopperHome> {
 
     buffer.writeln();
     buffer.writeln('Visit this amazing local market!');
-    buffer.writeln('Discovered on HiPop - Find local markets & pop-ups');
-    buffer.writeln('Download: https://apps.apple.com/us/app/hipop-markets/id6749876075');
+    buffer.writeln('Discovered on ATV Events - Find local markets & pop-ups');
+    buffer.writeln('Download: https://apps.apple.com/us/app/atv-events/id6749876075');
 
     return buffer.toString();
   }
@@ -1356,7 +1356,7 @@ class _ShopperHomeState extends State<ShopperHome> {
 
     buffer.writeln();
     buffer.writeln('Don\'t miss out on this exciting event!');
-    buffer.writeln('Download HiPop: https://apps.apple.com/us/app/hipop-markets/id6749876075');
+    buffer.writeln('Download ATV Events: https://apps.apple.com/us/app/atv-events/id6749876075');
 
     return buffer.toString();
   }
@@ -1386,7 +1386,7 @@ class _ShopperHomeState extends State<ShopperHome> {
 
     buffer.writeln();
     buffer.writeln('Don\'t miss out on fresh local products!');
-    buffer.writeln('Shared via HiPop');
+    buffer.writeln('Shared via ATV Events');
 
     return buffer.toString();
   }

@@ -1240,7 +1240,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
     
     buffer.writeln();
     buffer.writeln('Find them at ${widget.market.name}!');
-    buffer.writeln('Download HiPop: https://apps.apple.com/us/app/hipop-markets/id6749876075');
+    buffer.writeln('Download ATV Events: https://apps.apple.com/us/app/atv-events/id6749876075');
 
     return buffer.toString();
   }

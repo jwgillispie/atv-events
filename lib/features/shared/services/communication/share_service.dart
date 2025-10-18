@@ -6,9 +6,9 @@ import 'package:atv_events/features/market/models/market.dart';
 
 /// Service for handling different types of content sharing
 class ShareService {
-  static const String _appName = 'HiPop';
+  static const String _appName = 'ATV Events';
   static const String _appTagline = 'Discover local pop-ups and markets';
-  static const String _appWebsite = 'https://hipop-markets.web.app';
+  static const String _appWebsite = 'https://atv-events.web.app';
   
   /// Share a vendor popup event
   static Future<ShareResult> sharePopup(VendorPost popup, {String? marketName}) async {
@@ -16,7 +16,7 @@ class ShareService {
       final content = _buildPopupContent(popup, marketName);
       return await Share.share(
         content,
-        subject: 'Check out this pop-up on HiPop!',
+        subject: 'Check out this pop-up on ATV Events!',
       );
     } catch (e) {
       return ShareResult('', ShareResultStatus.unavailable);
@@ -29,7 +29,7 @@ class ShareService {
       final content = _buildEventContent(event);
       return await Share.share(
         content,
-        subject: 'Check out this event on HiPop!',
+        subject: 'Check out this event on ATV Events!',
       );
     } catch (e) {
       return ShareResult('', ShareResultStatus.unavailable);
@@ -42,7 +42,7 @@ class ShareService {
       final content = _buildMarketContent(market);
       return await Share.share(
         content,
-        subject: 'Check out this market on HiPop!',
+        subject: 'Check out this market on ATV Events!',
       );
     } catch (e) {
       return ShareResult('', ShareResultStatus.unavailable);
