@@ -425,16 +425,16 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
                     scrollDirection: Axis.horizontal,
                     children: [
                       _buildFilterChip(
-                        label: 'Markets',
-                        icon: Icons.store_mall_directory,
+                        label: 'Locations',
+                        icon: Icons.place,
                         color: HiPopColors.successGreen,
                         isSelected: _visibleCategories.contains('markets'),
                         onTap: () => _toggleCategory('markets'),
                       ),
                       const SizedBox(width: 8),
                       _buildFilterChip(
-                        label: 'Vendors',
-                        icon: Icons.store,
+                        label: 'Pop-ups',
+                        icon: Icons.storefront,
                         color: HiPopColors.infoBlueGray,
                         isSelected: _visibleCategories.contains('vendors'),
                         onTap: () => _toggleCategory('vendors'),

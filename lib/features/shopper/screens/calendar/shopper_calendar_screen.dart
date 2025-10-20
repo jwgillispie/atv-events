@@ -467,7 +467,7 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
     return Scaffold(
       backgroundColor: HiPopColors.darkBackground,
       appBar: AppBar(
-        title: const Text('Market Calendar'),
+        title: const Text('Event Calendar'),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -522,7 +522,7 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
           children: [
             if (_isLoading)
               const Expanded(
-                child: LoadingWidget(message: 'Loading market schedules...'),
+                child: LoadingWidget(message: 'Loading event schedules...'),
               )
             else if (_error != null)
               Expanded(
@@ -665,8 +665,8 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
               Expanded(
                 child: _buildSummaryCard(
                   '${_favoriteMarkets.length}',
-                  'Markets',
-                  Icons.storefront,
+                  'Locations',
+                  Icons.place,
                   HiPopColors.shopperAccent,
                 ),
               ),
@@ -747,8 +747,8 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
               Expanded(
                 child: _buildSummaryCard(
                   '${currentMarkets.length}',
-                  'Markets',
-                  Icons.storefront,
+                  'Locations',
+                  Icons.place,
                   HiPopColors.shopperAccent,
                 ),
               ),
@@ -1048,11 +1048,11 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
   String _getEventTypeLabel(String type) {
     switch (type) {
       case 'market':
-        return 'MARKET';
+        return 'LOCATION';
       case 'vendor':
-        return 'VENDOR POP-UP';
+        return 'POP-UP';
       case 'event':
-        return 'SPECIAL EVENT';
+        return 'EVENT';
       default:
         return type.toUpperCase();
     }
