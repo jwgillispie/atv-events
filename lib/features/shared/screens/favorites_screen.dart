@@ -198,12 +198,12 @@ class _FavoritesScreenState extends State<FavoritesScreen>
               ),
               tabs: const [
                 Tab(
-                  icon: Icon(Icons.store),
+                  icon: Icon(Icons.storefront),
                   text: 'Vendors',
                 ),
                 Tab(
-                  icon: Icon(Icons.location_on),
-                  text: 'Markets',
+                  icon: Icon(Icons.place),
+                  text: 'Locations',
                 ),
                 Tab(
                   icon: Icon(Icons.shopping_bag),
@@ -298,9 +298,9 @@ class _FavoritesScreenState extends State<FavoritesScreen>
         
         if (markets.isEmpty) {
           return _buildEmptyState(
-            icon: Icons.location_on,
-            title: 'No Favorite Markets',
-            subtitle: 'Markets you favorite will appear here.\nExplore nearby markets and save the ones you love!',
+            icon: Icons.place,
+            title: 'No Favorite Locations',
+            subtitle: 'Locations you favorite will appear here.\nExplore ATV locations and save the ones you love!',
           );
         }
 
@@ -721,7 +721,7 @@ class _FavoritesScreenState extends State<FavoritesScreen>
                 ),
               ),
               child: const Text(
-                'Explore Markets',
+                'Explore Events',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                 ),
@@ -968,7 +968,7 @@ class _FavoritesScreenState extends State<FavoritesScreen>
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Market removed from favorites'),
+        content: const Text('Location removed from favorites'),
         backgroundColor: HiPopColors.primaryDeepSageDark,
         duration: const Duration(seconds: 2),
         action: SnackBarAction(

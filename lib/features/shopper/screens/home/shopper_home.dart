@@ -316,7 +316,7 @@ class _ShopperHomeState extends State<ShopperHome> {
         IconButton(
           onPressed: () => context.pushNamed('shopperCalendar'),
           icon: const Icon(Icons.calendar_today_outlined, color: HiPopColors.darkTextPrimary),
-          tooltip: 'Market Calendar',
+          tooltip: 'Event Calendar',
         ),
       ],
     );
@@ -342,7 +342,7 @@ class _ShopperHomeState extends State<ShopperHome> {
                 children: [
                   const CircleAvatar(
                     backgroundColor: HiPopColors.shopperAccent,
-                    child: Icon(Icons.shopping_bag, color: Colors.white),
+                    child: Icon(Icons.event, color: Colors.white),
                   ),
                   const SizedBox(width: UIConstants.contentSpacing),
                   Expanded(
@@ -350,7 +350,7 @@ class _ShopperHomeState extends State<ShopperHome> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Shop at pop ups near you',
+                          'Discover events at ATV',
                           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             color: HiPopColors.darkTextPrimary,
                             fontWeight: FontWeight.bold,
@@ -529,8 +529,8 @@ class _ShopperHomeState extends State<ShopperHome> {
                     child: _FilterOption(
                       key: const ValueKey('filter_markets'),
                       filter: FeedFilter.markets,
-                      label: 'Markets',
-                      icon: Icons.store_mall_directory,
+                      label: 'Locations',
+                      icon: Icons.place,
                       color: HiPopColors.successGreen,
                       isSelected: _selectedFilter == FeedFilter.markets,
                       onTap: () => _handleFilterChange(FeedFilter.markets),
@@ -541,8 +541,8 @@ class _ShopperHomeState extends State<ShopperHome> {
                     child: _FilterOption(
                       key: const ValueKey('filter_vendors'),
                       filter: FeedFilter.vendors,
-                      label: 'Vendors',
-                      icon: Icons.store,
+                      label: 'Pop-ups',
+                      icon: Icons.storefront,
                       color: HiPopColors.infoBlueGray,
                       isSelected: _selectedFilter == FeedFilter.vendors,
                       onTap: () => _handleFilterChange(FeedFilter.vendors),
@@ -1123,18 +1123,18 @@ class _ShopperHomeState extends State<ShopperHome> {
 
     switch (_selectedFilter) {
       case FeedFilter.markets:
-        icon = Icons.store_mall_directory;
-        title = 'No markets found';
+        icon = Icons.place;
+        title = 'No locations found';
         subtitle = _searchLocation.isEmpty
-            ? 'Markets will appear here as they join'
-            : 'No markets found in $_searchLocation';
+            ? 'ATV locations will appear here'
+            : 'No locations found in $_searchLocation';
         break;
       case FeedFilter.vendors:
-        icon = Icons.store;
-        title = 'No vendor pop-ups found';
+        icon = Icons.storefront;
+        title = 'No pop-ups found';
         subtitle = _searchLocation.isEmpty
-            ? 'Vendor pop-ups will appear here'
-            : 'No vendor pop-ups found in $_searchLocation';
+            ? 'Pop-up events will appear here'
+            : 'No pop-ups found in $_searchLocation';
         break;
       case FeedFilter.events:
         icon = Icons.event;
@@ -1145,10 +1145,10 @@ class _ShopperHomeState extends State<ShopperHome> {
         break;
       case FeedFilter.all:
         icon = Icons.explore;
-        title = 'No pop ups right now :(';
+        title = 'No events right now';
         subtitle = _searchLocation.isEmpty
-            ? 'Very soon, pop ups will appear here'
-            : 'No pop ups going on in $_searchLocation';
+            ? 'Check back soon for upcoming events'
+            : 'No events happening in $_searchLocation';
         break;
     }
 
@@ -1195,13 +1195,13 @@ class _ShopperHomeState extends State<ShopperHome> {
   String _getSearchHeaderText() {
     switch (_selectedFilter) {
       case FeedFilter.markets:
-        return 'Find Markets Near You';
+        return 'Find Locations Near You';
       case FeedFilter.vendors:
-        return 'Find Vendor Pop-ups Near You';
+        return 'Find Pop-ups Near You';
       case FeedFilter.events:
         return 'Find Events Near You';
       case FeedFilter.all:
-        return 'Find Markets, Vendors & Events Near You';
+        return 'Find Events & Activities Near You';
     }
   }
 
@@ -1312,7 +1312,7 @@ class _ShopperHomeState extends State<ShopperHome> {
 
   String _buildMarketShareContent(Market market) {
     final buffer = StringBuffer();
-    buffer.writeln('Market Discovery!');
+    buffer.writeln('Event at Atlanta Tech Village!');
     buffer.writeln();
     buffer.writeln(market.name);
     if (market.description != null && market.description!.isNotEmpty) {
@@ -1330,8 +1330,8 @@ class _ShopperHomeState extends State<ShopperHome> {
     }
 
     buffer.writeln();
-    buffer.writeln('Visit this amazing local market!');
-    buffer.writeln('Discovered on ATV Events - Find local markets & pop-ups');
+    buffer.writeln('Join us at this amazing event!');
+    buffer.writeln('Discovered on ATV Events - Atlanta Tech Village Events');
     buffer.writeln('Download: https://apps.apple.com/us/app/atv-events/id6749876075');
 
     return buffer.toString();
@@ -1364,7 +1364,7 @@ class _ShopperHomeState extends State<ShopperHome> {
 
   String _buildVendorPostShareContent(VendorPost post) {
     final buffer = StringBuffer();
-    buffer.writeln('Pop-up Event Alert!');
+    buffer.writeln('Event at Atlanta Tech Village!');
     buffer.writeln();
     buffer.writeln(post.vendorName);
 
@@ -1385,7 +1385,7 @@ class _ShopperHomeState extends State<ShopperHome> {
     }
 
     buffer.writeln();
-    buffer.writeln('Don\'t miss out on fresh local products!');
+    buffer.writeln('Join us at this exciting event!');
     buffer.writeln('Shared via ATV Events');
 
     return buffer.toString();
