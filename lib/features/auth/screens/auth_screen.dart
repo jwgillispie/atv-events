@@ -401,7 +401,7 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
         const SizedBox(height: 16),
         Text(
-          '${widget.userType == 'vendor' ? 'Vendor' : widget.userType == 'market_organizer' ? 'Market Organizer' : 'Shopper'} ${_isLogin ? 'Login' : 'Sign Up'}',
+          '${widget.userType == 'vendor' ? 'Event Host' : widget.userType == 'market_organizer' ? 'Event Organizer' : 'Attendee'} ${_isLogin ? 'Login' : 'Sign Up'}',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -807,10 +807,10 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'This includes consent for payment processing through Stripe, analytics data collection, and our three-sided marketplace platform terms.',
+                  'This includes consent for payment processing through Stripe, analytics data collection, and our event platform terms.',
                   style: TextStyle(
                     fontSize: 10,
-                    color: isDarkTheme 
+                    color: isDarkTheme
                       ? HiPopColors.darkTextSecondary
                       : Colors.grey.shade600,
                   ),

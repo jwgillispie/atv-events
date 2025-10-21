@@ -166,7 +166,7 @@ class AuthLandingScreen extends StatelessWidget {
                   context.go('/signup?type=shopper');
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: HiPopColors.accentMauve,  // Using mauve for shoppers
+                  backgroundColor: HiPopColors.accentMauve,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
@@ -175,7 +175,7 @@ class AuthLandingScreen extends StatelessWidget {
                   elevation: 3,
                 ),
                 child: const Text(
-                  'Shopper',
+                  'Attendee',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -200,7 +200,7 @@ class AuthLandingScreen extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  'Vendor',
+                  'Event Host',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class AuthLandingScreen extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  'Market Organizer',
+                  'Event Organizer',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
