@@ -150,7 +150,7 @@ class _ShopperProfileScreenState extends State<ShopperProfileScreen>
               IconButton(
                 onPressed: () => context.pushNamed('shopperCalendar'),
                 icon: const Icon(Icons.calendar_today_outlined, color: HiPopColors.darkTextPrimary),
-                tooltip: 'Market Calendar',
+                tooltip: 'Event Calendar',
               ),
             ],
           ),
@@ -178,7 +178,7 @@ class _ShopperProfileScreenState extends State<ShopperProfileScreen>
 
                         // Menu sections
                         _buildMenuSection(
-                          'Shopping',
+                          'Events',
                           [
                             _MenuItem(
                               icon: Icons.confirmation_number_outlined,
@@ -356,7 +356,7 @@ class _ShopperProfileScreenState extends State<ShopperProfileScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  user.displayName ?? 'Shopper',
+                  user.displayName ?? 'Attendee',
                   style: const TextStyle(
                     color: HiPopColors.darkTextPrimary,
                     fontSize: 20,
@@ -775,7 +775,7 @@ class _ShopperProfileScreenState extends State<ShopperProfileScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Help us improve HiPop! Your feedback goes directly to our team.',
+                  'Help us improve ATV Events! Your feedback goes directly to our team.',
                   style: TextStyle(color: HiPopColors.darkTextSecondary),
                 ),
                 const SizedBox(height: 16),

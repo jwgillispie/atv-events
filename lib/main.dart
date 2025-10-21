@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'firebase_options.dart';
 import 'core/theme/atv_theme.dart';
 import 'repositories/auth/auth_repository.dart';
-// TODO: Removed for ATV MVP - import 'repositories/vendor/vendor_posts_repository.dart';
+import 'repositories/vendor/vendor_posts_repository.dart';
 import 'repositories/shopper/favorites_repository.dart';
 import 'repositories/organizer/organizer_profile_repository.dart';
 import 'blocs/auth/auth_bloc.dart';
@@ -146,7 +146,9 @@ class _ATVEventsAppState extends State<ATVEventsApp> {
         RepositoryProvider<IAuthRepository>(
           create: (context) => AuthRepository(),
         ),
-        // TODO: Removed for ATV MVP - RepositoryProvider<IVendorPostsRepository>
+        RepositoryProvider<IVendorPostsRepository>(
+          create: (context) => VendorPostsRepository(),
+        ),
         RepositoryProvider<FavoritesRepository>(
           create: (context) => FavoritesRepository(),
         ),
@@ -172,13 +174,12 @@ class _ATVEventsAppState extends State<ATVEventsApp> {
               authBloc: context.read<AuthBloc>(),
             ),
           ),
-          // TODO: Removed for ATV MVP - ShopperFeedBloc needs vendor posts repository
-          // BlocProvider<ShopperFeedBloc>(
-          //   create: (context) => ShopperFeedBloc(
-          //     vendorPostsRepository: context.read<IVendorPostsRepository>(),
-          //     cacheService: CacheService(),
-          //   ),
-          // ),
+          BlocProvider<ShopperFeedBloc>(
+            create: (context) => ShopperFeedBloc(
+              vendorPostsRepository: context.read<IVendorPostsRepository>(),
+              cacheService: CacheService(),
+            ),
+          ),
           BlocProvider<BasketBloc>(
             create: (context) {
               // Get userId from AuthBloc if available
