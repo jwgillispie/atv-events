@@ -1,6 +1,40 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import '../../vendor/models/post_type.dart';
+// import '../../vendor/models/post_type.dart'; // TODO: File doesn't exist
+
+/// Priority levels for approval requests
+enum ApprovalPriority {
+  low,
+  normal,
+  high,
+  urgent;
+
+  String get value {
+    switch (this) {
+      case ApprovalPriority.low:
+        return 'low';
+      case ApprovalPriority.normal:
+        return 'normal';
+      case ApprovalPriority.high:
+        return 'high';
+      case ApprovalPriority.urgent:
+        return 'urgent';
+    }
+  }
+
+  static ApprovalPriority fromString(String value) {
+    switch (value.toLowerCase()) {
+      case 'low':
+        return ApprovalPriority.low;
+      case 'high':
+        return ApprovalPriority.high;
+      case 'urgent':
+        return ApprovalPriority.urgent;
+      default:
+        return ApprovalPriority.normal;
+    }
+  }
+}
 
 /// Represents a pending vendor approval request for market organizers
 class ApprovalRequest extends Equatable {

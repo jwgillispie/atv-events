@@ -121,7 +121,7 @@ class PersonalizedRecommendationService {
         shopperId: shopperId, limit: 100);
 
       // Get followed vendors
-      final followedVendors = await VendorFollowingService.getFollowedVendors(shopperId);
+      final followedVendorIds = await VendorFollowingService.getFollowedVendors(shopperId);
 
       // Analyze category preferences
       final categoryPreferences = <String, double>{};
@@ -151,29 +151,19 @@ class PersonalizedRecommendationService {
       for (final search in searchHistory) {
         final categories = List<String>.from(search['categories'] ?? []);
         final location = search['location'] as String?;
-        
+
         for (final category in categories) {
           categoryPreferences[category] = (categoryPreferences[category] ?? 0.0) + 2.0;
         }
-        
+
         if (location != null && location.isNotEmpty) {
           locationPreferences[location] = (locationPreferences[location] ?? 0.0) + 1.0;
         }
       }
 
-      // Process followed vendors
-      for (final vendor in followedVendors) {
-        final categories = List<String>.from(vendor['categories'] ?? []);
-        final location = vendor['location'] as String?;
-        
-        for (final category in categories) {
-          categoryPreferences[category] = (categoryPreferences[category] ?? 0.0) + 5.0;
-        }
-        
-        if (location != null && location.isNotEmpty) {
-          locationPreferences[location] = (locationPreferences[location] ?? 0.0) + 3.0;
-        }
-      }
+      // Process followed vendors - Note: followedVendorIds is now just a list of IDs
+      // We would need to fetch vendor details to get categories, but vendor features are disabled
+      // So we'll just skip this processing for now since it's a stub implementation
 
       // Normalize scores
       final maxCategoryScore = categoryPreferences.values.isEmpty ? 1.0 : 
@@ -198,11 +188,11 @@ class PersonalizedRecommendationService {
         'vendorPreferences': vendorPreferences,
         'timePreferences': timePreferences,
         'totalInteractions': interactionsSnapshot.docs.length,
-        'followedVendorCount': followedVendors.length,
+        'followedVendorCount': followedVendorIds.length,
         'searchCount': searchHistory.length,
         'profileStrength': _calculateProfileStrength(
           interactionsSnapshot.docs.length,
-          followedVendors.length,
+          followedVendorIds.length,
           searchHistory.length,
         ),
         'lastUpdated': DateTime.now().toIso8601String(),
@@ -231,8 +221,7 @@ class PersonalizedRecommendationService {
   ) async {
     try {
       // Find similar users based on followed vendors
-      final followedVendors = await VendorFollowingService.getFollowedVendors(shopperId);
-      final followedVendorIds = followedVendors.map((v) => v['vendorId'] as String).toList();
+      final followedVendorIds = await VendorFollowingService.getFollowedVendors(shopperId);
 
       if (followedVendorIds.isEmpty) return [];
 

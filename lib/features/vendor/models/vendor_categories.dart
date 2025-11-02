@@ -17,4 +17,23 @@ class VendorCategories {
   static const String healthBeauty = 'Health & Beauty';
   static const String homeGarden = 'Home & Garden';
   static const String other = 'Other';
+
+  // Group-based methods for category targeting
+  static List<String> getGroupNames() {
+    return ['All Categories'];
+  }
+
+  static List<String> getCategoriesForGroup(String group) {
+    return all;
+  }
+
+  static List<String> searchCategories(String query) {
+    if (query.isEmpty) return all;
+    final lowerQuery = query.toLowerCase();
+    return all.where((cat) => cat.toLowerCase().contains(lowerQuery)).toList();
+  }
+
+  static String? getGroupForCategory(String category) {
+    return all.contains(category) ? 'All Categories' : null;
+  }
 }

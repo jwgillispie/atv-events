@@ -19,9 +19,15 @@ class VendorFollowingService {
     return false;
   }
 
-  Stream<List<String>> getFollowedVendors(String userId) {
+  Stream<List<String>> getFollowedVendorsStream(String userId) {
     // Return empty stream - vendor features disabled
     return Stream.value([]);
+  }
+
+  /// Static method for getting followed vendors (returns Future for compatibility)
+  static Future<List<String>> getFollowedVendors(String userId) async {
+    // Return empty list - vendor features disabled
+    return [];
   }
 
   Future<int> getFollowerCount(String vendorId) async {

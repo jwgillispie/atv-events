@@ -173,6 +173,15 @@ class VendorApplication extends Equatable {
     return DateTime.now().isAfter(approvalExpiresAt!);
   }
 
+  /// Getter for business name (alias for vendorName)
+  String get vendorBusinessName => vendorName;
+
+  /// Getter for display name (alias for vendorName)
+  String get vendorDisplayName => vendorName;
+
+  /// Getter for categories (backward compatibility)
+  List<String> get vendorCategories => customResponses?['categories'] as List<String>? ?? [];
+
   // ============================================================================
   // FIRESTORE SERIALIZATION
   // ============================================================================

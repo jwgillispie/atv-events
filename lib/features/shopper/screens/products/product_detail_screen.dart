@@ -3,15 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:atv_events/core/theme/atv_colors.dart';
 import 'package:atv_events/core/constants/ui_constants.dart';
 import 'package:atv_events/features/shopper/models/product_feed_item.dart';
-import 'package:atv_events/features/shopper/models/basket_item.dart';
 import 'package:atv_events/features/shopper/blocs/basket/basket_bloc.dart';
 import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
+import 'package:atv_events/features/shopper/blocs/basket/basket_state.dart';
+import 'package:atv_events/features/shared/services/waitlist_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:atv_events/features/shared/services/utilities/url_launcher_service.dart';
 
-/// Product Detail Screen
-/// Shows detailed information about a product including all photos,
-/// full description, vendor info, and availability schedule
+/// Product Detail Screen for ATV shop
+/// Shows product details with simple add to cart or join waitlist
 class ProductDetailScreen extends StatefulWidget {
   final ProductFeedItem feedItem;
 
@@ -26,7 +25,9 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final PageController _pageController = PageController();
+  final WaitlistService _waitlistService = WaitlistService();
   int _currentImageIndex = 0;
+  int _quantity = 1;
 
   @override
   void dispose() {
@@ -119,7 +120,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                           borderRadius: BorderRadius.circular(25),
                         ),
                         child: Text(
-                          product.displayPrice,
+                          product.formattedPrice,
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -129,6 +130,11 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ],
                   ),
+
+                  const SizedBox(height: UIConstants.largeSpacing),
+
+                  // Availability Status
+                  _buildAvailabilityCard(),
 
                   const SizedBox(height: UIConstants.largeSpacing),
 
@@ -169,23 +175,17 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     const SizedBox(height: UIConstants.largeSpacing),
                   ],
 
-                  // Vendor Section
-                  _buildVendorSection(),
+                  // Seller Section
+                  _buildSellerSection(),
 
                   const SizedBox(height: UIConstants.largeSpacing),
 
-                  // Availability Section
-                  _buildAvailabilitySection(),
+                  // Quantity Selector (only if in stock)
+                  if (product.isInStock) _buildQuantitySelector(),
 
                   const SizedBox(height: UIConstants.largeSpacing),
 
-                  // Upcoming Popups
-                  if (widget.feedItem.upcomingAvailabilities.isNotEmpty) ...[
-                    _buildUpcomingPopupsSection(),
-                    const SizedBox(height: UIConstants.largeSpacing),
-                  ],
-
-                  // Action Buttons based on payment configuration
+                  // Action Buttons
                   _buildActionButtons(),
 
                   const SizedBox(height: 40),
@@ -199,7 +199,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   Widget _buildImageCarousel() {
-    final images = widget.feedItem.product.allImageUrls;
+    final images = widget.feedItem.product.imageUrls;
     if (images.isEmpty) {
       return Container(
         color: HiPopColors.darkBorder,
@@ -264,7 +264,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     shape: BoxShape.circle,
                     color: _currentImageIndex == index
                         ? Colors.white
-                        : Colors.white.withOpacity( 0.5),
+                        : Colors.white.withOpacity(0.5),
                   ),
                 ),
               ),
@@ -274,13 +274,75 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  Widget _buildVendorSection() {
-    final vendor = widget.feedItem.vendorProfile;
+  Widget _buildAvailabilityCard() {
+    final product = widget.feedItem.product;
+    final Color statusColor = product.isInStock
+        ? HiPopColors.successGreen
+        : (product.canJoinWaitlist ? HiPopColors.warningAmber : HiPopColors.errorPlum);
+
+    return Card(
+      color: statusColor.withOpacity(0.1),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: statusColor.withOpacity(0.3)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        child: Row(
+          children: [
+            Icon(
+              product.isInStock ? Icons.check_circle : Icons.schedule,
+              color: statusColor,
+              size: 24,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.availabilityStatus,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: statusColor,
+                    ),
+                  ),
+                  if (product.stockQuantity != null && product.isInStock) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${product.stockQuantity} units available',
+                      style: const TextStyle(
+                        color: HiPopColors.darkTextSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                  if (!product.isInStock && product.waitlistCount > 0) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${product.waitlistCount} people waiting',
+                      style: const TextStyle(
+                        color: HiPopColors.darkTextSecondary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSellerSection() {
+    final seller = widget.feedItem.sellerProfile;
 
     return Card(
       color: HiPopColors.darkSurface,
       child: InkWell(
-        onTap: _navigateToVendor,
+        onTap: _navigateToSeller,
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(UIConstants.defaultPadding),
@@ -304,20 +366,20 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      widget.feedItem.vendorName,
+                      widget.feedItem.sellerName,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: HiPopColors.darkTextPrimary,
                       ),
                     ),
-                    if (vendor.instagramHandle != null) ...[
+                    if (seller.instagramHandle != null) ...[
                       const SizedBox(height: 4),
                       Row(
                         children: [
                           const Icon(Icons.camera_alt, size: 16, color: HiPopColors.infoBlueGray),
                           const SizedBox(width: 4),
                           Text(
-                            '@${vendor.instagramHandle}',
+                            '@${seller.instagramHandle}',
                             style: const TextStyle(
                               color: HiPopColors.infoBlueGray,
                               fontSize: 14,
@@ -341,169 +403,229 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  Widget _buildAvailabilitySection() {
-    final availability = widget.feedItem.nextAvailability;
-    if (availability == null) {
-      return Card(
-        color: HiPopColors.darkSurface,
-        child: Padding(
-          padding: const EdgeInsets.all(UIConstants.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.schedule, color: HiPopColors.darkTextSecondary),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Availability',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: HiPopColors.darkTextPrimary,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'No upcoming popups scheduled',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: HiPopColors.darkTextSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    final Color statusColor = widget.feedItem.isAvailableNow
-        ? HiPopColors.successGreen
-        : HiPopColors.warningAmber;
+  Widget _buildQuantitySelector() {
+    final product = widget.feedItem.product;
+    final maxQuantity = product.stockQuantity ?? 99;
 
     return Card(
-      color: statusColor.withOpacity( 0.1),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: statusColor.withOpacity( 0.3)),
-      ),
-      child: InkWell(
-        onTap: (availability.latitude != null && availability.longitude != null)
-            ? () => _launchMaps()
-            : null,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(UIConstants.defaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.schedule, color: statusColor),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.feedItem.isAvailableNow ? 'Available Now!' : 'Next Availability',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                      color: statusColor,
-                    ),
-                  ),
-                ],
+      color: HiPopColors.darkSurface,
+      child: Padding(
+        padding: const EdgeInsets.all(UIConstants.defaultPadding),
+        child: Row(
+          children: [
+            Text(
+              'Quantity:',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: HiPopColors.darkTextPrimary,
               ),
-              const SizedBox(height: 12),
-              Text(
-                availability.formattedTimeRange,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w500,
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: _quantity > 1
+                  ? () => setState(() => _quantity--)
+                  : null,
+              icon: const Icon(Icons.remove_circle_outline),
+              color: HiPopColors.shopperAccent,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: HiPopColors.darkBackground,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                '$_quantity',
+                style: const TextStyle(
                   color: HiPopColors.darkTextPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  const Icon(Icons.location_on, size: 16, color: HiPopColors.darkTextSecondary),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      availability.locationName ?? availability.location,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: HiPopColors.darkTextSecondary,
-                      ),
-                    ),
-                  ),
-                  if (widget.feedItem.distanceText.isNotEmpty) ...[
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: HiPopColors.darkBorder,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        widget.feedItem.distanceText,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: HiPopColors.darkTextSecondary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
+            ),
+            IconButton(
+              onPressed: _quantity < maxQuantity
+                  ? () => setState(() => _quantity++)
+                  : null,
+              icon: const Icon(Icons.add_circle_outline),
+              color: HiPopColors.shopperAccent,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    final product = widget.feedItem.product;
+
+    if (!product.isInStock) {
+      // Show join waitlist button if available
+      if (product.canJoinWaitlist) {
+        return _buildJoinWaitlistButton();
+      } else {
+        return _buildOutOfStockMessage();
+      }
+    }
+
+    // Show add to cart button
+    return _buildAddToCartButton();
+  }
+
+  Widget _buildAddToCartButton() {
+    return BlocBuilder<BasketBloc, BasketState>(
+      builder: (context, state) {
+        final isInBasket = state is BasketLoaded && state.isProductInBasket(widget.feedItem.product.id);
+
+        return SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: _handleAddToCart,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: isInBasket ? HiPopColors.infoBlueGray : HiPopColors.shopperAccent,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-            ],
+            ),
+            icon: Icon(
+              isInBasket ? Icons.check_circle : Icons.shopping_cart,
+              color: Colors.white,
+            ),
+            label: Text(
+              isInBasket ? 'In Cart' : 'Add to Cart',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildJoinWaitlistButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _handleJoinWaitlist,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: HiPopColors.warningAmber,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: const Icon(
+          Icons.list_alt,
+          color: Colors.white,
+        ),
+        label: const Text(
+          'Join Waitlist',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
       ),
     );
   }
 
-  Widget _buildUpcomingPopupsSection() {
-    final upcomingPosts = widget.feedItem.upcomingAvailabilities
-        .where((post) => post.isUpcoming)
-        .take(3)
-        .toList();
-
-    if (upcomingPosts.isEmpty) return const SizedBox.shrink();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Upcoming Popups',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w600,
-            color: HiPopColors.darkTextPrimary,
+  Widget _buildOutOfStockMessage() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: HiPopColors.errorPlum.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: HiPopColors.errorPlum.withOpacity(0.3)),
+      ),
+      child: const Column(
+        children: [
+          Icon(Icons.error_outline, color: HiPopColors.errorPlum, size: 32),
+          SizedBox(height: 8),
+          Text(
+            'Out of Stock',
+            style: TextStyle(
+              color: HiPopColors.errorPlum,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
-        ),
-        const SizedBox(height: UIConstants.smallSpacing),
-        ...upcomingPosts.map((post) => Card(
-          color: HiPopColors.darkSurface,
-          margin: const EdgeInsets.only(bottom: 8),
-          child: ListTile(
-            leading: const Icon(Icons.event, color: HiPopColors.shopperAccent),
-            title: Text(
-              post.formattedDateTime,
-              style: const TextStyle(color: HiPopColors.darkTextPrimary),
+          SizedBox(height: 4),
+          Text(
+            'Waitlist is full',
+            style: TextStyle(
+              color: HiPopColors.darkTextSecondary,
+              fontSize: 14,
             ),
-            subtitle: Text(
-              post.locationName ?? post.location,
-              style: const TextStyle(color: HiPopColors.darkTextSecondary),
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: HiPopColors.darkTextTertiary,
-            ),
-            onTap: () {
-              // Navigate to popup detail
-            },
           ),
-        )),
-      ],
+        ],
+      ),
     );
+  }
+
+  void _handleAddToCart() {
+    final basketBloc = context.read<BasketBloc>();
+    basketBloc.add(AddToBasket(
+      product: widget.feedItem.product,
+      quantity: _quantity,
+    ));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Added $_quantity ${_quantity > 1 ? "items" : "item"} to cart'),
+        backgroundColor: HiPopColors.successGreen,
+        action: SnackBarAction(
+          label: 'View Cart',
+          textColor: Colors.white,
+          onPressed: () {
+            // Navigate to basket screen
+            Navigator.of(context).pushNamed('/basket');
+          },
+        ),
+      ),
+    );
+
+    // Reset quantity
+    setState(() => _quantity = 1);
+  }
+
+  Future<void> _handleJoinWaitlist() async {
+    try {
+      await _waitlistService.joinWaitlist(
+        productId: widget.feedItem.product.id,
+        productName: widget.feedItem.product.name,
+        productImageUrl: widget.feedItem.product.primaryImageUrl,
+        sellerId: widget.feedItem.product.sellerId,
+        sellerName: widget.feedItem.product.sellerName,
+        quantityRequested: 1,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Successfully joined waitlist! You\'ll be notified when available.'),
+            backgroundColor: HiPopColors.successGreen,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to join waitlist: $e'),
+            backgroundColor: HiPopColors.errorPlum,
+          ),
+        );
+      }
+    }
   }
 
   void _toggleFavorite() {
-    // Implement favorite toggle
+    // TODO: Implement favorite toggle
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
@@ -517,7 +639,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   }
 
   void _shareProduct() {
-    // Implement share functionality
+    // TODO: Implement share functionality
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Sharing product...'),
@@ -526,143 +648,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
     );
   }
 
-  void _navigateToVendor() {
-    // Navigate to vendor profile
-    // context.pushNamed('vendorDetail', pathParameters: {'vendorId': widget.feedItem.vendorProfile.userId});
-  }
-
-  void _launchMaps() async {
-    final location = widget.feedItem.nextLocation;
-    if (location == null) return;
-
-    try {
-      await UrlLauncherService.launchMaps(location, context: context);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not open maps: $e'),
-            backgroundColor: HiPopColors.errorPlum,
-          ),
-        );
-      }
-    }
-  }
-
-  void _handleReservation() {
-    // Add to basket as reservation
-    _addToBasket(isPayment: false);
-  }
-
-  void _handleBuyNow() {
-    // Add to basket for payment
-    _addToBasket(isPayment: true);
-  }
-
-  void _addToBasket({required bool isPayment}) {
-    // TODO: Implement actual basket addition logic
-    // This will need to access the basket bloc and add the item
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isPayment
-            ? 'Added to cart for payment: \${widget.feedItem.product.displayPrice}'
-            : 'Reserved for pickup',
-        ),
-        backgroundColor: isPayment ? HiPopColors.successGreen : HiPopColors.shopperAccent,
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    // Since everything is now preorder-only, we only show the reserve button
-    return _buildReserveButton();
-  }
-
-  Widget _buildBuyNowButton() {
-    final product = widget.feedItem.product;
-    final hasPrice = product.basePrice != null && product.basePrice! > 0;
-
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: _handleBuyNow,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: HiPopColors.successGreen,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        icon: const Icon(
-          Icons.shopping_cart,
-          color: Colors.white,
-        ),
-        label: Text(
-          hasPrice
-            ? 'Buy Now - \${product.displayPrice}'
-            : 'Buy Now',
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildReserveButton({bool isSecondary = false}) {
-    return SizedBox(
-      width: double.infinity,
-      child: isSecondary
-        ? OutlinedButton.icon(
-            onPressed: _handleReservation,
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              side: const BorderSide(
-                color: HiPopColors.shopperAccent,
-                width: 2,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            icon: const Icon(
-              Icons.bookmark_outline,
-              color: HiPopColors.shopperAccent,
-            ),
-            label: const Text(
-              'Reserve for Pickup',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: HiPopColors.shopperAccent,
-              ),
-            ),
-          )
-        : ElevatedButton.icon(
-            onPressed: _handleReservation,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: HiPopColors.shopperAccent,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            icon: const Icon(
-              Icons.bookmark_outline,
-              color: Colors.white,
-            ),
-            label: const Text(
-              'Reserve This Product',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-    );
+  void _navigateToSeller() {
+    // TODO: Navigate to seller profile
   }
 }

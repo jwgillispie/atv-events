@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:atv_events/features/shared/services/data/event_service.dart';
 import 'package:intl/intl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../blocs/auth/auth_bloc.dart';
 import '../../../../blocs/auth/auth_state.dart';
 import '../../../shared/models/event.dart';
@@ -12,8 +13,10 @@ import '../../../shared/widgets/common/simple_places_widget.dart';
 import '../../../shared/widgets/common/photo_upload_widget.dart';
 import '../../../shared/services/location/places_service.dart';
 import '../../../shared/services/utilities/photo_service.dart';
-import 'package:atv_events/core/theme/atv_colors.dart';
-import '../../../shared/widgets/ai_flyer_upload_widget.dart';
+import '../../../../core/theme/atv_colors.dart';
+import '../../../tickets/widgets/ticket_configuration_widget.dart';
+import '../../../tickets/models/event_ticket.dart';
+import '../../../tickets/services/ticket_service.dart';
 
 class CreateEventScreen extends StatefulWidget {
   final Event? editingEvent;
@@ -50,11 +53,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final _instagramController = TextEditingController();
   final _facebookController = TextEditingController();
 
-  // Ticketing controllers
-  final _ticketPriceController = TextEditingController();
-  final _maxAttendeesController = TextEditingController();
-  final _ticketDescriptionController = TextEditingController();
-
   // Form state
   DateTime _startDateTime = DateTime.now().add(const Duration(days: 1));
   DateTime _endDateTime = DateTime.now().add(const Duration(days: 1, hours: 2));
@@ -63,7 +61,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   // Ticketing state
   bool _hasTicketing = false;
-  bool _enableQRScanning = true; // Default to enabled for better UX
+  List<Map<String, dynamic>> _ticketConfigs = [];
   
   // Location selection with Google Places
   PlaceDetails? _selectedPlace;
@@ -121,25 +119,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         _formData['facebook'] = _facebookController.text;
       });
     });
-    
-    // Ticketing listeners
-    _ticketPriceController.addListener(() {
-      setState(() {
-        _formData['ticketPrice'] = _ticketPriceController.text;
-      });
-    });
-
-    _maxAttendeesController.addListener(() {
-      setState(() {
-        _formData['maxAttendees'] = _maxAttendeesController.text;
-      });
-    });
-
-    _ticketDescriptionController.addListener(() {
-      setState(() {
-        _formData['ticketDescription'] = _ticketDescriptionController.text;
-      });
-    });
   }
   
   void _initializeEditingData() {
@@ -156,20 +135,29 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
     // Initialize ticketing data
     _hasTicketing = event.hasTicketing;
-    _enableQRScanning = event.enableQRScanning ?? true;
-    if (event.ticketPrice != null) {
-      _ticketPriceController.text = event.ticketPrice!.toStringAsFixed(2);
-    }
-    if (event.maxAttendees != null) {
-      _maxAttendeesController.text = event.maxAttendees!.toString();
-    }
-    _ticketDescriptionController.text = event.ticketDescription ?? '';
+
+    // Note: Existing ticket data will be loaded by the TicketConfigurationWidget
+    // through the _loadExistingTickets method
 
     // Mark fields as completed
     _completedFields['name'] = true;
     _completedFields['location'] = true;
     _completedFields['startDateTime'] = true;
     _completedFields['endDateTime'] = true;
+  }
+
+  Future<List<EventTicket>?> _loadExistingTickets() async {
+    if (widget.editingEvent == null || !widget.editingEvent!.hasTicketing) {
+      return null;
+    }
+
+    try {
+      final tickets = await TicketService.getEventTickets(widget.editingEvent!.id);
+      return tickets.isEmpty ? null : tickets;
+    } catch (e) {
+      debugPrint('Error loading existing tickets: $e');
+      return null;
+    }
   }
   
   
@@ -182,9 +170,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     _eventWebsiteController.dispose();
     _instagramController.dispose();
     _facebookController.dispose();
-    _ticketPriceController.dispose();
-    _maxAttendeesController.dispose();
-    _ticketDescriptionController.dispose();
     super.dispose();
   }
 
@@ -211,35 +196,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     });
   }
 
-  /// Handle extracted flyer data and pre-fill form fields
-  void _handleFlyerDataExtracted(Map<String, dynamic> data) {
-    setState(() {
-      // Pre-fill name/title
-      if (data['title'] != null) {
-        _nameController.text = data['title'];
-      }
-
-      // Pre-fill description
-      if (data['description'] != null) {
-        _descriptionController.text = data['description'];
-      }
-
-      // Show date/time info in snackbar for manual entry
-      if (data['date'] != null || data['time'] != null) {
-        String info = 'Extracted from flyer:\n';
-        if (data['date'] != null) info += 'Date: ${data['date']}\n';
-        if (data['time'] != null) info += 'Time: ${data['time']}';
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(info),
-            backgroundColor: HiPopColors.organizerAccent,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
-    });
-  }
+  // Old inline AI widget handler removed - can add AIEventCreationScreen later if needed
 
   Map<String, String> _parseAddressComponents(String formattedAddress) {
     // Simple parsing of formatted address
@@ -275,16 +232,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     // Check required fields completion
     bool baseFieldsValid = _requiredFields.every((field) => _completedFields[field] == true);
 
-    // If ticketing is enabled, validate ticket fields
+    // If ticketing is enabled, validate that at least one ticket type is configured
     if (_hasTicketing) {
-      bool hasValidPrice = _ticketPriceController.text.isNotEmpty &&
-                          double.tryParse(_ticketPriceController.text) != null &&
-                          double.tryParse(_ticketPriceController.text)! >= 0;
-      bool hasValidAttendees = _maxAttendeesController.text.isNotEmpty &&
-                              int.tryParse(_maxAttendeesController.text) != null &&
-                              int.tryParse(_maxAttendeesController.text)! > 0;
+      bool hasValidTickets = _ticketConfigs.isNotEmpty &&
+          _ticketConfigs.any((ticket) =>
+              ticket['name']?.toString().isNotEmpty == true &&
+              (ticket['price'] as double?) != null &&
+              (ticket['totalQuantity'] as int?) != null &&
+              ((ticket['totalQuantity'] as int?) ?? 0) > 0);
 
-      return baseFieldsValid && hasValidPrice && hasValidAttendees;
+      return baseFieldsValid && hasValidTickets;
     }
 
     return baseFieldsValid;
@@ -443,19 +400,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
       final addressComponents = _parseAddressComponents(_selectedPlace!.formattedAddress);
 
-      // Parse ticketing values
-      double? ticketPrice;
-      int? maxAttendees;
-
-      if (_hasTicketing) {
-        if (_ticketPriceController.text.isNotEmpty) {
-          ticketPrice = double.tryParse(_ticketPriceController.text);
-        }
-        if (_maxAttendeesController.text.isNotEmpty) {
-          maxAttendees = int.tryParse(_maxAttendeesController.text);
-        }
-      }
-
       final event = Event(
         id: widget.editingEvent?.id ?? '', // Will be set by Firestore for new events
         name: _nameController.text.trim(),
@@ -493,33 +437,45 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         isActive: true,
         createdAt: widget.editingEvent?.createdAt ?? DateTime.now(),
         updatedAt: DateTime.now(),
-        // Ticketing fields
+        // Ticketing fields - set hasTicketing flag but no single ticket fields
         hasTicketing: _hasTicketing,
         requiresTicket: _hasTicketing,
-        ticketPrice: ticketPrice,
-        maxAttendees: maxAttendees,
+        ticketPrice: null, // No longer using single ticket price
+        maxAttendees: null, // No longer using single max attendees
         earlyBirdPrice: null,
         earlyBirdDeadline: null,
-        enableQRScanning: _hasTicketing ? _enableQRScanning : null,
-        ticketDescription: _hasTicketing && _ticketDescriptionController.text.isNotEmpty
-            ? _ticketDescriptionController.text.trim()
-            : null,
+        enableQRScanning: _hasTicketing ? true : null, // Always enable QR scanning if ticketing is enabled
+        ticketDescription: null, // No longer using single ticket description
       );
 
+      String eventId;
       if (widget.editingEvent != null) {
-        final eventId = widget.editingEvent?.id ?? '';
+        eventId = widget.editingEvent!.id;
         await EventService.updateEvent(eventId, event.toFirestore());
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event updated successfully!')),
-        );
+
+        // If editing, we may need to update existing tickets
+        // For now, the TicketConfigurationWidget handles the initial state
+        // In a production app, you might want to implement ticket updates here
       } else {
-        await EventService.createEvent(event);
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Event created successfully!')),
+        // Create new event
+        final eventDoc = await EventService.createEvent(event);
+        eventId = eventDoc; // EventService.createEvent returns the document ID
+      }
+
+      // Save ticket types if ticketing is enabled
+      if (_hasTicketing && _ticketConfigs.isNotEmpty) {
+        await TicketService.batchCreateEventTickets(
+          eventId: eventId,
+          ticketTypes: _ticketConfigs,
         );
       }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(widget.editingEvent != null
+          ? 'Event updated successfully!'
+          : 'Event created successfully!')),
+      );
       
       widget.onEventCreated?.call();
       if (mounted) {
@@ -884,175 +840,25 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   }
   
   Widget _buildTicketingSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Ticketing Toggle with Premium Badge
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: _hasTicketing
-                ? HiPopColors.primaryDeepSage.withOpacity(0.05)
-                : HiPopColors.darkSurface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: _hasTicketing
-                  ? HiPopColors.primaryDeepSage.withOpacity(0.3)
-                  : HiPopColors.darkBorder,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.qr_code_2,
-                          color: _hasTicketing
-                              ? HiPopColors.primaryDeepSage
-                              : HiPopColors.darkTextSecondary,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Enable Ticketing',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: HiPopColors.darkTextPrimary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Sell tickets with QR codes',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: HiPopColors.darkTextSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Switch(
-                    value: _hasTicketing,
-                    onChanged: (value) {
-                      setState(() {
-                        _hasTicketing = value;
-                      });
-                    },
-                    activeColor: HiPopColors.primaryDeepSage,
-                    activeTrackColor: HiPopColors.primaryDeepSage.withOpacity(0.3),
-                    inactiveThumbColor: HiPopColors.darkTextTertiary,
-                    inactiveTrackColor: HiPopColors.darkBorder,
-                  ),
-                ],
-              ),
-              if (_hasTicketing) ...[
-                const SizedBox(height: 20),
-                // QR Scanning Toggle
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: HiPopColors.darkSurface,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: HiPopColors.darkBorder),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.qr_code_scanner,
-                        color: _enableQRScanning
-                            ? HiPopColors.successGreen
-                            : HiPopColors.darkTextTertiary,
-                        size: 20,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'QR Code Check-In',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: HiPopColors.darkTextPrimary,
-                              ),
-                            ),
-                            Text(
-                              'Scan tickets for fast entry',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: HiPopColors.darkTextSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Switch(
-                        value: _enableQRScanning,
-                        onChanged: (value) {
-                          setState(() {
-                            _enableQRScanning = value;
-                          });
-                        },
-                        activeColor: HiPopColors.successGreen,
-                        activeTrackColor: HiPopColors.successGreen.withOpacity(0.3),
-                        inactiveThumbColor: HiPopColors.darkTextTertiary,
-                        inactiveTrackColor: HiPopColors.darkBorder,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-        if (_hasTicketing) ...[
-          const SizedBox(height: 20),
-          // Ticket Price
-          _buildInlineTextField(
-            fieldKey: 'ticketPrice',
-            label: 'Ticket Price',
-            controller: _ticketPriceController,
-            hintText: '0.00',
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            prefixIcon: Icons.attach_money,
-            isRequired: _hasTicketing,
-          ),
-          const SizedBox(height: 20),
-          // Max Attendees
-          _buildInlineTextField(
-            fieldKey: 'maxAttendees',
-            label: 'Maximum Attendees',
-            controller: _maxAttendeesController,
-            hintText: 'e.g., 100',
-            keyboardType: TextInputType.number,
-            prefixIcon: Icons.people,
-            isRequired: _hasTicketing,
-          ),
-          const SizedBox(height: 20),
-          // Ticket Description
-          _buildInlineTextField(
-            fieldKey: 'ticketDescription',
-            label: 'What\'s Included',
-            controller: _ticketDescriptionController,
-            hintText: 'Describe what ticket holders will receive...',
-            maxLines: 3,
-            prefixIcon: Icons.receipt_long,
-          ),
-        ],
-      ],
+    return FutureBuilder<List<EventTicket>?>(
+      future: _loadExistingTickets(),
+      builder: (context, snapshot) {
+        List<EventTicket>? initialTickets;
+        if (snapshot.hasData) {
+          initialTickets = snapshot.data;
+        }
+
+        return TicketConfigurationWidget(
+          initialTickets: initialTickets,
+          onTicketsChanged: (hasTicketing, tickets) {
+            setState(() {
+              _hasTicketing = hasTicketing;
+              _ticketConfigs = tickets;
+            });
+          },
+          isEditing: widget.editingEvent != null,
+        );
+      },
     );
   }
 
@@ -1117,14 +923,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // AI Flyer Upload Widget
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: AIFlyerUploadWidget(
-                    onDataExtracted: _handleFlyerDataExtracted,
-                    accentColor: HiPopColors.organizerAccent,
-                  ),
-                ),
+                // AI Event Creation can be added later with AIEventCreationScreen (similar to AIMarketCreationScreen)
 
                 // Basic Information Section
                 _buildSectionHeader('BASIC INFORMATION'),

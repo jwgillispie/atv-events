@@ -19,9 +19,9 @@ class EmailService {
 
       // Get market organizer information
       String organizerName = 'Market Organizer';
-      if (relationship.createdBy.isNotEmpty) {
+      if (relationship.createdBy?.isNotEmpty == true) {
         try {
-          final organizer = await UserProfileService().getUserProfile(relationship.createdBy);
+          final organizer = await UserProfileService().getUserProfile(relationship.createdBy!);
           if (organizer?.displayName?.isNotEmpty == true) {
             organizerName = organizer!.displayName!;
           } else if (organizer?.businessName?.isNotEmpty == true) {

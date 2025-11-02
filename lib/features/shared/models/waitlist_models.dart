@@ -37,18 +37,14 @@ enum NotificationPreference {
   }
 }
 
-/// Product waitlist entry model
+/// Product waitlist entry model for ATV shop
 class WaitlistEntry extends Equatable {
   final String id;
   final String productId;
   final String productName;
   final String? productImageUrl;
-  final String vendorId;
-  final String vendorName;
-  final String popupId;
-  final String marketId;
-  final String marketName;
-  final DateTime popupDate;
+  final String sellerId;  // Seller/vendor ID
+  final String sellerName;  // Seller/vendor name
 
   // Shopper details
   final String shopperId;
@@ -80,12 +76,8 @@ class WaitlistEntry extends Equatable {
     required this.productId,
     required this.productName,
     this.productImageUrl,
-    required this.vendorId,
-    required this.vendorName,
-    required this.popupId,
-    required this.marketId,
-    required this.marketName,
-    required this.popupDate,
+    required this.sellerId,
+    required this.sellerName,
     required this.shopperId,
     required this.shopperEmail,
     this.shopperPhone,
@@ -103,6 +95,12 @@ class WaitlistEntry extends Equatable {
     this.timezone,
   });
 
+  /// Backward compatibility - vendorId maps to sellerId
+  String get vendorId => sellerId;
+
+  /// Backward compatibility - vendorName maps to sellerName
+  String get vendorName => sellerName;
+
   factory WaitlistEntry.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
@@ -111,12 +109,8 @@ class WaitlistEntry extends Equatable {
       productId: data['productId'] ?? '',
       productName: data['productName'] ?? '',
       productImageUrl: data['productImageUrl'],
-      vendorId: data['vendorId'] ?? '',
-      vendorName: data['vendorName'] ?? '',
-      popupId: data['popupId'] ?? '',
-      marketId: data['marketId'] ?? '',
-      marketName: data['marketName'] ?? '',
-      popupDate: (data['popupDate'] as Timestamp).toDate(),
+      sellerId: data['sellerId'] ?? data['vendorId'] ?? '',  // backward compat
+      sellerName: data['sellerName'] ?? data['vendorName'] ?? '',  // backward compat
       shopperId: data['shopperId'] ?? '',
       shopperEmail: data['shopperEmail'] ?? '',
       shopperPhone: data['shopperPhone'],
@@ -148,12 +142,10 @@ class WaitlistEntry extends Equatable {
       'productId': productId,
       'productName': productName,
       'productImageUrl': productImageUrl,
-      'vendorId': vendorId,
-      'vendorName': vendorName,
-      'popupId': popupId,
-      'marketId': marketId,
-      'marketName': marketName,
-      'popupDate': Timestamp.fromDate(popupDate),
+      'sellerId': sellerId,
+      'sellerName': sellerName,
+      'vendorId': sellerId,  // DB compatibility
+      'vendorName': sellerName,  // DB compatibility
       'shopperId': shopperId,
       'shopperEmail': shopperEmail,
       'shopperPhone': shopperPhone,
@@ -205,12 +197,8 @@ class WaitlistEntry extends Equatable {
     String? productId,
     String? productName,
     String? productImageUrl,
-    String? vendorId,
-    String? vendorName,
-    String? popupId,
-    String? marketId,
-    String? marketName,
-    DateTime? popupDate,
+    String? sellerId,
+    String? sellerName,
     String? shopperId,
     String? shopperEmail,
     String? shopperPhone,
@@ -232,12 +220,8 @@ class WaitlistEntry extends Equatable {
       productId: productId ?? this.productId,
       productName: productName ?? this.productName,
       productImageUrl: productImageUrl ?? this.productImageUrl,
-      vendorId: vendorId ?? this.vendorId,
-      vendorName: vendorName ?? this.vendorName,
-      popupId: popupId ?? this.popupId,
-      marketId: marketId ?? this.marketId,
-      marketName: marketName ?? this.marketName,
-      popupDate: popupDate ?? this.popupDate,
+      sellerId: sellerId ?? this.sellerId,
+      sellerName: sellerName ?? this.sellerName,
       shopperId: shopperId ?? this.shopperId,
       shopperEmail: shopperEmail ?? this.shopperEmail,
       shopperPhone: shopperPhone ?? this.shopperPhone,
@@ -270,9 +254,7 @@ class WaitlistEntry extends Equatable {
 /// Product waitlist summary (stored at product level)
 class ProductWaitlist extends Equatable {
   final String productId;
-  final String vendorId;
-  final String popupId;
-  final String marketId;
+  final String sellerId;
   final int totalWaiting;
   final int nextPosition;
   final int conversions;
@@ -281,9 +263,7 @@ class ProductWaitlist extends Equatable {
 
   const ProductWaitlist({
     required this.productId,
-    required this.vendorId,
-    required this.popupId,
-    required this.marketId,
+    required this.sellerId,
     this.totalWaiting = 0,
     this.nextPosition = 1,
     this.conversions = 0,
@@ -291,14 +271,15 @@ class ProductWaitlist extends Equatable {
     required this.updatedAt,
   });
 
+  /// Backward compatibility - vendorId maps to sellerId
+  String get vendorId => sellerId;
+
   factory ProductWaitlist.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
 
     return ProductWaitlist(
       productId: doc.id,
-      vendorId: data['vendorId'] ?? '',
-      popupId: data['popupId'] ?? '',
-      marketId: data['marketId'] ?? '',
+      sellerId: data['sellerId'] ?? data['vendorId'] ?? '',  // backward compat
       totalWaiting: data['totalWaiting'] ?? 0,
       nextPosition: data['nextPosition'] ?? 1,
       conversions: data['conversions'] ?? 0,
@@ -309,9 +290,8 @@ class ProductWaitlist extends Equatable {
 
   Map<String, dynamic> toFirestore() {
     return {
-      'vendorId': vendorId,
-      'popupId': popupId,
-      'marketId': marketId,
+      'sellerId': sellerId,
+      'vendorId': sellerId,  // DB compatibility
       'totalWaiting': totalWaiting,
       'nextPosition': nextPosition,
       'conversions': conversions,

@@ -4,10 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:atv_events/core/theme/atv_colors.dart';
+import '../../../../core/theme/atv_colors.dart';
 import '../../../shared/widgets/common/loading_widget.dart';
 import '../../../shared/widgets/common/error_widget.dart' as common_error;
 import '../../../shared/models/order.dart' as app_order;
+import '../../../../utils/firestore_error_logger.dart';
 
 /// Shopper Orders History Screen
 /// Shows all past and current orders for the authenticated shopper
@@ -119,22 +120,34 @@ class _ShopperOrdersScreenState extends State<ShopperOrdersScreen> {
   }
 
   Stream<List<dynamic>> _getMergedOrdersStream() {
-    // Stream for legacy orders
+    // Stream for legacy orders with error logging
     final legacyOrdersStream = _firestore
         .collection('orders')
         .where('customerId', isEqualTo: _customerId)
         .orderBy('createdAt', descending: true)
         .snapshots()
+        .handleError((error) {
+          FirestoreErrorLogger.logError(
+            error,
+            'ShopperOrdersScreen._getMergedOrdersStream (legacy orders, customerId: $_customerId)'
+          );
+        })
         .map((snapshot) => snapshot.docs
             .map((doc) => app_order.Order.fromFirestore(doc))
             .toList());
 
-    // Stream for Stripe preorders
+    // Stream for Stripe preorders with error logging
     final stripeOrdersStream = _firestore
         .collection('preorders')
         .where('customerId', isEqualTo: _customerId)
         .orderBy('createdAt', descending: true)
         .snapshots()
+        .handleError((error) {
+          FirestoreErrorLogger.logError(
+            error,
+            'ShopperOrdersScreen._getMergedOrdersStream (Stripe preorders, customerId: $_customerId)'
+          );
+        })
         .map((snapshot) => snapshot.docs);
 
     // Combine both streams
@@ -429,7 +442,7 @@ class _StripeOrderCard extends StatelessWidget {
                       color: const Color(0xFF635BFF),
                     ),
                   ),
-                  if (transferId != null) ...[
+                  if (status == 'paid') ...[
                     const SizedBox(width: 8),
                     Icon(
                       Icons.check_circle,
@@ -438,7 +451,7 @@ class _StripeOrderCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      'Transfer Complete',
+                      'Complete',
                       style: TextStyle(
                         fontSize: 11,
                         color: HiPopColors.successGreen,
@@ -498,10 +511,8 @@ class _StripeOrderCard extends StatelessWidget {
       case 'pending_payment':
         return 'Processing Payment';
       case 'paid':
-        if (transferId != null) {
-          return 'Payment Complete';
-        }
-        return 'Paid';
+        // With instant split, status='paid' means payment and transfer both complete
+        return 'Payment Complete';
       case 'payment_failed':
         return 'Payment Failed';
       case 'refunded':

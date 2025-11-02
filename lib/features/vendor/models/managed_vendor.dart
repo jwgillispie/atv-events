@@ -62,6 +62,18 @@ class ManagedVendor extends Equatable {
   String? get email => contactEmail;
   String? get website => metadata?['website'] as String?;
   String? get instagramHandle => metadata?['instagramHandle'] as String?;
+  String get contactName => metadata?['contactName'] as String? ?? name;
+  List<String> get categories => category != null ? [category!] : [];
+  String? get userProfileId => metadata?['userProfileId'] as String?;
+
+  /// Factory constructor from Firestore DocumentSnapshot
+  factory ManagedVendor.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>?;
+    if (data == null) {
+      throw Exception('Document data is null');
+    }
+    return ManagedVendor.fromMap(data, doc.id);
+  }
 
   @override
   List<Object?> get props => [

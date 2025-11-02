@@ -3,12 +3,25 @@
 
 import 'package:equatable/equatable.dart';
 
+/// Enum to identify the source of a unified vendor
+enum VendorSource {
+  managedVendor,
+  application,
+  userProfile,
+  permissionRequest,
+  eventApplication,
+  manuallyCreated,
+  marketInvitation,
+  other,
+}
+
 class UnifiedVendor extends Equatable {
   final String id;
   final String name;
   final String? description;
   final String? imageUrl;
   final Map<String, dynamic>? metadata;
+  final VendorSource source;
 
   const UnifiedVendor({
     required this.id,
@@ -16,6 +29,7 @@ class UnifiedVendor extends Equatable {
     this.description,
     this.imageUrl,
     this.metadata,
+    this.source = VendorSource.other,
   });
 
   factory UnifiedVendor.fromMap(Map<String, dynamic> map, String id) {
@@ -25,6 +39,7 @@ class UnifiedVendor extends Equatable {
       description: map['description'] as String?,
       imageUrl: map['imageUrl'] as String?,
       metadata: map['metadata'] as Map<String, dynamic>?,
+      source: VendorSource.other,
     );
   }
 
@@ -36,6 +51,7 @@ class UnifiedVendor extends Equatable {
       description: vendor.description as String?,
       imageUrl: vendor.imageUrl as String?,
       metadata: vendor.metadata as Map<String, dynamic>?,
+      source: VendorSource.managedVendor,
     );
   }
 
@@ -46,6 +62,7 @@ class UnifiedVendor extends Equatable {
       description: application.businessDescription as String?,
       imageUrl: null,
       metadata: {'applicationId': application.id},
+      source: VendorSource.application,
     );
   }
 
@@ -54,5 +71,5 @@ class UnifiedVendor extends Equatable {
   String? get email => metadata?['email'] as String?;
 
   @override
-  List<Object?> get props => [id, name, description, imageUrl, metadata];
+  List<Object?> get props => [id, name, description, imageUrl, metadata, source];
 }

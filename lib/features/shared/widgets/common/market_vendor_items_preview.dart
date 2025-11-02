@@ -18,7 +18,7 @@ class MarketVendorItemsPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Map<String, List<String>>>(
-      stream: VendorMarketItemsService.getMarketVendorItemsStream(marketId),
+      stream: VendorMarketItemsService.getMarketVendorItemsStreamStatic(marketId),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingState(context);

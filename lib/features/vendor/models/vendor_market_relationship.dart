@@ -49,6 +49,11 @@ class VendorMarketRelationship extends Equatable {
     return VendorMarketRelationship.fromMap(data, doc.id);
   }
 
+  /// Getters for compatibility with email service
+  String? get invitationEmail => metadata?['invitationEmail'] as String?;
+  String? get createdBy => metadata?['createdBy'] as String?;
+  String? get invitationToken => metadata?['invitationToken'] as String?;
+
   @override
   List<Object?> get props => [id, vendorId, marketId, status, metadata, operatingDays, boothNumber, isActive, isApproved];
 }

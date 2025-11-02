@@ -173,7 +173,7 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
     
     // Add managed vendors first (they're the "canonical" record)
     for (final vendor in managedVendors) {
-      final vendorUserId = vendor.metadata['vendorUserId'] as String? ?? vendor.id;
+      final vendorUserId = vendor.metadata?['vendorUserId'] as String? ?? vendor.id;
       vendorMap[vendorUserId] = UnifiedVendor.fromManagedVendor(vendor);
     }
     
@@ -792,8 +792,7 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
 
     final currentMarketCount = authState.userProfile!.managedMarketIds.length;
     final usageSummary = await SubscriptionService.getMarketUsageSummary(
-      authState.userProfile!.userId, 
-      currentMarketCount,
+      authState.userProfile!.userId,
     );
 
     if (!mounted) return;
@@ -1034,7 +1033,7 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(vendor.email),
+            if (vendor.email != null) Text(vendor.email!),
             const SizedBox(height: 4),
             // Show source with appropriate icon/color
             Row(
@@ -1069,6 +1068,12 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
 
   Widget _getSourceIcon(VendorSource source) {
     switch (source) {
+      case VendorSource.managedVendor:
+        return Icon(Icons.store, size: 16, color: HiPopColors.primaryDeepSage);
+      case VendorSource.application:
+        return Icon(Icons.assignment, size: 16, color: HiPopColors.warningAmber);
+      case VendorSource.userProfile:
+        return Icon(Icons.person, size: 16, color: HiPopColors.accentMauve);
       case VendorSource.permissionRequest:
         return Icon(Icons.verified_user, size: 16, color: HiPopColors.successGreen);
       case VendorSource.eventApplication:
@@ -1077,11 +1082,19 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
         return Icon(Icons.person_add, size: 16, color: HiPopColors.primaryDeepSage);
       case VendorSource.marketInvitation:
         return Icon(Icons.mail, size: 16, color: HiPopColors.accentMauve);
+      case VendorSource.other:
+        return Icon(Icons.help_outline, size: 16, color: Colors.grey);
     }
   }
 
   String _getSourceLabel(VendorSource source) {
     switch (source) {
+      case VendorSource.managedVendor:
+        return 'Managed Vendor';
+      case VendorSource.application:
+        return 'Application';
+      case VendorSource.userProfile:
+        return 'User Profile';
       case VendorSource.permissionRequest:
         return 'Permission-Based';
       case VendorSource.eventApplication:
@@ -1090,11 +1103,19 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
         return 'Manually Added';
       case VendorSource.marketInvitation:
         return 'Market Invitation';
+      case VendorSource.other:
+        return 'Other';
     }
   }
 
   Color _getSourceColor(VendorSource source) {
     switch (source) {
+      case VendorSource.managedVendor:
+        return HiPopColors.primaryDeepSage;
+      case VendorSource.application:
+        return HiPopColors.warningAmber;
+      case VendorSource.userProfile:
+        return HiPopColors.accentMauve;
       case VendorSource.permissionRequest:
         return HiPopColors.successGreen;
       case VendorSource.eventApplication:
@@ -1103,6 +1124,8 @@ class _MarketFormDialogState extends State<MarketFormDialog> {
         return HiPopColors.primaryDeepSage;
       case VendorSource.marketInvitation:
         return HiPopColors.accentMauve;
+      case VendorSource.other:
+        return Colors.grey;
     }
   }
 

@@ -287,49 +287,6 @@ class _WaitlistPositionCardState extends State<WaitlistPositionCard> {
                       ),
                       const SizedBox(height: 8),
 
-                      // Market info
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.store_mall_directory_outlined,
-                            size: 14,
-                            color: HiPopColors.darkTextSecondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              widget.entry.marketName,
-                              style: const TextStyle(
-                                color: HiPopColors.darkTextSecondary,
-                                fontSize: 12,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-
-                      // Popup date
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_today_outlined,
-                            size: 14,
-                            color: HiPopColors.darkTextSecondary,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            dateFormatter.format(widget.entry.popupDate),
-                            style: const TextStyle(
-                              color: HiPopColors.darkTextSecondary,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-
                       // Quantity if more than 1
                       if (widget.entry.quantityRequested > 1) ...[
                         const SizedBox(height: 4),

@@ -1,68 +1,33 @@
 import 'package:equatable/equatable.dart';
-import 'package:atv_events/features/vendor/models/vendor_product.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
+import 'package:atv_events/features/shared/models/product.dart';
 import 'package:atv_events/features/shared/models/user_profile.dart';
 
-/// Product Feed Item combining product, vendor info, and availability
-/// This model represents a product in the shopper feed with all necessary context
+/// Product Feed Item for ATV shop
+/// Combines product with seller information for display in shopper feed
 class ProductFeedItem extends Equatable {
-  final VendorProduct product;
-  final UserProfile vendorProfile;
-  final VendorPost? nextAvailability; // Next popup where this product will be available
-  final List<VendorPost> upcomingAvailabilities; // All upcoming popups with this product
+  final Product product;
+  final UserProfile sellerProfile;
   final double? distance; // Distance from user's location (in miles)
   final bool isFavorited;
-  final DateTime? lastUpdated;
 
   const ProductFeedItem({
     required this.product,
-    required this.vendorProfile,
-    this.nextAvailability,
-    this.upcomingAvailabilities = const [],
+    required this.sellerProfile,
     this.distance,
     this.isFavorited = false,
-    this.lastUpdated,
   });
 
-  /// Get vendor display name
-  String get vendorName => vendorProfile.businessName ?? vendorProfile.displayName ?? 'Unknown Vendor';
+  /// Get seller display name
+  String get sellerName => sellerProfile.businessName ?? sellerProfile.displayName ?? 'Unknown Seller';
 
-  /// Get vendor Instagram handle
-  String? get vendorInstagramHandle => vendorProfile.instagramHandle;
+  /// Get seller Instagram handle
+  String? get sellerInstagramHandle => sellerProfile.instagramHandle;
 
-  /// Get vendor website
-  String? get vendorWebsite => vendorProfile.website;
+  /// Get seller website
+  String? get sellerWebsite => sellerProfile.website;
 
-  /// Check if product is currently available (vendor has active popup now)
-  bool get isAvailableNow {
-    if (nextAvailability == null) return false;
-    return nextAvailability!.isHappening;
-  }
-
-  /// Get next availability display text
-  String get nextAvailabilityText {
-    if (nextAvailability == null) {
-      return 'No upcoming popups';
-    }
-    if (nextAvailability!.isHappening) {
-      return 'Available now at ${nextAvailability!.locationName ?? nextAvailability!.location}';
-    }
-    return nextAvailability!.formattedDateTime;
-  }
-
-  /// Get location for next availability
-  String? get nextLocation {
-    return nextAvailability?.locationName ?? nextAvailability?.location;
-  }
-
-  /// Get coordinates for next availability
-  double? get nextLatitude => nextAvailability?.latitude;
-  double? get nextLongitude => nextAvailability?.longitude;
-
-  /// Check if has location data
-  bool get hasLocationData {
-    return nextLatitude != null && nextLongitude != null;
-  }
+  /// Get seller profile image
+  String? get sellerImageUrl => sellerProfile.profilePhotoUrl;
 
   /// Get distance display text
   String get distanceText {
@@ -72,47 +37,49 @@ class ProductFeedItem extends Equatable {
     return '${distance!.toStringAsFixed(1)} mi away';
   }
 
-  /// Get availability status color code
+  /// Get availability status for display
   String get availabilityStatus {
-    if (isAvailableNow) return 'now';
-    if (nextAvailability != null && nextAvailability!.isUpcoming) {
-      final hoursUntil = nextAvailability!.popUpStartDateTime.difference(DateTime.now()).inHours;
-      if (hoursUntil <= 24) return 'today';
-      if (hoursUntil <= 48) return 'tomorrow';
-      if (hoursUntil <= 168) return 'this_week';
+    if (product.isInStock) {
+      if (product.stockQuantity == null) return 'In Stock';
+      if (product.stockQuantity! > 10) return 'In Stock';
+      if (product.stockQuantity! > 0) return 'Low Stock';
     }
-    return 'future';
+    if (product.canJoinWaitlist) return 'Join Waitlist';
+    return 'Out of Stock';
+  }
+
+  /// Get status color code for UI
+  String get statusColorCode {
+    if (product.isInStock) return 'success';
+    if (product.canJoinWaitlist) return 'warning';
+    return 'error';
+  }
+
+  /// Check if product can be added to basket
+  bool get canAddToBasket {
+    return product.isInStock && product.isActive;
   }
 
   /// Create a copy with updated fields
   ProductFeedItem copyWith({
-    VendorProduct? product,
-    UserProfile? vendorProfile,
-    VendorPost? nextAvailability,
-    List<VendorPost>? upcomingAvailabilities,
+    Product? product,
+    UserProfile? sellerProfile,
     double? distance,
     bool? isFavorited,
-    DateTime? lastUpdated,
   }) {
     return ProductFeedItem(
       product: product ?? this.product,
-      vendorProfile: vendorProfile ?? this.vendorProfile,
-      nextAvailability: nextAvailability ?? this.nextAvailability,
-      upcomingAvailabilities: upcomingAvailabilities ?? this.upcomingAvailabilities,
+      sellerProfile: sellerProfile ?? this.sellerProfile,
       distance: distance ?? this.distance,
       isFavorited: isFavorited ?? this.isFavorited,
-      lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
 
   @override
   List<Object?> get props => [
     product,
-    vendorProfile,
-    nextAvailability,
-    upcomingAvailabilities,
+    sellerProfile,
     distance,
     isFavorited,
-    lastUpdated,
   ];
 }

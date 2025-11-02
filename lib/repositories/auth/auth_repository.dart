@@ -129,8 +129,11 @@ class AuthRepository implements IAuthRepository {
     required String userType,
   }) async {
     try {
-      // Create user profile in the user_profiles collection
-      await _firestore.collection('user_profiles').doc(uid).set({
+      // Check if user is from Atlanta Tech Village
+      final isAtlantaTechVillage = email.toLowerCase().endsWith('@atlantatechvillage.com');
+
+      // Base profile data
+      final profileData = <String, dynamic>{
         'userId': uid,
         'displayName': name,
         'email': email,
@@ -140,7 +143,38 @@ class AuthRepository implements IAuthRepository {
         'managedMarketIds': userType == 'market_organizer' ? [] : null,
         'categories': userType == 'vendor' ? [] : null,
         'ccEmails': userType == 'market_organizer' ? [] : null,
-      }, SetOptions(merge: true));
+      };
+
+      // Auto-grant full permissions for Atlanta Tech Village users
+      if (isAtlantaTechVillage) {
+        profileData.addAll({
+          'organization': 'atlanta_tech_village',
+          'organizationDomain': 'atlantatechvillage.com',
+          'canPostEvents': true,
+          'canPostProducts': true,
+          'canCollectPayments': true,
+          'isAdmin': false,
+          'verificationStatus': 'approved', // Auto-approve ATV users
+          'autoApproved': true,
+          'permissionsGrantedBy': 'system',
+          'permissionsGrantedAt': FieldValue.serverTimestamp(),
+          'verifiedAt': FieldValue.serverTimestamp(),
+        });
+      } else {
+        // Default permissions for non-ATV users
+        profileData.addAll({
+          'canPostEvents': false,
+          'canPostProducts': false,
+          'canCollectPayments': false,
+          'isAdmin': false,
+        });
+      }
+
+      // Create user profile in the user_profiles collection
+      await _firestore.collection('user_profiles').doc(uid).set(
+        profileData,
+        SetOptions(merge: true),
+      );
     } catch (e) {
       if (e is FirebaseException) {
         throw AuthException('Firebase error: ${e.message ?? 'Unknown Firebase error'}');

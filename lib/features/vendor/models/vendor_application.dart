@@ -77,6 +77,11 @@ class VendorApplication extends Equatable {
     };
   }
 
+  // Add missing getters for compatibility
+  String get vendorBusinessName => metadata?['vendorBusinessName'] as String? ?? '';
+  String get vendorDisplayName => metadata?['vendorDisplayName'] as String? ?? '';
+  List<String> get vendorCategories => (metadata?['vendorCategories'] as List?)?.cast<String>() ?? [];
+
   @override
   List<Object?> get props => [id, vendorId, marketId, status, appliedAt, createdAt, metadata];
 }

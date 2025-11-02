@@ -50,4 +50,33 @@ class SubscriptionService {
   static Future<void> incrementMarketCount(String userId) async {
     // Do nothing - no tracking for MVP
   }
+
+  /// Get market usage summary for a user
+  static Future<Map<String, dynamic>> getMarketUsageSummary(String userId) async {
+    // Return default values - no limits for MVP
+    return {
+      'currentMonthCount': 0,
+      'totalCount': 0,
+      'limit': 999,
+      'remaining': 999,
+    };
+  }
+
+  /// Get user's market creation limit
+  static Future<int> getUserLimit(String userId, String limitType) async {
+    // Return unlimited - no limits for MVP
+    return 999;
+  }
+
+  /// Check if user is within their limit
+  static Future<bool> isWithinLimit(String userId, String limitType, int current) async {
+    // Always return true - no limits for MVP
+    return true;
+  }
+
+  /// Get remaining monthly markets for a user
+  static Future<int> getRemainingMonthlyMarkets(String userId) async {
+    // Return unlimited - no limits for MVP
+    return 999;
+  }
 }

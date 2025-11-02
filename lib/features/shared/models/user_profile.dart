@@ -54,6 +54,18 @@ class UserProfile {
   final String? platform; // 'ios', 'android', 'web'
   final Map<String, dynamic>? notificationPreferences;
 
+  // Organization fields
+  final String? organization; // e.g., 'atlanta_tech_village'
+  final String? organizationDomain; // e.g., 'atlantatechvillage.com'
+
+  // Admin & Permission fields
+  final bool isAdmin; // Platform super admin
+  final bool canPostEvents; // Permission to create/manage events
+  final bool canPostProducts; // Permission to create/manage products
+  final bool canCollectPayments; // Permission to process payments
+  final DateTime? permissionsGrantedAt; // When permissions were granted
+  final String? permissionsGrantedBy; // Admin userId who granted permissions
+
   UserProfile({
     required this.userId,
     required this.userType,
@@ -98,6 +110,16 @@ class UserProfile {
     this.lastTokenUpdate,
     this.platform,
     this.notificationPreferences,
+    // Organization parameters
+    this.organization,
+    this.organizationDomain,
+    // Admin & Permission parameters
+    this.isAdmin = false,
+    this.canPostEvents = false,
+    this.canPostProducts = false,
+    this.canCollectPayments = false,
+    this.permissionsGrantedAt,
+    this.permissionsGrantedBy,
   });
 
   // Create a copy with updated fields
@@ -145,6 +167,16 @@ class UserProfile {
     DateTime? lastTokenUpdate,
     String? platform,
     Map<String, dynamic>? notificationPreferences,
+    // Organization parameters
+    String? organization,
+    String? organizationDomain,
+    // Admin & Permission parameters
+    bool? isAdmin,
+    bool? canPostEvents,
+    bool? canPostProducts,
+    bool? canCollectPayments,
+    DateTime? permissionsGrantedAt,
+    String? permissionsGrantedBy,
   }) {
     return UserProfile(
       userId: userId ?? this.userId,
@@ -190,6 +222,16 @@ class UserProfile {
       lastTokenUpdate: lastTokenUpdate ?? this.lastTokenUpdate,
       platform: platform ?? this.platform,
       notificationPreferences: notificationPreferences ?? this.notificationPreferences,
+      // Organization fields
+      organization: organization ?? this.organization,
+      organizationDomain: organizationDomain ?? this.organizationDomain,
+      // Admin & Permission fields
+      isAdmin: isAdmin ?? this.isAdmin,
+      canPostEvents: canPostEvents ?? this.canPostEvents,
+      canPostProducts: canPostProducts ?? this.canPostProducts,
+      canCollectPayments: canCollectPayments ?? this.canCollectPayments,
+      permissionsGrantedAt: permissionsGrantedAt ?? this.permissionsGrantedAt,
+      permissionsGrantedBy: permissionsGrantedBy ?? this.permissionsGrantedBy,
     );
   }
 
@@ -239,6 +281,16 @@ class UserProfile {
       'lastTokenUpdate': lastTokenUpdate != null ? Timestamp.fromDate(lastTokenUpdate!) : null,
       'platform': platform,
       'notificationPreferences': notificationPreferences,
+      // Organization fields
+      'organization': organization,
+      'organizationDomain': organizationDomain,
+      // Admin & Permission fields
+      'isAdmin': isAdmin,
+      'canPostEvents': canPostEvents,
+      'canPostProducts': canPostProducts,
+      'canCollectPayments': canCollectPayments,
+      'permissionsGrantedAt': permissionsGrantedAt != null ? Timestamp.fromDate(permissionsGrantedAt!) : null,
+      'permissionsGrantedBy': permissionsGrantedBy,
     };
   }
 
@@ -295,6 +347,16 @@ class UserProfile {
       notificationPreferences: data['notificationPreferences'] != null
           ? Map<String, dynamic>.from(data['notificationPreferences'])
           : null,
+      // Organization fields
+      organization: data['organization'],
+      organizationDomain: data['organizationDomain'],
+      // Admin & Permission fields
+      isAdmin: data['isAdmin'] ?? false,
+      canPostEvents: data['canPostEvents'] ?? false,
+      canPostProducts: data['canPostProducts'] ?? false,
+      canCollectPayments: data['canCollectPayments'] ?? false,
+      permissionsGrantedAt: (data['permissionsGrantedAt'] as Timestamp?)?.toDate(),
+      permissionsGrantedBy: data['permissionsGrantedBy'],
     );
   }
 
@@ -349,6 +411,16 @@ class UserProfile {
       notificationPreferences: data['notificationPreferences'] != null
           ? Map<String, dynamic>.from(data['notificationPreferences'])
           : null,
+      // Organization fields
+      organization: data['organization'],
+      organizationDomain: data['organizationDomain'],
+      // Admin & Permission fields
+      isAdmin: data['isAdmin'] ?? false,
+      canPostEvents: data['canPostEvents'] ?? false,
+      canPostProducts: data['canPostProducts'] ?? false,
+      canCollectPayments: data['canCollectPayments'] ?? false,
+      permissionsGrantedAt: (data['permissionsGrantedAt'] as Timestamp?)?.toDate(),
+      permissionsGrantedBy: data['permissionsGrantedBy'],
     );
   }
 
@@ -538,4 +610,20 @@ class UserProfile {
       updatedAt: DateTime.now(),
     );
   }
+
+  // Organization helper methods
+  bool get isAtlantaTechVillage => organization == 'atlanta_tech_village';
+
+  bool hasOrganizationDomain(String domain) {
+    return email.toLowerCase().endsWith('@${domain.toLowerCase()}');
+  }
+
+  // Permission helper methods
+  bool get canCreateEvents => isAdmin || canPostEvents;
+  bool get canCreateProducts => isAdmin || canPostProducts;
+  bool get canProcessPayments => isAdmin || canCollectPayments;
+  bool get hasAnyPermissions => canPostEvents || canPostProducts || canCollectPayments;
+
+  // Admin designation (CEO is auto-admin)
+  bool get isAdminUser => isCEO || isAdmin;
 }

@@ -85,6 +85,14 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
       // Load fresh data
       await _loadFreshData(emit, event.filter, event.location);
     } catch (error) {
+      // Print full error details for Firestore index errors
+      print('🔴 [SHOPPER FEED] ERROR: $error');
+      if (error is FirebaseException) {
+        print('🔴 [FIRESTORE ERROR] Code: ${error.code}');
+        print('🔴 [FIRESTORE ERROR] Message: ${error.message}');
+        print('🔴 [FIRESTORE ERROR] Plugin: ${error.plugin}');
+        print('🔴 [FIRESTORE ERROR] Stack: ${error.stackTrace}');
+      }
       emit(ShopperFeedError(
         message: 'Failed to load feed: ${error.toString()}',
         filter: event.filter,
@@ -116,6 +124,13 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
       // Load fresh data
       await _loadFreshData(emit, currentState.filter, currentState.location);
     } catch (error) {
+      // Print full error details for Firestore index errors
+      print('🔴 [SHOPPER FEED REFRESH] ERROR: $error');
+      if (error is FirebaseException) {
+        print('🔴 [FIRESTORE ERROR] Code: ${error.code}');
+        print('🔴 [FIRESTORE ERROR] Message: ${error.message}');
+        print('🔴 [FIRESTORE ERROR] Plugin: ${error.plugin}');
+      }
       emit(currentState.copyWith(
         isRefreshing: false,
         error: 'Failed to refresh: ${error.toString()}',
@@ -272,6 +287,15 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
         isFromCache: false,
       ));
     } catch (error) {
+      // Print full error details for Firestore index errors
+      print('🔴 [LOAD FRESH DATA] ERROR: $error');
+      if (error is FirebaseException) {
+        print('🔴 [FIRESTORE ERROR] Code: ${error.code}');
+        print('🔴 [FIRESTORE ERROR] Message: ${error.message}');
+        print('🔴 [FIRESTORE ERROR] Plugin: ${error.plugin}');
+        // Print the full error string which contains the index URL
+        print('🔴 [FIRESTORE ERROR] Full error: ${error.toString()}');
+      }
       emit(ShopperFeedError(
         message: 'Failed to load data: ${error.toString()}',
         filter: filter,

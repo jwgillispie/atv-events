@@ -6,35 +6,26 @@ import 'dart:convert';
 import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
 import 'package:atv_events/features/shopper/blocs/basket/basket_state.dart';
 import 'package:atv_events/features/shopper/models/basket_item.dart';
-import 'package:atv_events/features/shopper/services/product_reservation_service.dart';
-import 'package:atv_events/features/vendor/models/vendor_product.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:atv_events/features/shared/models/user_profile.dart';
 import 'package:atv_events/features/shared/models/product.dart';
 
-/// BLoC for managing the reservation basket
+/// BLoC for managing the shopping basket
 class BasketBloc extends Bloc<BasketEvent, BasketState> {
-  final ProductReservationService _reservationService;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String? userId;
-  static const String _basketKey = 'hipop_basket';
+  static const String _basketKey = 'atv_basket';
   final _uuid = const Uuid();
 
   BasketBloc({
-    ProductReservationService? reservationService,
     this.userId,
-  }) : _reservationService = reservationService ?? ProductReservationService(),
-        super(BasketInitial()) {
+  }) : super(BasketInitial()) {
     on<LoadBasket>(_onLoadBasket);
     on<AddToBasket>(_onAddToBasket);
     on<RemoveFromBasket>(_onRemoveFromBasket);
     on<UpdateBasketItemQuantity>(_onUpdateQuantity);
-    on<UpdatePickupTimeSlot>(_onUpdatePickupTimeSlot);
     on<UpdateBasketItemNotes>(_onUpdateNotes);
     on<ClearBasket>(_onClearBasket);
-    on<ConfirmReservations>(_onConfirmReservations);
-    on<RemovePopupItems>(_onRemovePopupItems);
+    on<CheckoutBasket>(_onCheckoutBasket);
 
     // Load basket on initialization
     add(LoadBasket());
@@ -71,15 +62,7 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
         items = await _loadFromLocalStorage();
       }
 
-      // Filter out expired items and verify vendor posts still exist
-      final validItems = await _validateBasketItems(items);
-
-      emit(BasketLoaded(items: validItems));
-
-      // Save if we filtered any items
-      if (validItems.length != items.length) {
-        await _saveBasket(validItems);
-      }
+      emit(BasketLoaded(items: items));
     } catch (e) {
       print('Error loading basket: $e');
       emit(BasketError(message: 'Failed to load basket: $e'));
@@ -99,72 +82,15 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     return [];
   }
 
-  /// Validate basket items by checking:
-  /// 1. If the item is still upcoming (not expired)
-  /// 2. If the vendor post still exists (skip for direct purchases)
-  Future<List<BasketItem>> _validateBasketItems(List<BasketItem> items) async {
-    final validItems = <BasketItem>[];
-
-    // Get vendor post IDs that need validation (exclude direct purchases)
-    final vendorPostIds = items
-        .map((item) => item.vendorPostId)
-        .where((id) => !id.startsWith('direct-'))
-        .toSet();
-
-    // Batch check which vendor posts still exist
-    final existingPosts = <String>{};
-    for (final postId in vendorPostIds) {
-      try {
-        final postDoc = await _firestore
-            .collection('vendor_posts')
-            .doc(postId)
-            .get();
-
-        if (postDoc.exists) {
-          existingPosts.add(postId);
-        }
-      } catch (e) {
-        // Post doesn't exist or error accessing it
-        print('Error checking vendor post $postId: $e');
-      }
-    }
-
-    // Filter items
-    for (final item in items) {
-      // Check if item is still upcoming
-      if (!item.isUpcoming) {
-        print('Removing expired basket item: ${item.product.name}');
-        continue;
-      }
-
-      // Check if vendor post still exists (skip validation for direct purchases)
-      final isDirectPurchase = item.vendorPostId.startsWith('direct-');
-      if (!isDirectPurchase && !existingPosts.contains(item.vendorPostId)) {
-        print('Removing basket item for deleted vendor post: ${item.product.name}');
-        continue;
-      }
-
-      validItems.add(item);
-    }
-
-    // Log cleanup statistics
-    if (items.length != validItems.length) {
-      print('Basket cleanup: ${items.length - validItems.length} items removed (${items.length} -> ${validItems.length})');
-    }
-
-    return validItems;
-  }
-
   /// Add product to basket
   Future<void> _onAddToBasket(AddToBasket event, Emitter<BasketState> emit) async {
     final currentState = state;
     if (currentState is! BasketLoaded) return;
 
     try {
-      // Check if product already in basket for this popup
+      // Check if product already in basket
       final existingIndex = currentState.items.indexWhere(
-        (item) => item.product.id == event.product.id &&
-                  item.vendorPostId == event.vendorPostId,
+        (item) => item.product.id == event.product.id,
       );
 
       List<BasketItem> updatedItems;
@@ -175,27 +101,15 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
         final existing = updatedItems[existingIndex];
         updatedItems[existingIndex] = existing.copyWith(
           quantity: existing.quantity + event.quantity,
-          // Keep the original payment preference unless different
-          isPaymentItem: event.isPaymentItem,
-          paidAmount: event.isPaymentItem
-            ? (event.product.price != null ? event.product.price! * (existing.quantity + event.quantity) : null)
-            : null,
         );
       } else {
         // Add new item
         final newItem = BasketItem(
           id: _uuid.v4(),
           product: event.product,
-          vendorPostId: event.vendorPostId,
-          marketId: event.marketId,
-          marketName: event.marketName,
-          popupDateTime: event.popupDateTime,
-          popupLocation: event.popupLocation,
           quantity: event.quantity,
           addedAt: DateTime.now(),
           notes: event.notes,
-          isPaymentItem: event.isPaymentItem,
-          paidAmount: event.isPaymentItem ? event.product.price : null,
         );
         updatedItems = [...currentState.items, newItem];
       }
@@ -259,29 +173,6 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     }
   }
 
-  /// Update pickup time slot
-  Future<void> _onUpdatePickupTimeSlot(UpdatePickupTimeSlot event, Emitter<BasketState> emit) async {
-    final currentState = state;
-    if (currentState is! BasketLoaded) return;
-
-    try {
-      final updatedItems = currentState.items.map((item) {
-        if (item.id == event.itemId) {
-          return item.copyWith(selectedPickupSlot: event.slot);
-        }
-        return item;
-      }).toList();
-
-      emit(currentState.copyWith(items: updatedItems));
-      await _saveBasket(updatedItems);
-    } catch (e) {
-      emit(BasketError(
-        message: 'Failed to update pickup time: $e',
-        previousItems: currentState.items,
-      ));
-    }
-  }
-
   /// Update item notes
   Future<void> _onUpdateNotes(UpdateBasketItemNotes event, Emitter<BasketState> emit) async {
     final currentState = state;
@@ -315,127 +206,151 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     }
   }
 
-  /// Confirm reservations for a popup
-  Future<void> _onConfirmReservations(ConfirmReservations event, Emitter<BasketState> emit) async {
+  /// Checkout basket and create order
+  Future<void> _onCheckoutBasket(CheckoutBasket event, Emitter<BasketState> emit) async {
     final currentState = state;
     if (currentState is! BasketLoaded) return;
 
-    emit(currentState.copyWith(
-      isSubmitting: true,
-      submittingVendorPostId: event.vendorPostId,
-    ));
+    emit(currentState.copyWith(isSubmitting: true));
 
     try {
-      // Get items for this popup
-      final popupItems = currentState.items
-          .where((item) => item.vendorPostId == event.vendorPostId)
-          .toList();
-
-      if (popupItems.isEmpty) {
-        throw Exception('No items found for this popup');
+      if (currentState.items.isEmpty) {
+        throw Exception('Basket is empty');
       }
 
-      // Get vendor post details and verify it still exists
-      final vendorPostDoc = await _firestore
-          .collection('vendor_posts')
-          .doc(event.vendorPostId)
-          .get();
-
-      if (!vendorPostDoc.exists) {
-        // Vendor post has been deleted - remove items from basket
-        await _handleDeletedVendorPost(event.vendorPostId, currentState, emit);
-        throw Exception('This popup event has been cancelled. Your basket has been updated.');
+      if (userId == null) {
+        throw Exception('Must be logged in to checkout');
       }
 
-      final vendorPost = VendorPost.fromFirestore(vendorPostDoc);
-      final reservationIds = <String>[];
+      // Get user profile for customer info
+      final userDoc = await _firestore.collection('users').doc(userId).get();
+      final userData = userDoc.data();
+      final customerName = userData?['displayName'] ?? 'Unknown';
+      final customerEmail = userData?['email'] ?? '';
 
-      // Create reservations for each item
-      for (final item in popupItems) {
-        // Get vendor profile
-        final vendorDoc = await _firestore
-            .collection('users')
-            .doc(item.product.vendorId)
-            .get();
+      // Create order for each seller (group by sellerId)
+      final ordersBySeller = <String, List<BasketItem>>{};
+      for (final item in currentState.items) {
+        final sellerId = item.product.sellerId;
+        if (!ordersBySeller.containsKey(sellerId)) {
+          ordersBySeller[sellerId] = [];
+        }
+        ordersBySeller[sellerId]!.add(item);
+      }
 
-        if (!vendorDoc.exists) {
-          throw Exception('Vendor not found');
+      final orderIds = <String>[];
+
+      // Create separate order for each seller
+      for (final entry in ordersBySeller.entries) {
+        final sellerId = entry.key;
+        final sellerItems = entry.value;
+        final sellerName = sellerItems.first.product.sellerName;
+
+        // Calculate seller's total
+        double sellerTotal = 0;
+        for (final item in sellerItems) {
+          if (item.totalPrice != null) {
+            sellerTotal += item.totalPrice!;
+          }
         }
 
-        final vendorProfile = UserProfile.fromFirestore(vendorDoc);
+        // Create order items
+        final orderItems = sellerItems.map((item) => {
+          'productId': item.product.id,
+          'productName': item.product.name,
+          'quantity': item.quantity,
+          'price': item.product.price,
+          'totalPrice': item.totalPrice,
+          'imageUrl': item.product.primaryImageUrl,
+          'notes': item.notes,
+        }).toList();
 
-        // Create vendor product from product model
-        final vendorProduct = VendorProduct(
-          id: item.product.id,
-          vendorId: item.product.vendorId,
-          name: item.product.name,
-          description: item.product.description,
-          category: item.product.category,
-          basePrice: item.product.price,
-          photoUrls: item.product.imageUrls,
-          createdAt: item.product.createdAt,
-        );
+        // Create order document
+        final orderId = _uuid.v4();
+        final now = DateTime.now();
 
-        // Create reservation
-        final reservation = await _reservationService.createReservation(
-          product: vendorProduct,
-          vendorPost: vendorPost,
-          vendorProfile: vendorProfile.toFirestore(),
-          quantity: item.quantity,
-          customerNotes: '${item.notes ?? ''}\nPickup Time: ${item.selectedPickupSlot?.label ?? 'Flexible'}',
-          customerPhone: event.customerPhone,
-        );
+        final orderData = {
+          'orderId': orderId,
+          'customerId': userId,
+          'customerName': customerName,
+          'customerEmail': customerEmail,
+          'customerPhone': event.customerPhone,
+          'vendorId': sellerId,
+          'vendorName': sellerName,
+          'marketId': 'atv-shop',  // ATV shop identifier
+          'marketName': 'ATV Shop',
+          'items': orderItems,
+          'totalAmount': sellerTotal,
+          'status': 'pending',  // pending, confirmed, preparing, ready, completed, cancelled
+          'paymentStatus': 'pending',  // pending, paid, refunded
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'orderNumber': '#${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}-${orderId.substring(0, 6).toUpperCase()}',
+          'customerNotes': event.customerNotes,
+        };
 
-        reservationIds.add(reservation.id);
+        // Save order
+        await _firestore.collection('orders').doc(orderId).set(orderData);
+
+        // Add to user's orders subcollection
+        await _firestore
+            .collection('users')
+            .doc(userId)
+            .collection('orders')
+            .doc(orderId)
+            .set({
+          'orderId': orderId,
+          'vendorId': sellerId,
+          'vendorName': sellerName,
+          'totalAmount': sellerTotal,
+          'status': 'pending',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        // Add to seller's orders
+        await _firestore
+            .collection('users')
+            .doc(sellerId)
+            .collection('vendor_orders')
+            .doc(orderId)
+            .set({
+          'orderId': orderId,
+          'customerId': userId,
+          'customerName': customerName,
+          'customerEmail': customerEmail,
+          'customerPhone': event.customerPhone,
+          'totalAmount': sellerTotal,
+          'itemCount': sellerItems.length,
+          'status': 'pending',
+          'createdAt': FieldValue.serverTimestamp(),
+        });
+
+        orderIds.add(orderId);
+
+        print('✅ Created order $orderId for seller $sellerName');
       }
 
-      // Remove confirmed items from basket
-      final remainingItems = currentState.items
-          .where((item) => item.vendorPostId != event.vendorPostId)
-          .toList();
+      // Clear the basket
+      await _saveBasket([]);
 
-      await _saveBasket(remainingItems);
-
-      // Show success state briefly
-      emit(BasketReservationSuccess(
-        vendorPostId: event.vendorPostId,
-        itemCount: popupItems.length,
-        reservationIds: reservationIds,
+      // Show success state
+      emit(BasketCheckoutSuccess(
+        itemCount: currentState.items.length,
+        orderId: orderIds.first,  // Show first order ID
       ));
 
-      // Return to loaded state after delay
-      await Future.delayed(const Duration(seconds: 2));
-      emit(BasketLoaded(items: remainingItems));
+      print('✅ Checkout complete - ${orderIds.length} orders created');
 
     } catch (e) {
+      print('❌ Checkout failed: $e');
       emit(BasketError(
-        message: 'Failed to confirm reservations: $e',
+        message: 'Failed to checkout: $e',
         previousItems: currentState.items,
       ));
 
-      // Return to loaded state after error
+      // Return to loaded state after brief delay
       await Future.delayed(const Duration(seconds: 2));
-      emit(currentState.copyWith(isSubmitting: false, submittingVendorPostId: null));
-    }
-  }
-
-  /// Remove all items for a specific popup
-  Future<void> _onRemovePopupItems(RemovePopupItems event, Emitter<BasketState> emit) async {
-    final currentState = state;
-    if (currentState is! BasketLoaded) return;
-
-    try {
-      final updatedItems = currentState.items
-          .where((item) => item.vendorPostId != event.vendorPostId)
-          .toList();
-
-      emit(currentState.copyWith(items: updatedItems));
-      await _saveBasket(updatedItems);
-    } catch (e) {
-      emit(BasketError(
-        message: 'Failed to remove popup items: $e',
-        previousItems: currentState.items,
-      ));
+      emit(currentState.copyWith(isSubmitting: false));
     }
   }
 
@@ -491,17 +406,9 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     return {
       'id': item.id,
       'product': item.product.toJson(), // Use toJson for local storage
-      'vendorPostId': item.vendorPostId,
-      'marketId': item.marketId,
-      'marketName': item.marketName,
-      'popupDateTime': item.popupDateTime.toIso8601String(),
-      'popupLocation': item.popupLocation,
       'quantity': item.quantity,
       'addedAt': item.addedAt.toIso8601String(),
       'notes': item.notes,
-      'selectedPickupSlot': item.selectedPickupSlot?.index,
-      'isPaymentItem': item.isPaymentItem,
-      'paidAmount': item.paidAmount,
     };
   }
 
@@ -514,19 +421,9 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     return BasketItem(
       id: json['id'],
       product: product,
-      vendorPostId: json['vendorPostId'],
-      marketId: json['marketId'],
-      marketName: json['marketName'],
-      popupDateTime: DateTime.parse(json['popupDateTime']),
-      popupLocation: json['popupLocation'],
       quantity: json['quantity'],
       addedAt: DateTime.parse(json['addedAt']),
       notes: json['notes'],
-      selectedPickupSlot: json['selectedPickupSlot'] != null
-          ? PickupTimeSlot.values[json['selectedPickupSlot']]
-          : null,
-      isPaymentItem: json['isPaymentItem'] ?? false,
-      paidAmount: json['paidAmount'] != null ? (json['paidAmount'] as num).toDouble() : null,
     );
   }
 
@@ -535,17 +432,9 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     return {
       'id': item.id,
       'product': item.product.toFirestore(), // Use toFirestore for Firestore
-      'vendorPostId': item.vendorPostId,
-      'marketId': item.marketId,
-      'marketName': item.marketName,
-      'popupDateTime': Timestamp.fromDate(item.popupDateTime),
-      'popupLocation': item.popupLocation,
       'quantity': item.quantity,
       'addedAt': Timestamp.fromDate(item.addedAt),
       'notes': item.notes,
-      'selectedPickupSlot': item.selectedPickupSlot?.index,
-      'isPaymentItem': item.isPaymentItem,
-      'paidAmount': item.paidAmount,
     };
   }
 
@@ -560,49 +449,9 @@ class BasketBloc extends Bloc<BasketEvent, BasketState> {
     return BasketItem(
       id: data['id'] ?? doc.id,
       product: product,
-      vendorPostId: data['vendorPostId'],
-      marketId: data['marketId'],
-      marketName: data['marketName'],
-      popupDateTime: (data['popupDateTime'] as Timestamp).toDate(),
-      popupLocation: data['popupLocation'],
       quantity: data['quantity'],
       addedAt: (data['addedAt'] as Timestamp).toDate(),
       notes: data['notes'],
-      selectedPickupSlot: data['selectedPickupSlot'] != null
-          ? PickupTimeSlot.values[data['selectedPickupSlot']]
-          : null,
-      isPaymentItem: data['isPaymentItem'] ?? false,
-      paidAmount: data['paidAmount'] != null ? (data['paidAmount'] as num).toDouble() : null,
     );
-  }
-
-  /// Handle the case where a vendor post has been deleted
-  Future<void> _handleDeletedVendorPost(
-    String vendorPostId,
-    BasketLoaded currentState,
-    Emitter<BasketState> emit,
-  ) async {
-    // Remove all items for the deleted vendor post
-    final remainingItems = currentState.items
-        .where((item) => item.vendorPostId != vendorPostId)
-        .toList();
-
-    // Save updated basket
-    await _saveBasket(remainingItems);
-
-    // Emit updated state
-    emit(BasketLoaded(items: remainingItems));
-  }
-
-  /// Periodically validate basket items (can be called on app resume)
-  Future<void> revalidateBasket() async {
-    final currentState = state;
-    if (currentState is! BasketLoaded) return;
-
-    final validItems = await _validateBasketItems(currentState.items);
-
-    if (validItems.length != currentState.items.length) {
-      add(LoadBasket()); // Reload basket with validation
-    }
   }
 }

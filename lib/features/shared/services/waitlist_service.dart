@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../models/waitlist_models.dart';
 
-/// Service for managing product waitlists
+/// Service for managing product waitlists in ATV shop
 class WaitlistService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,12 +13,8 @@ class WaitlistService {
     required String productId,
     required String productName,
     String? productImageUrl,
-    required String vendorId,
-    required String vendorName,
-    required String popupId,
-    required String marketId,
-    required String marketName,
-    required DateTime popupDate,
+    required String sellerId,
+    required String sellerName,
     int quantityRequested = 1,
     NotificationPreference notificationPreference = NotificationPreference.push,
     String? deviceToken,
@@ -50,9 +47,8 @@ class WaitlistService {
     } else {
       // Create new waitlist
       await waitlistRef.set({
-        'vendorId': vendorId,
-        'popupId': popupId,
-        'marketId': marketId,
+        'sellerId': sellerId,
+        'vendorId': sellerId,  // DB compatibility
         'totalWaiting': 0,
         'nextPosition': 1,
         'conversions': 0,
@@ -67,12 +63,8 @@ class WaitlistService {
       productId: productId,
       productName: productName,
       productImageUrl: productImageUrl,
-      vendorId: vendorId,
-      vendorName: vendorName,
-      popupId: popupId,
-      marketId: marketId,
-      marketName: marketName,
-      popupDate: popupDate,
+      sellerId: sellerId,
+      sellerName: sellerName,
       shopperId: user.uid,
       shopperEmail: userEmail,
       shopperPhone: userPhone,
@@ -107,12 +99,11 @@ class WaitlistService {
       'productId': productId,
       'productName': productName,
       'productImageUrl': productImageUrl,
-      'vendorId': vendorId,
-      'vendorName': vendorName,
+      'sellerId': sellerId,
+      'sellerName': sellerName,
       'position': nextPosition,
       'status': 'waiting',
       'joinedAt': FieldValue.serverTimestamp(),
-      'popupDate': Timestamp.fromDate(popupDate),
     });
 
     debugPrint('✅ [WaitlistService] Joined waitlist at position $nextPosition');
@@ -206,7 +197,7 @@ class WaitlistService {
     }
   }
 
-  /// Get all waitlist entries for a product (vendor view)
+  /// Get all waitlist entries for a product (seller view)
   Stream<List<WaitlistEntry>> getProductWaitlistEntries(String productId) {
     return _firestore
         .collection('product_waitlists')
@@ -236,7 +227,7 @@ class WaitlistService {
             .toList());
   }
 
-  /// Manually release inventory to waitlist (vendor action)
+  /// Manually release inventory to waitlist (seller action)
   Future<void> manualReleaseToWaitlist({
     required String productId,
     required int quantity,
@@ -302,12 +293,12 @@ class WaitlistService {
     debugPrint('✅ [WaitlistService] Released $quantity units to waitlist');
   }
 
-  /// Get waitlist statistics for a vendor
-  Future<Map<String, dynamic>> getVendorWaitlistStats(String vendorId) async {
+  /// Get waitlist statistics for a seller
+  Future<Map<String, dynamic>> getSellerWaitlistStats(String sellerId) async {
     try {
       final waitlistsSnapshot = await _firestore
           .collection('product_waitlists')
-          .where('vendorId', isEqualTo: vendorId)
+          .where('sellerId', isEqualTo: sellerId)
           .get();
 
       int totalWaiting = 0;
@@ -340,9 +331,4 @@ class WaitlistService {
       };
     }
   }
-}
-
-// For debugging
-void debugPrint(String message) {
-  print(message);
 }

@@ -15,10 +15,8 @@ import 'blocs/favorites/favorites_bloc.dart';
 import 'features/organizer/blocs/profile/organizer_profile_bloc.dart';
 import 'features/shopper/blocs/shopper_feed/shopper_feed_bloc.dart';
 import 'features/shopper/blocs/enhanced_map/enhanced_map_bloc.dart';
-import 'features/shopper/blocs/product_feed/product_feed_bloc.dart';
 import 'features/shopper/blocs/basket/basket_bloc.dart';
 import 'features/shopper/blocs/basket/basket_event.dart';
-import 'features/shopper/services/product_reservation_service.dart';
 import 'features/shared/services/data/cache_service.dart';
 import 'core/routing/app_router.dart';
 import 'features/shared/services/utilities/remote_config_service.dart';
@@ -187,16 +185,12 @@ class _ATVEventsAppState extends State<ATVEventsApp> {
               final userId = authState is Authenticated ? authState.user.uid : null;
 
               return BasketBloc(
-                reservationService: ProductReservationService(),
                 userId: userId,
               );
             },
           ),
           BlocProvider<EnhancedMapBloc>(
             create: (context) => EnhancedMapBloc(),
-          ),
-          BlocProvider<ProductFeedBloc>(
-            create: (context) => ProductFeedBloc(),
           ),
         ],
         child: Builder(

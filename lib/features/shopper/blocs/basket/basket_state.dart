@@ -18,52 +18,20 @@ class BasketLoading extends BasketState {}
 class BasketLoaded extends BasketState {
   final List<BasketItem> items;
   final bool isSubmitting;
-  final String? submittingVendorPostId;
 
   const BasketLoaded({
     this.items = const [],
     this.isSubmitting = false,
-    this.submittingVendorPostId,
   });
-
-  /// Group items by vendor post/popup
-  List<BasketGroup> get groupedItems {
-    final Map<String, List<BasketItem>> groups = {};
-
-    for (final item in items) {
-      if (!groups.containsKey(item.vendorPostId)) {
-        groups[item.vendorPostId] = [];
-      }
-      groups[item.vendorPostId]!.add(item);
-    }
-
-    return groups.entries.map((entry) {
-      final firstItem = entry.value.first;
-      return BasketGroup(
-        vendorPostId: entry.key,
-        marketId: firstItem.marketId,
-        marketName: firstItem.marketName,
-        popupDateTime: firstItem.popupDateTime,
-        popupLocation: firstItem.popupLocation,
-        items: entry.value,
-      );
-    }).toList()
-      ..sort((a, b) => a.popupDateTime.compareTo(b.popupDateTime));
-  }
 
   /// Get total item count
   int get totalItems {
     return items.fold(0, (sum, item) => sum + item.quantity);
   }
 
-  /// Get unique vendor count
-  int get uniqueVendorCount {
-    return items.map((item) => item.product.vendorId).toSet().length;
-  }
-
-  /// Get unique popup count
-  int get uniquePopupCount {
-    return items.map((item) => item.vendorPostId).toSet().length;
+  /// Get unique seller count
+  int get uniqueSellerCount {
+    return items.map((item) => item.product.sellerId).toSet().length;
   }
 
   /// Calculate total amount (if all prices available)
@@ -105,17 +73,15 @@ class BasketLoaded extends BasketState {
   BasketLoaded copyWith({
     List<BasketItem>? items,
     bool? isSubmitting,
-    String? submittingVendorPostId,
   }) {
     return BasketLoaded(
       items: items ?? this.items,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      submittingVendorPostId: submittingVendorPostId ?? this.submittingVendorPostId,
     );
   }
 
   @override
-  List<Object?> get props => [items, isSubmitting, submittingVendorPostId];
+  List<Object?> get props => [items, isSubmitting];
 }
 
 /// Error state
@@ -132,18 +98,16 @@ class BasketError extends BasketState {
   List<Object?> get props => [message, previousItems];
 }
 
-/// Reservation confirmation success
-class BasketReservationSuccess extends BasketState {
-  final String vendorPostId;
+/// Checkout success
+class BasketCheckoutSuccess extends BasketState {
   final int itemCount;
-  final List<String> reservationIds;
+  final String orderId;
 
-  const BasketReservationSuccess({
-    required this.vendorPostId,
+  const BasketCheckoutSuccess({
     required this.itemCount,
-    required this.reservationIds,
+    required this.orderId,
   });
 
   @override
-  List<Object?> get props => [vendorPostId, itemCount, reservationIds];
+  List<Object?> get props => [itemCount, orderId];
 }

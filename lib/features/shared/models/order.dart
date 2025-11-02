@@ -5,8 +5,8 @@ import 'package:equatable/equatable.dart';
 enum OrderStatus {
   pending('pending'),           // Payment pending
   paid('paid'),                 // Payment completed
-  confirmed('confirmed'),       // Order confirmed by vendor
-  preparing('preparing'),       // Vendor preparing order
+  confirmed('confirmed'),       // Order confirmed by seller
+  preparing('preparing'),       // Seller preparing order
   readyForPickup('ready_for_pickup'), // Ready for customer pickup
   pickedUp('picked_up'),       // Customer picked up order
   cancelled('cancelled'),       // Order cancelled
@@ -35,17 +35,17 @@ class Order extends Equatable {
   final String customerName;
   final String? customerPhone;
 
-  // Vendor details
+  // Seller details
   final String vendorId;
   final String vendorName;
 
-  // Market details
+  // Shop details
   final String marketId;
   final String marketName;
   final String marketLocation;
 
-  // Popup details (for analytics tracking)
-  final String? popupId; // Links order to specific vendor popup for location-based analytics
+  // Event details (for analytics tracking)
+  final String? popupId; // Links order to specific event for location-based analytics
 
   // Order items
   final List<OrderItem> items;
@@ -74,7 +74,7 @@ class Order extends Equatable {
 
   // Notes
   final String? customerNotes;
-  final String? vendorNotes;
+  final String? sellerNotes;
 
   // Timestamps
   final DateTime createdAt;
@@ -110,7 +110,7 @@ class Order extends Equatable {
     this.qrScanned = false,
     this.qrScannedAt,
     this.customerNotes,
-    this.vendorNotes,
+    this.sellerNotes,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -120,12 +120,12 @@ class Order extends Equatable {
     final now = DateTime.now();
     final timestamp = now.millisecondsSinceEpoch.toString().substring(6);
     final random = (now.microsecond % 1000).toString().padLeft(3, '0');
-    return 'HP-$timestamp$random';
+    return 'ATV-$timestamp$random';
   }
 
   /// Generate QR code data
   static String generateQRCode(String orderId) {
-    return 'hipop://order/$orderId';
+    return 'atv-events://order/$orderId';
   }
 
   factory Order.fromFirestore(DocumentSnapshot doc) {
@@ -167,7 +167,7 @@ class Order extends Equatable {
           ? (data['qrScannedAt'] as Timestamp).toDate()
           : null,
       customerNotes: data['customerNotes'],
-      vendorNotes: data['vendorNotes'],
+      sellerNotes: data['vendorNotes'], // vendorNotes in DB for compatibility
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
@@ -203,7 +203,7 @@ class Order extends Equatable {
       'qrScanned': qrScanned,
       'qrScannedAt': qrScannedAt != null ? Timestamp.fromDate(qrScannedAt!) : null,
       'customerNotes': customerNotes,
-      'vendorNotes': vendorNotes,
+      'vendorNotes': sellerNotes, // vendorNotes in DB for compatibility
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -293,7 +293,7 @@ class Order extends Equatable {
     bool? qrScanned,
     DateTime? qrScannedAt,
     String? customerNotes,
-    String? vendorNotes,
+    String? sellerNotes,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -327,7 +327,7 @@ class Order extends Equatable {
       qrScanned: qrScanned ?? this.qrScanned,
       qrScannedAt: qrScannedAt ?? this.qrScannedAt,
       customerNotes: customerNotes ?? this.customerNotes,
-      vendorNotes: vendorNotes ?? this.vendorNotes,
+      sellerNotes: sellerNotes ?? this.sellerNotes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

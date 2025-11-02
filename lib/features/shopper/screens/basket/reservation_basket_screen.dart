@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:atv_events/core/theme/atv_colors.dart';
 import 'package:atv_events/core/constants/ui_constants.dart';
 import 'package:atv_events/features/shopper/blocs/basket/basket_bloc.dart';
@@ -11,7 +10,8 @@ import 'package:atv_events/features/shopper/blocs/basket/basket_event.dart';
 import 'package:atv_events/features/shopper/blocs/basket/basket_state.dart';
 import 'package:atv_events/features/shopper/models/basket_item.dart';
 
-/// Simplified reservation basket screen showing grouped items by popup
+/// Shopping basket screen for ATV shop
+/// Shows cart items with simple checkout flow
 class ReservationBasketScreen extends StatelessWidget {
   const ReservationBasketScreen({super.key});
 
@@ -23,7 +23,7 @@ class ReservationBasketScreen extends StatelessWidget {
         backgroundColor: HiPopColors.darkSurfaceVariant,
         elevation: 0,
         title: const Text(
-          'Your Basket',
+          'Shopping Cart',
           style: TextStyle(
             color: Colors.white,
             fontSize: 20,
@@ -38,7 +38,7 @@ class ReservationBasketScreen extends StatelessWidget {
             onPressed: () => context.push('/orders'),
             tooltip: 'View Past Orders',
           ),
-          // Clear basket button (only shows when basket has items)
+          // Clear basket button
           BlocBuilder<BasketBloc, BasketState>(
             builder: (context, state) {
               if (state is BasketLoaded && state.items.isNotEmpty) {
@@ -66,7 +66,7 @@ class ReservationBasketScreen extends StatelessWidget {
             return _buildErrorState(context, state);
           }
 
-          if (state is BasketReservationSuccess) {
+          if (state is BasketCheckoutSuccess) {
             return _buildSuccessState(context, state);
           }
 
@@ -85,7 +85,6 @@ class ReservationBasketScreen extends StatelessWidget {
   }
 
   Widget _buildBasketContent(BuildContext context, BasketLoaded state) {
-    final groups = state.groupedItems;
     final totalAmount = state.totalAmount ?? 0.0;
 
     return Stack(
@@ -93,19 +92,19 @@ class ReservationBasketScreen extends StatelessWidget {
         // Main content with padding for sticky bottom
         Padding(
           padding: EdgeInsets.only(
-            bottom: totalAmount > 0 ? 100 : 0,
+            bottom: totalAmount > 0 ? 180 : 0,
           ),
           child: ListView.builder(
             padding: const EdgeInsets.all(UIConstants.defaultPadding),
-            itemCount: groups.length,
+            itemCount: state.items.length,
             itemBuilder: (context, index) {
-              final group = groups[index];
-              return _buildPopupGroup(context, group, state);
+              final item = state.items[index];
+              return _buildBasketItem(context, item);
             },
           ),
         ),
 
-        // Sticky bottom checkout button
+        // Sticky bottom summary and checkout
         if (totalAmount > 0)
           Positioned(
             bottom: 0,
@@ -116,12 +115,12 @@ class ReservationBasketScreen extends StatelessWidget {
                 color: HiPopColors.darkSurfaceVariant,
                 border: Border(
                   top: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withOpacity(0.1),
                   ),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: Colors.black.withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, -2),
                   ),
@@ -133,48 +132,87 @@ class ReservationBasketScreen extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Total:',
-                          style: TextStyle(
-                            color: Colors.white70,
-                            fontSize: 16,
+                    // Summary
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Items:',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                '${state.totalItems}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        Text(
-                          '\$${totalAmount.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Sellers:',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              Text(
+                                '${state.uniqueSellerCount}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const Divider(height: 24, color: Colors.white24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'Total:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                '\$${totalAmount.toStringAsFixed(2)}',
+                                style: const TextStyle(
+                                  color: HiPopColors.shopperAccent,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 12),
+                    // Checkout button
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Navigate to checkout with all items from all groups
-                          final allItems = <BasketItem>[];
-                          for (final group in groups) {
-                            allItems.addAll(group.items);
-                          }
-
-                          if (allItems.isNotEmpty) {
-                            final firstGroup = groups.first;
-                            context.push('/shopper/checkout', extra: {
-                              'items': allItems,
-                              'marketId': firstGroup.marketId.isNotEmpty ? firstGroup.marketId : 'direct-purchase',
-                              'marketName': firstGroup.marketName.isNotEmpty ? firstGroup.marketName : 'Direct Purchase',
-                              'vendorId': allItems.first.product.vendorId,
-                              'vendorName': allItems.first.product.vendorName,
-                            });
-                          }
-                        },
+                      child: ElevatedButton.icon(
+                        onPressed: state.isSubmitting
+                            ? null
+                            : () => _handleCheckout(context),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: HiPopColors.shopperAccent,
                           foregroundColor: Colors.white,
@@ -182,9 +220,22 @@ class ReservationBasketScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
+                          disabledBackgroundColor: HiPopColors.shopperAccent.withOpacity(0.5),
                         ),
-                        child: Text(
-                          'Checkout • \$${totalAmount.toStringAsFixed(2)}',
+                        icon: state.isSubmitting
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : const Icon(Icons.shopping_cart_checkout),
+                        label: Text(
+                          state.isSubmitting
+                              ? 'Processing...'
+                              : 'Proceed to Checkout',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -201,389 +252,235 @@ class ReservationBasketScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPopupGroup(BuildContext context, BasketGroup group, BasketLoaded state) {
-    final groupTotal = group.totalAmount ?? 0.0;
-
+  Widget _buildBasketItem(BuildContext context, BasketItem item) {
     return Container(
       margin: const EdgeInsets.only(bottom: UIConstants.defaultPadding),
       decoration: BoxDecoration(
         color: HiPopColors.darkSurfaceVariant,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: HiPopColors.shopperAccent.withValues(alpha: 0.2),
+          color: HiPopColors.shopperAccent.withOpacity(0.2),
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Group header with vendor/market info
-          Container(
-            padding: const EdgeInsets.all(UIConstants.defaultPadding),
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(16),
-                topRight: Radius.circular(16),
-              ),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Vendor name
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.store,
-                      color: HiPopColors.shopperAccent,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        group.items.isNotEmpty ? group.items.first.product.vendorName : 'Vendor',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                // Location
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.location_on,
-                      color: Colors.white70,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        group.popupLocation,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                // Date
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      color: Colors.white70,
-                      size: 16,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      _formatPopupDate(group.popupDateTime),
-                      style: TextStyle(
-                        color: _isUpcoming(group.popupDateTime)
-                            ? HiPopColors.shopperAccent
-                            : HiPopColors.errorPlum,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Items list - always visible
-          ...group.items.map((item) => _buildBasketItem(context, item)),
-
-          // Group subtotal and actions
-          Container(
-            padding: const EdgeInsets.all(UIConstants.defaultPadding),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ),
-            ),
-            child: Column(
-              children: [
-                // Subtotal
-                if (groupTotal > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Subtotal (${group.totalItems} items):',
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          '\$${groupTotal.toStringAsFixed(2)}',
-                          style: const TextStyle(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            // Product image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: item.product.imageUrls.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: item.product.imageUrls.first,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: HiPopColors.darkSurface,
+                        child: const Center(
+                          child: CircularProgressIndicator(
                             color: HiPopColors.shopperAccent,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            strokeWidth: 2,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-
-                // Action buttons
-                Row(
-                  children: [
-                    // Remove all button
-                    Expanded(
-                      child: TextButton.icon(
-                        onPressed: () => _confirmRemoveGroup(context, group.vendorPostId),
-                        icon: const Icon(Icons.delete_outline, color: HiPopColors.errorPlum, size: 20),
-                        label: const Text(
-                          'Remove All',
-                          style: TextStyle(color: HiPopColors.errorPlum, fontSize: 12),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 80,
+                        height: 80,
+                        color: HiPopColors.darkSurface,
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: Colors.white30,
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    // Checkout this group button
-                    Expanded(
-                      flex: 2,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.push('/shopper/checkout', extra: {
-                            'items': group.items,
-                            'marketId': group.marketId.isNotEmpty ? group.marketId : 'direct-purchase',
-                            'marketName': group.marketName.isNotEmpty ? group.marketName : 'Direct Purchase',
-                            'vendorId': group.items.first.product.vendorId,
-                            'vendorName': group.items.first.product.vendorName,
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: HiPopColors.successGreen,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text(
-                          'Checkout • \$${groupTotal.toStringAsFixed(2)}',
-                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBasketItem(BuildContext context, BasketItem item) {
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: UIConstants.defaultPadding,
-        vertical: UIConstants.smallSpacing,
-      ),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          // Product image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: item.product.imageUrls.isNotEmpty
-                ? CachedNetworkImage(
-                    imageUrl: item.product.imageUrls.first,
-                    width: 60,
-                    height: 60,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: HiPopColors.darkSurfaceVariant,
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          color: HiPopColors.shopperAccent,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      width: 60,
-                      height: 60,
-                      color: HiPopColors.darkSurfaceVariant,
+                    )
+                  : Container(
+                      width: 80,
+                      height: 80,
+                      color: HiPopColors.darkSurface,
                       child: const Icon(
                         Icons.image_not_supported,
                         color: Colors.white30,
                       ),
                     ),
-                  )
-                : Container(
-                    width: 60,
-                    height: 60,
-                    color: HiPopColors.darkSurfaceVariant,
-                    child: const Icon(
-                      Icons.image_not_supported,
-                      color: Colors.white30,
-                    ),
-                  ),
-          ),
-          const SizedBox(width: 12),
+            ),
+            const SizedBox(width: 12),
 
-          // Product details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  item.product.name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  item.product.vendorName,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      item.displayPrice,
-                      style: const TextStyle(
-                        color: HiPopColors.shopperAccent,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+            // Product details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    item.product.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-                    if (item.quantity > 1) ...[
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.store, size: 14, color: Colors.white60),
                       const SizedBox(width: 4),
                       Text(
-                        '× ${item.quantity}',
+                        item.product.sellerName,
                         style: const TextStyle(
                           color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '= \$${(item.product.price! * item.quantity).toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          color: HiPopColors.shopperAccent,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        item.product.formattedPrice,
+                        style: const TextStyle(
+                          color: HiPopColors.shopperAccent,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      if (item.quantity > 1) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '× ${item.quantity}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '= ${item.displayPrice}',
+                          style: const TextStyle(
+                            color: HiPopColors.shopperAccent,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (item.notes != null && item.notes!.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.note,
+                            size: 14,
+                            color: Colors.white60,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              item.notes!,
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
 
-          // Quantity controls
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Decrease button
-                InkWell(
-                  onTap: () {
-                    if (item.quantity > 1) {
+            const SizedBox(width: 8),
+
+            // Quantity controls
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.3),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Increase button
+                  InkWell(
+                    onTap: () {
                       HapticFeedback.lightImpact();
                       context.read<BasketBloc>().add(
                         UpdateBasketItemQuantity(
                           itemId: item.id,
-                          quantity: item.quantity - 1,
+                          quantity: item.quantity + 1,
                         ),
                       );
-                    } else {
-                      // Remove item if quantity would be 0
-                      HapticFeedback.mediumImpact();
-                      context.read<BasketBloc>().add(
-                        RemoveFromBasket(item.id),
-                      );
-                    }
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Icon(
-                      item.quantity > 1 ? Icons.remove : Icons.delete_outline,
-                      color: item.quantity > 1 ? HiPopColors.shopperAccent : HiPopColors.errorPlum,
-                      size: 18,
-                    ),
-                  ),
-                ),
-                Container(
-                  constraints: const BoxConstraints(minWidth: 32),
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text(
-                    '${item.quantity}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                // Increase button
-                InkWell(
-                  onTap: () {
-                    HapticFeedback.lightImpact();
-                    context.read<BasketBloc>().add(
-                      UpdateBasketItemQuantity(
-                        itemId: item.id,
-                        quantity: item.quantity + 1,
+                    },
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                    child: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Icon(
+                        Icons.add,
+                        color: HiPopColors.shopperAccent,
+                        size: 20,
                       ),
-                    );
-                  },
-                  borderRadius: BorderRadius.circular(8),
-                  child: const Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Icon(
-                      Icons.add,
-                      color: HiPopColors.shopperAccent,
-                      size: 18,
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    child: Text(
+                      '${item.quantity}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  // Decrease/Delete button
+                  InkWell(
+                    onTap: () {
+                      if (item.quantity > 1) {
+                        HapticFeedback.lightImpact();
+                        context.read<BasketBloc>().add(
+                          UpdateBasketItemQuantity(
+                            itemId: item.id,
+                            quantity: item.quantity - 1,
+                          ),
+                        );
+                      } else {
+                        HapticFeedback.mediumImpact();
+                        context.read<BasketBloc>().add(
+                          RemoveFromBasket(item.id),
+                        );
+                      }
+                    },
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(8)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Icon(
+                        item.quantity > 1 ? Icons.remove : Icons.delete_outline,
+                        color: item.quantity > 1 ? HiPopColors.shopperAccent : HiPopColors.errorPlum,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
 
   Widget _buildEmptyState(BuildContext context) {
     return Center(
@@ -591,13 +488,13 @@ class ReservationBasketScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.shopping_basket_outlined,
+            Icons.shopping_cart_outlined,
             size: 80,
-            color: Colors.white.withValues(alpha:  0.3),
+            color: Colors.white.withOpacity(0.3),
           ),
           const SizedBox(height: 16),
           const Text(
-            'Your basket is empty',
+            'Your cart is empty',
             style: TextStyle(
               color: Colors.white,
               fontSize: 20,
@@ -606,7 +503,7 @@ class ReservationBasketScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           const Text(
-            'Reserve products for pickup at upcoming popups',
+            'Add products from the shop to get started',
             style: TextStyle(
               color: Colors.white70,
               fontSize: 14,
@@ -626,7 +523,7 @@ class ReservationBasketScreen extends StatelessWidget {
             ),
             icon: const Icon(Icons.shopping_bag),
             label: const Text(
-              'Start Shopping',
+              'Browse Products',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
@@ -637,57 +534,60 @@ class ReservationBasketScreen extends StatelessWidget {
 
   Widget _buildErrorState(BuildContext context, BasketError state) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.error_outline,
-            size: 80,
-            color: HiPopColors.errorPlum,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Something went wrong',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              size: 80,
+              color: HiPopColors.errorPlum,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            state.message,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () {
-              context.read<BasketBloc>().add(LoadBasket());
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: HiPopColors.shopperAccent,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 16),
+            const Text(
+              'Something went wrong',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            icon: const Icon(Icons.refresh),
-            label: const Text(
-              'Try Again',
-              style: TextStyle(fontWeight: FontWeight.w600),
+            const SizedBox(height: 8),
+            Text(
+              state.message,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<BasketBloc>().add(LoadBasket());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: HiPopColors.shopperAccent,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              icon: const Icon(Icons.refresh),
+              label: const Text(
+                'Try Again',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildSuccessState(BuildContext context, BasketReservationSuccess state) {
+  Widget _buildSuccessState(BuildContext context, BasketCheckoutSuccess state) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -695,7 +595,7 @@ class ReservationBasketScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: HiPopColors.successGreen.withValues(alpha:  0.2),
+              color: HiPopColors.successGreen.withOpacity(0.2),
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -706,7 +606,7 @@ class ReservationBasketScreen extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           const Text(
-            'Reservations Confirmed!',
+            'Order Placed!',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -715,7 +615,7 @@ class ReservationBasketScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${state.itemCount} items reserved for pickup',
+            '${state.itemCount} ${state.itemCount > 1 ? "items" : "item"} ordered',
             style: const TextStyle(
               color: Colors.white70,
               fontSize: 16,
@@ -724,11 +624,7 @@ class ReservationBasketScreen extends StatelessWidget {
           const SizedBox(height: 32),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                '/shopper/reservations',
-                (route) => route.isFirst,
-              );
+              context.push('/orders');
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: HiPopColors.shopperAccent,
@@ -740,7 +636,7 @@ class ReservationBasketScreen extends StatelessWidget {
             ),
             icon: const Icon(Icons.receipt_long),
             label: const Text(
-              'View Reservations',
+              'View Orders',
               style: TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
@@ -749,74 +645,81 @@ class ReservationBasketScreen extends StatelessWidget {
     );
   }
 
-  String _formatPopupDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = date.difference(now);
-
-    if (difference.isNegative) {
-      return 'Past event';
-    } else if (difference.inDays == 0) {
-      return 'Today at ${DateFormat('h:mm a').format(date)}';
-    } else if (difference.inDays == 1) {
-      return 'Tomorrow at ${DateFormat('h:mm a').format(date)}';
-    } else if (difference.inDays < 7) {
-      return DateFormat('EEEE, h:mm a').format(date);
-    } else {
-      return DateFormat('MMM d, h:mm a').format(date);
-    }
+  void _handleCheckout(BuildContext context) {
+    // TODO: Show phone number input dialog before checkout
+    // For now, use a placeholder
+    _showPhoneDialog(context);
   }
 
-  bool _isUpcoming(DateTime date) {
-    return date.isAfter(DateTime.now());
-  }
+  void _showPhoneDialog(BuildContext context) {
+    final phoneController = TextEditingController();
 
-
-  void _confirmRemoveGroup(BuildContext context, String vendorPostId) {
-    HapticFeedback.lightImpact();
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          backgroundColor: HiPopColors.darkSurfaceVariant,
-          title: const Text(
-            'Remove Items?',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: const Text(
-            'Remove all items for this vendor from your cart?',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.white70),
-              ),
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: HiPopColors.darkSurfaceVariant,
+        title: const Text(
+          'Contact Information',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Please provide your phone number for order updates:',
+              style: TextStyle(color: Colors.white70, fontSize: 14),
             ),
-            TextButton(
-              onPressed: () {
-                context.read<BasketBloc>().add(RemovePopupItems(vendorPostId));
-                Navigator.pop(dialogContext);
-              },
-              child: const Text(
-                'Remove',
-                style: TextStyle(color: HiPopColors.errorPlum),
+            const SizedBox(height: 16),
+            TextField(
+              controller: phoneController,
+              keyboardType: TextInputType.phone,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: '(555) 123-4567',
+                hintStyle: TextStyle(color: Colors.white.withOpacity(0.3)),
+                filled: true,
+                fillColor: Colors.black.withOpacity(0.2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ],
-        );
-      },
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              final phone = phoneController.text.trim();
+              if (phone.isNotEmpty) {
+                Navigator.pop(dialogContext);
+                context.read<BasketBloc>().add(CheckoutBasket(
+                  customerPhone: phone,
+                ));
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: HiPopColors.shopperAccent,
+            ),
+            child: const Text('Place Order'),
+          ),
+        ],
+      ),
     );
   }
-
-
 
   void _showClearBasketDialog(BuildContext context) {
     HapticFeedback.mediumImpact();
     showDialog(
       context: context,
-      builder: (BuildContext dialogContext) {
+      builder: (dialogContext) {
         return AlertDialog(
           backgroundColor: HiPopColors.darkSurfaceVariant,
           title: const Text(
@@ -824,7 +727,7 @@ class ReservationBasketScreen extends StatelessWidget {
             style: TextStyle(color: Colors.white),
           ),
           content: const Text(
-            'Remove all items from your basket?',
+            'Remove all items from your cart?',
             style: TextStyle(color: Colors.white70),
           ),
           actions: [

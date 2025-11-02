@@ -13,12 +13,8 @@ class WaitlistButton extends StatefulWidget {
   final String productId;
   final String productName;
   final String? productImageUrl;
-  final String vendorId;
-  final String vendorName;
-  final String popupId;
-  final String marketId;
-  final String marketName;
-  final DateTime popupDate;
+  final String sellerId;
+  final String sellerName;
   final double? price;
   final VoidCallback? onJoined;
   final bool showCount;
@@ -29,12 +25,8 @@ class WaitlistButton extends StatefulWidget {
     required this.productId,
     required this.productName,
     this.productImageUrl,
-    required this.vendorId,
-    required this.vendorName,
-    required this.popupId,
-    required this.marketId,
-    required this.marketName,
-    required this.popupDate,
+    required this.sellerId,
+    required this.sellerName,
     this.price,
     this.onJoined,
     this.showCount = true,
@@ -115,12 +107,8 @@ class _WaitlistButtonState extends State<WaitlistButton> {
         productId: widget.productId,
         productName: widget.productName,
         productImageUrl: widget.productImageUrl,
-        vendorId: widget.vendorId,
-        vendorName: widget.vendorName,
-        popupId: widget.popupId,
-        marketId: widget.marketId,
-        marketName: widget.marketName,
-        popupDate: widget.popupDate,
+        sellerId: widget.sellerId,
+        sellerName: widget.sellerName,
         price: widget.price,
         onJoined: () {
           _checkWaitlistStatus();

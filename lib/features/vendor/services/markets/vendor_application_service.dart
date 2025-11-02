@@ -7,6 +7,14 @@ import '../../models/vendor_application.dart';
 class VendorApplicationService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  /// Static method to get approved applications for a market
+  static Future<List<VendorApplication>> getApprovedApplicationsForMarket(
+    String marketId,
+  ) async {
+    // Return empty list - vendor features disabled
+    return [];
+  }
+
   Future<VendorApplication?> getApplication(String applicationId) async {
     // Return null - vendor features disabled
     return null;

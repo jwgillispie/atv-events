@@ -440,8 +440,8 @@ class _CompleteProfileScreenState extends State<CompleteProfileScreen> {
 
   Future<void> _showCategoryPicker(Color colorScheme) async {
     final selected = await CategorySelectionDialog.show(
-      context: context,
-      initialSelection: _selectedCategories,
+      context,
+      selectedCategories: _selectedCategories,
     );
 
     if (selected != null) {

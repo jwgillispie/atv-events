@@ -39,6 +39,18 @@ class VendorMarketItemsService {
     // Return null - vendor features disabled
     return null;
   }
+
+  /// Get market vendor items stream (instance method)
+  Stream<List<Map<String, dynamic>>> getMarketVendorItemsStream(String marketId) {
+    // Return empty stream - vendor features disabled
+    return Stream.value([]);
+  }
+
+  /// Get market vendor items stream (static method for compatibility)
+  static Stream<Map<String, List<String>>> getMarketVendorItemsStreamStatic(String marketId) {
+    // Return empty stream - vendor features disabled
+    return Stream.value({});
+  }
 }
 
 /// Stub class for vendor market items

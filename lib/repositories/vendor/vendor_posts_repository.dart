@@ -10,6 +10,7 @@ abstract class IVendorPostsRepository {
   Future<VendorPost?> getVendorPostById(String postId);
   Stream<List<VendorPost>> searchPostsByLocation(String location);
   Stream<List<VendorPost>> getAllActivePosts();
+  Stream<List<VendorPost>> getMarketPosts(String marketId);
 }
 
 class VendorPostsRepository implements IVendorPostsRepository {
@@ -41,6 +42,12 @@ class VendorPostsRepository implements IVendorPostsRepository {
 
   @override
   Stream<List<VendorPost>> getAllActivePosts() {
+    // Return empty stream - vendor features disabled
+    return Stream.value([]);
+  }
+
+  @override
+  Stream<List<VendorPost>> getMarketPosts(String marketId) {
     // Return empty stream - vendor features disabled
     return Stream.value([]);
   }

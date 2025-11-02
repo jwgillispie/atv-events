@@ -127,6 +127,11 @@ class VendorApplicationService {
         .toList();
   }
 
+  /// Instance method to get approved applications for a market (for compatibility)
+  Future<List<VendorApplication>> getApprovedApplications(String marketId) async {
+    return getApprovedApplicationsForMarket(marketId);
+  }
+
   /// Get all applications for a specific market (real-time stream)
   Stream<List<VendorApplication>> getMarketApplications(
     String marketId, {

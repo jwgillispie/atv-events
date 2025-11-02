@@ -3,9 +3,16 @@ import 'package:flutter/foundation.dart';
 import 'package:atv_events/features/shared/services/user/customer_loyalty_service.dart';
 import 'dart:math';
 
-import '../../../vendor/services/products/vendor_sales_service.dart';
+// import '../../../vendor/services/products/vendor_sales_service.dart'; // TODO: File doesn't exist
 import '../../../shared/services/user/customer_feedback_service.dart';
 import '../../../shared/models/customer_feedback.dart';
+
+/// Stub class for VendorSalesService
+class VendorSalesService {
+  Future<Map<String, dynamic>> getVendorSalesData(String vendorId) async {
+    return {};
+  }
+}
 
 /// Premium analytics service for market organizers
 /// Provides comprehensive market management, vendor analytics, and business intelligence
