@@ -15,8 +15,6 @@ import 'package:atv_events/features/shared/services/user/user_profile_service.da
 import 'package:atv_events/features/shared/widgets/common/photo_upload_widget.dart';
 import 'package:atv_events/features/shared/services/utilities/photo_service.dart';
 import 'package:atv_events/features/shared/widgets/ai_flyer_upload_widget.dart';
-import 'package:atv_events/features/organizer/models/organizer_vendor_post.dart';
-import 'package:atv_events/features/organizer/services/vendor_management/vendor_post_service.dart';
 
 class CreateMarketScreen extends StatefulWidget {
   const CreateMarketScreen({super.key});
@@ -1126,51 +1124,7 @@ class _CreateMarketScreenState extends State<CreateMarketScreen> {
       final updatedProfile = authState.userProfile!.addManagedMarket(marketId);
       await userProfileService.updateUserProfile(updatedProfile);
 
-      // Create recruitment post if looking for vendors
-      if (_formData['lookingForVendors'] == true) {
-        try {
-          final organizerEmail = authState.userProfile?.email ?? authState.user.email ?? '';
-          final enableInAppApplications = _formData['enableInAppApplications'] ?? false;
-
-          final recruitmentPost = OrganizerVendorPost(
-            id: '', // Will be set by Firestore
-            marketId: marketId,
-            organizerId: authState.user.uid,
-            title: _formData['name'] ?? 'New Market',
-            description: _formData['description'] ?? '',
-            categories: const [], // Can be added later based on market target categories
-            requirements: VendorRequirements(
-              experienceLevel: ExperienceLevel.beginner,
-              applicationDeadline: _formData['applicationDeadline'],
-              startDate: _formData['marketDate'],
-              endDate: _formData['marketDate'],
-              boothFee: _formData['boothFee']?.toDouble() ?? 0,
-            ),
-            contactInfo: ContactInfo(
-              preferredMethod: enableInAppApplications
-                  ? ContactMethod.form
-                  : (_formData['applicationUrl'] != null && (_formData['applicationUrl'] as String).isNotEmpty
-                      ? ContactMethod.form
-                      : ContactMethod.email),
-              email: organizerEmail,
-              formUrl: _formData['applicationUrl'],
-            ),
-            status: PostStatus.active,
-            visibility: PostVisibility.public,
-            analytics: const PostAnalytics(),
-            metadata: const PostMetadata(),
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-            expiresAt: _formData['applicationDeadline'],
-          );
-
-          final postId = await OrganizerVendorPostService.createVendorPost(recruitmentPost);
-          print('✅ Created recruitment post $postId for market $marketId');
-        } catch (e) {
-          print('⚠️ Failed to create recruitment post: $e');
-          // Don't fail the market creation if recruitment post fails
-        }
-      }
+      // No vendor recruitment posts in ATV Events
 
       // Refresh AuthBloc
       if (mounted) {

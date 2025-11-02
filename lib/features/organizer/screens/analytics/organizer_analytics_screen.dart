@@ -825,18 +825,8 @@ class _OrganizerAnalyticsScreenState extends State<OrganizerAnalyticsScreen>
           ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
-        VendorRegistrationsChart(
-          data: [], // Empty data for stub
-          marketId: _currentMarketId ?? '',
-          monthsBack:
-              _selectedTimeRange == AnalyticsTimeRange.week
-                  ? 3
-                  : _selectedTimeRange == AnalyticsTimeRange.month
-                  ? 6
-                  : _selectedTimeRange == AnalyticsTimeRange.quarter
-                  ? 12
-                  : 12,
-        ),
+        // No vendor registrations chart in ATV Events
+        const SizedBox.shrink(),
       ],
     );
   }

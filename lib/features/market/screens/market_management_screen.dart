@@ -13,7 +13,6 @@ import '../../market/services/market_service.dart';
 import '../../premium/services/subscription_service.dart';
 import '../../shared/services/analytics/real_time_analytics_service.dart';
 import 'package:atv_events/core/theme/atv_colors.dart';
-import 'package:atv_events/features/organizer/services/vendor_management/vendor_post_service.dart';
 
 class MarketManagementScreen extends StatefulWidget {
   final bool isEmbedded;
@@ -256,20 +255,7 @@ class MarketManagementScreenState extends State<MarketManagementScreen>
 
     if (confirmed == true) {
       try {
-        // Delete associated recruitment post if exists
-        try {
-          final posts = await OrganizerVendorPostService.getOrganizerPosts(
-            market.organizerId ?? '',
-            marketId: market.id,
-          );
-          for (final post in posts) {
-            await OrganizerVendorPostService.deleteVendorPost(post.id);
-            debugPrint('✅ Deleted recruitment post ${post.id} for market ${market.id}');
-          }
-        } catch (e) {
-          debugPrint('⚠️ Failed to delete recruitment posts: $e');
-          // Continue with market deletion even if recruitment post deletion fails
-        }
+        // No vendor posts to delete in ATV Events
 
         await MarketService.deleteMarket(market.id);
 

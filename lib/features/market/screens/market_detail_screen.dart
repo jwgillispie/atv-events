@@ -20,10 +20,6 @@ import '../../shared/widgets/reviews/quick_rating_button.dart';
 import '../../shared/services/user/user_profile_service.dart';
 import '../../shared/widgets/reviews/review_indicator.dart';
 import '../../shared/widgets/rating/quick_rating_bottom_sheet.dart';
-import '../../organizer/screens/applications/organizer_applications_tab.dart';
-import '../../shared/blocs/application/application_bloc.dart';
-import '../../shared/services/applications/vendor_application_service.dart';
-import '../../shared/services/applications/application_payment_service.dart';
 
 
 class MarketDetailScreen extends StatefulWidget {
@@ -47,7 +43,6 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
   ReviewStats? _reviewStats;
   List<UniversalReview> _allReviews = [];
   List<UniversalReview> _shopperReviews = [];
-  List<UniversalReview> _vendorReviews = [];
   bool _loadingReviews = true;
   bool _canReview = false;
   bool _hasReviewed = false;
@@ -113,7 +108,6 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
 
       // Separate reviews by type
       _shopperReviews = _allReviews.where((r) => r.reviewerType == 'shopper').toList();
-      _vendorReviews = _allReviews.where((r) => r.reviewerType == 'vendor').toList();
 
       if (mounted) {
         setState(() => _loadingReviews = false);
@@ -727,40 +721,9 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
     }
   }
 
+  // [DEPRECATED] No vendor stats in ATV Events
   Widget _buildStatsCards() {
-    return Row(
-      children: [
-        Expanded(
-          child: StreamBuilder<List<ManagedVendor>>(
-            stream: ManagedVendorService.getVendorsForMarket(widget.market.id),
-            builder: (context, snapshot) {
-              final vendorCount = snapshot.hasData ? snapshot.data!.length : 0;
-              return _buildStatCard(
-                'Total Vendors',
-                '$vendorCount',
-                Icons.store,
-                HiPopColors.successGreen,
-              );
-            },
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: StreamBuilder<List<ManagedVendor>>(
-            stream: ManagedVendorService.getActiveVendorsForMarket(widget.market.id),
-            builder: (context, snapshot) {
-              final activeCount = snapshot.hasData ? snapshot.data!.length : 0;
-              return _buildStatCard(
-                'Active Vendors',
-                '$activeCount',
-                Icons.check_circle,
-                HiPopColors.infoBlueGray,
-              );
-            },
-          ),
-        ),
-      ],
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
@@ -794,348 +757,50 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
     );
   }
 
+  // [DEPRECATED] No vendors tab in ATV Events
   Widget _buildVendorsTab() {
-    return StreamBuilder<List<ManagedVendor>>(
-      stream: ManagedVendorService.getVendorsForMarket(widget.market.id),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget(message: 'Loading vendors...');
-        }
-
-        if (snapshot.hasError) {
-          return ErrorDisplayWidget.network(
-            onRetry: () => setState(() {}),
-          );
-        }
-
-        final vendors = snapshot.data ?? [];
-
-        if (vendors.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.store_mall_directory,
-                    size: 80,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No vendors yet',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'This market hasn\'t added any vendors yet. Check back soon for vendors to discover!',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey[500],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
-
-        // VENDOR ITEMS SERVICE DISABLED FOR WEB BUILD
-        // return FutureBuilder<Map<String, List<String>>>(
-        //   future: VendorMarketItemsService.getMarketVendorItems(widget.market.id),
-        //   builder: (context, itemsSnapshot) {
-        //     final vendorItemsMap = itemsSnapshot.data ?? <String, List<String>>{};
-
-        //     return ListView.builder(
-        //       padding: const EdgeInsets.all(16.0),
-        //       itemCount: vendors.length,
-        //       itemBuilder: (context, index) {
-        //         final vendor = vendors[index];
-        //         // Get market-specific items for this vendor
-        //         final vendorItems = vendorItemsMap[vendor.id] ?? <String>[];
-        //         return _buildVendorCard(vendor, vendorItems);
-        //       },
-        //     );
-        //   },
-        // );
-
-        // For web build, just show vendors without market-specific items
-        return ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: vendors.length,
-          itemBuilder: (context, index) {
-            final vendor = vendors[index];
-            return _buildVendorCard(vendor, <String>[]);
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildVendorCard(ManagedVendor vendor, List<String> marketItems) {
-    return Card(
-      color: HiPopColors.darkSurface,
-      margin: const EdgeInsets.only(bottom: 12),
+    return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: HiPopColors.vendorAccent.withOpacity( 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.store,
-                    color: HiPopColors.vendorAccent,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        vendor.businessName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: HiPopColors.darkTextPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        vendor.categoriesDisplay,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: HiPopColors.darkTextSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    ShareButton(
-                      onGetShareContent: () async {
-                        return _buildVendorShareContent(vendor);
-                      },
-                      style: ShareButtonStyle.icon,
-                      size: ShareButtonSize.small,
-                    ),
-                    const SizedBox(width: 8),
-                    FavoriteButton(
-                      itemId: vendor.id,
-                      type: FavoriteType.vendor,
-                      size: 20,
-                    ),
-                  ],
-                ),
-                if (vendor.isFeatured)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: HiPopColors.premiumGold.withOpacity( 0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.star,
-                          size: 12,
-                          color: HiPopColors.premiumGoldDark,
-                        ),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'FEATURED',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: HiPopColors.premiumGoldDark,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-              ],
+            Icon(
+              Icons.info_outline,
+              size: 80,
+              color: Colors.grey[400],
             ),
-            
-            if (vendor.description?.isNotEmpty ?? false) ...[
-              const SizedBox(height: 12),
-              Text(
-                vendor.description!,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: HiPopColors.darkTextSecondary,
-                ),
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 16),
+            Text(
+              'No vendor listings',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.grey[600],
               ),
-            ],
-
-            // Show market-specific items if available, otherwise show general products
-            if (marketItems.isNotEmpty || (vendor.products?.isNotEmpty ?? false)) ...[
-              const SizedBox(height: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (marketItems.isNotEmpty) ...[
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.local_grocery_store,
-                          size: 14,
-                          color: HiPopColors.primaryDeepSage,
-                        ),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'Available at this market:',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: HiPopColors.primaryDeepSage,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    VendorItemsWidget.full(items: marketItems),
-                  ] else if (vendor.products?.isNotEmpty ?? false) ...[
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.inventory_2,
-                          size: 14,
-                          color: HiPopColors.darkTextTertiary,
-                        ),
-                        const SizedBox(width: 4),
-                        const Text(
-                          'General products:',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: HiPopColors.darkTextSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    VendorItemsWidget.full(items: vendor.products?.cast<String>() ?? []),
-                  ],
-                ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'This event location does not have vendor listings. Check the Events tab for upcoming activities.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[500],
               ),
-            ],
-            
-            // Contact Information Section
-            if (vendor.email != null || vendor.website != null || vendor.instagramHandle != null) ...[
-              const SizedBox(height: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Email
-                  if (vendor.email != null) ...[
-                    InkWell(
-                      onTap: () => _launchEmail(vendor.email!),
-                      borderRadius: BorderRadius.circular(4),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.email, size: 14, color: HiPopColors.darkTextTertiary),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                vendor.email!,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: HiPopColors.primaryDeepSage,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                  
-                  // Instagram
-                  if (vendor.instagramHandle != null) ...[
-                    if (vendor.email != null) const SizedBox(height: 4),
-                    InkWell(
-                      onTap: () => _launchInstagram(vendor.instagramHandle!),
-                      borderRadius: BorderRadius.circular(4),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.camera_alt, size: 14, color: HiPopColors.darkTextTertiary),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                vendor.instagramHandle!.startsWith('@')
-                                  ? vendor.instagramHandle!
-                                  : '@${vendor.instagramHandle!}',
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: HiPopColors.primaryDeepSage,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                  
-                  // Website
-                  if (vendor.website != null) ...[
-                    if (vendor.email != null || vendor.instagramHandle != null) const SizedBox(height: 4),
-                    InkWell(
-                      onTap: () => _launchWebsite(vendor.website!),
-                      borderRadius: BorderRadius.circular(4),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 4),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.language, size: 14, color: HiPopColors.darkTextTertiary),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                _formatWebsiteDisplay(vendor.website!),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: HiPopColors.primaryDeepSage,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ],
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
     );
   }
-  
+
+  // [DEPRECATED] No vendor cards in ATV Events
+  Widget _buildVendorCard(dynamic vendor, List<String> marketItems) {
+    return const SizedBox.shrink();
+  }
+
+  // [DEPRECATED] No vendor launch methods needed
+  Future<void> _launchEmail(String email) async {}
+  Future<void> _launchInstagram(String handle) async {}
+  Future<void> _launchWebsite(String url) async {}
+
   Future<void> _launchMaps(String address) async {
     try {
       await UrlLauncherService.launchMaps(address, context: context);
@@ -1144,51 +809,6 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Could not open maps: $e'),
-            backgroundColor: HiPopColors.errorPlum,
-          ),
-        );
-      }
-    }
-  }
-  
-  Future<void> _launchEmail(String email) async {
-    try {
-      await UrlLauncherService.launchEmail(email);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not send email: $e'),
-            backgroundColor: HiPopColors.errorPlum,
-          ),
-        );
-      }
-    }
-  }
-  
-  Future<void> _launchInstagram(String handle) async {
-    try {
-      await UrlLauncherService.launchInstagram(handle);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not open Instagram: $e'),
-            backgroundColor: HiPopColors.errorPlum,
-          ),
-        );
-      }
-    }
-  }
-  
-  Future<void> _launchWebsite(String url) async {
-    try {
-      await UrlLauncherService.launchWebsite(url);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Could not open website: $e'),
             backgroundColor: HiPopColors.errorPlum,
           ),
         );
@@ -1205,40 +825,9 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
   }
 
 
-  String _buildVendorShareContent(ManagedVendor vendor) {
-    final buffer = StringBuffer();
-    
-    buffer.writeln('Check out ${vendor.businessName}!');
-    buffer.writeln();
-    
-    if (vendor.description?.isNotEmpty ?? false) {
-      buffer.writeln(vendor.description);
-      buffer.writeln();
-    }
-
-    buffer.writeln('Categories: ${vendor.categoriesDisplay}');
-
-    if (vendor.products?.isNotEmpty ?? false) {
-      buffer.writeln('Products: ${(vendor.products ?? []).take(5).join(", ")}${(vendor.products?.length ?? 0) > 5 ? "..." : ""}');
-    }
-    
-    if (vendor.email != null) {
-      buffer.writeln('Email: ${vendor.email}');
-    }
-    
-    if (vendor.website != null) {
-      buffer.writeln('Website: ${vendor.website}');
-    }
-    
-    if (vendor.instagramHandle != null) {
-      buffer.writeln('Instagram: ${vendor.instagramHandle!.startsWith('@') ? vendor.instagramHandle : '@${vendor.instagramHandle}'}');
-    }
-    
-    buffer.writeln();
-    buffer.writeln('Find them at ${widget.market.name}!');
-    buffer.writeln('Download ATV Events: https://apps.apple.com/us/app/atv-events/id6749876075');
-
-    return buffer.toString();
+  // [DEPRECATED] No vendor share content in ATV Events
+  String _buildVendorShareContent(dynamic vendor) {
+    return '';
   }
 
 
@@ -1292,8 +881,7 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
                         unselectedLabelColor: HiPopColors.darkTextSecondary,
                         tabs: [
                           Tab(text: 'All (${_allReviews.length})'),
-                          Tab(text: 'Shoppers (${_shopperReviews.length})'),
-                          Tab(text: 'Vendors (${_vendorReviews.length})'),
+                          Tab(text: 'Attendees (${_shopperReviews.length})'),
                         ],
                       ),
                     ),
@@ -1304,7 +892,6 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
                         children: [
                           _buildReviewList(_allReviews),
                           _buildReviewList(_shopperReviews),
-                          _buildReviewList(_vendorReviews),
                         ],
                       ),
                     ),
@@ -1394,15 +981,36 @@ class _MarketDetailScreenState extends State<MarketDetailScreen>
   }
 
   /// Build Applications tab (for organizers only)
+  // [DEPRECATED] No vendor applications in ATV Events
   Widget _buildApplicationsTab() {
-    return BlocProvider(
-      create: (context) => ApplicationBloc(
-        applicationService: VendorApplicationService(),
-        paymentService: ApplicationPaymentService(),
-      ),
-      child: OrganizerApplicationsTab(
-        marketId: widget.market.id,
-        marketName: widget.market.name,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.info_outline,
+              size: 80,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No applications',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Vendor applications are not available for this event location.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[500],
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -11,8 +11,6 @@ import 'package:atv_events/features/shared/services/communication/welcome_notifi
 import 'package:atv_events/features/shared/widgets/welcome_notification_dialog.dart';
 import 'package:atv_events/features/shared/widgets/debug_account_switcher.dart';
 import 'package:atv_events/features/shared/widgets/debug_database_cleaner.dart';
-import 'package:atv_events/features/shared/widgets/debug_managed_vendor_creator.dart';
-import 'package:atv_events/features/shared/widgets/debug_play_data_generator.dart';
 import 'package:atv_events/features/shared/widgets/debug_premium_activator.dart';
 import 'package:atv_events/core/widgets/hipop_app_bar.dart';
 import 'package:atv_events/features/shared/services/universal_review_service.dart';
@@ -259,12 +257,7 @@ class _OrganizerDashboardState extends State<OrganizerDashboard> {
                       const DebugAccountSwitcher(),
                       // Debug Database Cleaner
                       const DebugDatabaseCleaner(),
-                      // Debug Managed Vendor Creator (only for testing)
-                      if (const String.fromEnvironment('dart.vm.product') != 'true')
-                        const DebugManagedVendorCreator(),
-                      // Debug Play Data Generator for staging
-                      if (const String.fromEnvironment('dart.vm.product') != 'true')
-                        const DebugPlayDataGenerator(),
+                      // No vendor debug tools in ATV Events
                       
                       // Welcome Card
                       Card(
