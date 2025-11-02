@@ -340,73 +340,30 @@ class MarketService {
   }
 
 
-  // VendorMarket relationship operations
-  static Future<String> createVendorMarketRelationship(VendorMarket vendorMarket) async {
-    try {
-      final docRef = await _vendorMarketsCollection.add(vendorMarket.toFirestore());
-      return docRef.id;
-    } catch (e) {
-      throw Exception('Failed to create vendor-market relationship: $e');
-    }
+  // [DEPRECATED] VendorMarket relationship operations - No vendors in ATV Events
+  static Future<String> createVendorMarketRelationship(dynamic vendorMarket) async {
+    // No vendors in ATV Events - return empty ID
+    return '';
   }
 
-  static Future<List<VendorMarket>> getVendorMarkets(String vendorId) async {
-    try {
-      final querySnapshot = await _vendorMarketsCollection
-          .where('vendorId', isEqualTo: vendorId)
-          .where('isActive', isEqualTo: true)
-          .get();
-      
-      return querySnapshot.docs
-          .map((doc) => VendorMarket.fromFirestore(doc))
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to get vendor markets: $e');
-    }
+  static Future<List<dynamic>> getVendorMarkets(String vendorId) async {
+    // No vendors in ATV Events - return empty list
+    return [];
   }
 
-  static Future<List<VendorMarket>> getMarketVendors(String marketId) async {
-    try {
-      final querySnapshot = await _vendorMarketsCollection
-          .where('marketId', isEqualTo: marketId)
-          .where('isActive', isEqualTo: true)
-          .where('isApproved', isEqualTo: true)
-          .get();
-      
-      return querySnapshot.docs
-          .map((doc) => VendorMarket.fromFirestore(doc))
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to get market vendors: $e');
-    }
+  static Future<List<dynamic>> getMarketVendors(String marketId) async {
+    // No vendors in ATV Events - return empty list
+    return [];
   }
 
-  static Future<List<VendorMarket>> getActiveVendorsForMarketToday(String marketId) async {
-    try {
-      final today = DateTime.now().weekday;
-      final dayName = _getDayName(today);
-      
-      final querySnapshot = await _vendorMarketsCollection
-          .where('marketId', isEqualTo: marketId)
-          .where('isActive', isEqualTo: true)
-          .where('isApproved', isEqualTo: true)
-          .where('schedule', arrayContains: dayName)
-          .get();
-      
-      return querySnapshot.docs
-          .map((doc) => VendorMarket.fromFirestore(doc))
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to get active vendors for today: $e');
-    }
+  static Future<List<dynamic>> getActiveVendorsForMarketToday(String marketId) async {
+    // No vendors in ATV Events - return empty list
+    return [];
   }
 
   static Future<void> updateVendorMarketRelationship(String relationshipId, Map<String, dynamic> updates) async {
-    try {
-      await _vendorMarketsCollection.doc(relationshipId).update(updates);
-    } catch (e) {
-      throw Exception('Failed to update vendor-market relationship: $e');
-    }
+    // No vendors in ATV Events - do nothing
+    return;
   }
 
   static Future<void> approveVendorForMarket(String relationshipId) async {
