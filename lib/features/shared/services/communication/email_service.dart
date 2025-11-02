@@ -5,12 +5,13 @@ import 'package:url_launcher/url_launcher.dart';
 class EmailService {
   static const String _supportEmail = 'hipopmarkets@gmail.com';
 
-  /// Send vendor invitation email
+  /// [DEPRECATED] Send vendor invitation email - No vendors in ATV Events
   static Future<void> sendVendorInvitation({
-    required VendorMarketRelationship relationship,
+    required dynamic relationship,
     required Market market,
     String? customMessage,
   }) async {
+    // No vendors in ATV Events - method stubbed out
     try {
       if (relationship.invitationEmail == null || relationship.invitationEmail!.isEmpty) {
         throw Exception('Invitation email is required');
@@ -52,13 +53,15 @@ class EmailService {
     }
   }
 
-  /// Build invitation email content
+  /// [DEPRECATED] Build invitation email content - No vendors in ATV Events
   static String _buildInvitationEmailContent({
-    required VendorMarketRelationship relationship,
+    required dynamic relationship,
     required Market market,
     required String organizerName,
     String? customMessage,
   }) {
+    // No vendors in ATV Events - return empty string
+    return '';
     final buffer = StringBuffer();
 
     buffer.writeln('Subject: You\'re Invited to Join ${market.name}!');
@@ -232,11 +235,14 @@ class EmailService {
   }
 
   /// Build application notification content
+  /// [DEPRECATED] Build application notification content - No vendors in ATV Events
   static String _buildApplicationNotificationContent({
     required String marketName,
     required String vendorName,
     required String vendorEmail,
   }) {
+    // No vendors in ATV Events - return empty string
+    return '';
     final buffer = StringBuffer();
 
     buffer.writeln('New Vendor Application for $marketName');

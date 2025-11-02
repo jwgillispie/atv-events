@@ -9,17 +9,10 @@ class ShareService {
   static const String _appTagline = 'Discover local pop-ups and markets';
   static const String _appWebsite = 'https://atv-events.web.app';
   
-  /// Share a vendor popup event
-  static Future<ShareResult> sharePopup(VendorPost popup, {String? marketName}) async {
-    try {
-      final content = _buildPopupContent(popup, marketName);
-      return await Share.share(
-        content,
-        subject: 'Check out this pop-up on ATV Events!',
-      );
-    } catch (e) {
-      return ShareResult('', ShareResultStatus.unavailable);
-    }
+  /// [DEPRECATED] Share a vendor popup event - No vendors in ATV Events
+  static Future<ShareResult> sharePopup(dynamic popup, {String? marketName}) async {
+    // No vendors in ATV Events - return unavailable
+    return ShareResult('', ShareResultStatus.unavailable);
   }
 
   /// Share an event
@@ -78,7 +71,10 @@ Download $_appName: $_appWebsite
 
   // Private methods for building content
 
-  static String _buildPopupContent(VendorPost popup, String? marketName) {
+  /// [DEPRECATED] Build popup content - No vendors in ATV Events
+  static String _buildPopupContent(dynamic popup, String? marketName) {
+    // No vendors in ATV Events - return empty string
+    return '';
     final buffer = StringBuffer();
     
     // Emoji and title
