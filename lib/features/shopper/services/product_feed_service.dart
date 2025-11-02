@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:atv_events/features/vendor/models/vendor_product.dart';
 import 'package:atv_events/features/shared/models/product.dart';
 import 'package:atv_events/features/shared/models/user_profile.dart';
 import 'package:atv_events/features/shopper/models/product_feed_item.dart';

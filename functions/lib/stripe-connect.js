@@ -121,12 +121,13 @@ exports.createStripeConnectAccount = functions.https.onCall(async (data, context
 });
 /**
  * Create AccountLink for onboarding/re-onboarding
+ * Uses web redirect page that auto-opens the app via deep link
  */
 async function createAccountLink(accountId) {
     return await stripe.accountLinks.create({
         account: accountId,
-        refresh_url: 'https://hipopmarkets.web.app/vendor/settings?stripe=refresh',
-        return_url: 'https://hipopmarkets.web.app/vendor/settings?stripe=success',
+        refresh_url: 'https://hipop-markets.web.app/stripe-redirect?role=vendor&status=refresh',
+        return_url: 'https://hipop-markets.web.app/stripe-redirect?role=vendor&status=success',
         type: 'account_onboarding',
     });
 }
@@ -240,12 +241,13 @@ exports.getStripeAccountLink = functions.https.onCall(async (data, context) => {
 // ============================================================================
 /**
  * Create AccountLink for organizer onboarding/re-onboarding
+ * Uses web redirect page that auto-opens the app via deep link
  */
 async function createOrganizerAccountLink(accountId) {
     return await stripe.accountLinks.create({
         account: accountId,
-        refresh_url: 'https://hipopmarkets.web.app/organizer/settings?stripe=refresh',
-        return_url: 'https://hipopmarkets.web.app/organizer/settings?stripe=success',
+        refresh_url: 'https://hipop-markets.web.app/stripe-redirect?role=organizer&status=refresh',
+        return_url: 'https://hipop-markets.web.app/stripe-redirect?role=organizer&status=success',
         type: 'account_onboarding',
     });
 }

@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:atv_events/features/vendor/models/vendor_product.dart';
 
 /// Simplified Product model for ATV shop
 /// No popup/market associations - products are permanent catalog items
@@ -65,33 +64,6 @@ class Product extends Equatable {
     this.productReviewCount,
   });
 
-  /// Create Product from VendorProduct
-  factory Product.fromVendorProduct(
-    VendorProduct vendorProduct, {
-    String? sellerName,
-    String? sellerImageUrl,
-  }) {
-    return Product(
-      id: vendorProduct.id,
-      sellerId: vendorProduct.vendorId,
-      sellerName: sellerName ?? 'ATV Shop',
-      sellerImageUrl: sellerImageUrl,
-      name: vendorProduct.name,
-      category: vendorProduct.category,
-      description: vendorProduct.description,
-      price: vendorProduct.basePrice,
-      imageUrls: vendorProduct.photoUrls,
-      tags: vendorProduct.tags,
-      createdAt: vendorProduct.createdAt,
-      updatedAt: vendorProduct.updatedAt,
-      isActive: vendorProduct.isActive,
-      stockQuantity: vendorProduct.quantityAvailable,
-      isInStock: vendorProduct.inStock,
-      waitlistEnabled: vendorProduct.waitlistEnabled,
-      waitlistCount: vendorProduct.waitlistCount,
-      maxWaitlistSize: vendorProduct.maxWaitlistSize,
-    );
-  }
 
   factory Product.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;

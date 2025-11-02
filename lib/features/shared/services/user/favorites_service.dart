@@ -6,8 +6,6 @@ import 'package:atv_events/features/shared/models/event.dart';
 import 'package:atv_events/features/shared/models/user_favorite.dart';
 import 'package:atv_events/features/shared/services/data/event_service.dart';
 import 'package:atv_events/features/shared/widgets/common/favorite_button.dart' hide FavoriteType;
-import 'package:atv_events/features/vendor/models/managed_vendor.dart';
-import 'package:atv_events/features/vendor/services/core/managed_vendor_service.dart';
 import 'package:atv_events/features/shared/services/analytics/real_time_analytics_service.dart';
 
 

@@ -1,6 +1,5 @@
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter/services.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:atv_events/features/shared/models/event.dart';
 import 'package:atv_events/features/market/models/market.dart';
 

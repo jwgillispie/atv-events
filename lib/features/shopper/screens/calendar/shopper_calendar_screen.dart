@@ -14,7 +14,6 @@ import 'package:atv_events/features/shared/services/data/event_service.dart';
 import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
 import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
 import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
-import 'package:atv_events/features/vendor/models/vendor_market_relationship.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';

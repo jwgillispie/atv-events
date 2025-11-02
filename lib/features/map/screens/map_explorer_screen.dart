@@ -3,7 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:atv_events/features/market/models/market.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:atv_events/features/shared/models/event.dart';
 import 'package:atv_events/core/theme/atv_colors.dart';
 import 'package:atv_events/core/constants/ui_constants.dart';
@@ -14,14 +13,12 @@ import 'package:atv_events/core/utils/date_time_utils.dart';
 /// Full-screen map explorer with advanced features
 class MapExplorerScreen extends StatefulWidget {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
   final String? selectedFilter;
-  
+
   const MapExplorerScreen({
     super.key,
     required this.markets,
-    required this.vendorPosts,
     required this.events,
     this.selectedFilter,
   });
@@ -37,7 +34,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
   
   // Selected item tracking
   Market? _selectedMarket;
-  VendorPost? _selectedVendorPost;
   Event? _selectedEvent;
   
   // User location
@@ -46,7 +42,7 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
   
   // Filter state
   late String _activeFilter;
-  final Set<String> _visibleCategories = {'markets', 'vendors', 'events'};
+  final Set<String> _visibleCategories = {'markets', 'events'};
   
   // Animation controllers
   late AnimationController _cardAnimationController;
@@ -146,34 +142,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
         }
       }
       
-      // Create vendor markers with category icons
-      if (_visibleCategories.contains('vendors')) {
-        for (final post in widget.vendorPosts) {
-          if (_isValidLocation(post.latitude, post.longitude)) {
-            // Determine vendor category
-            List<String> vendorItems = [
-              if (post.description != null) post.description!,
-              post.vendorName,
-              if (post.locationName != null) post.locationName!,
-            ];
-            
-            final vendorIcon = await CustomMapMarkers.getVendorIcon(
-              vendorItems: vendorItems,
-            );
-            
-            newMarkers.add(
-              Marker(
-                markerId: MarkerId('vendor_${post.id}'),
-                position: LatLng(post.latitude!, post.longitude!),
-                onTap: () => _selectVendorPost(post),
-                icon: vendorIcon,
-                zIndexInt: 1,
-              ),
-            );
-          }
-        }
-      }
-      
       // Create event markers
       if (_visibleCategories.contains('events')) {
         final eventIcon = await CustomMapMarkers.getEnhancedEventIcon();
@@ -239,7 +207,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
   void _selectMarket(Market market) {
     setState(() {
       _selectedMarket = market;
-      _selectedVendorPost = null;
       _selectedEvent = null;
     });
     
@@ -256,30 +223,9 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
     }
   }
   
-  void _selectVendorPost(VendorPost post) {
-    setState(() {
-      _selectedMarket = null;
-      _selectedVendorPost = post;
-      _selectedEvent = null;
-    });
-    
-    _cardAnimationController.forward();
-    
-    // Animate to selected marker
-    if (_isValidLocation(post.latitude, post.longitude)) {
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(post.latitude!, post.longitude!),
-          15.0,
-        ),
-      );
-    }
-  }
-  
   void _selectEvent(Event event) {
     setState(() {
       _selectedMarket = null;
-      _selectedVendorPost = null;
       _selectedEvent = event;
     });
     
@@ -300,7 +246,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
     _cardAnimationController.reverse().then((_) {
       setState(() {
         _selectedMarket = null;
-        _selectedVendorPost = null;
         _selectedEvent = null;
       });
     });
@@ -433,14 +378,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
                       ),
                       const SizedBox(width: 8),
                       _buildFilterChip(
-                        label: 'Pop-ups',
-                        icon: Icons.storefront,
-                        color: HiPopColors.infoBlueGray,
-                        isSelected: _visibleCategories.contains('vendors'),
-                        onTap: () => _toggleCategory('vendors'),
-                      ),
-                      const SizedBox(width: 8),
-                      _buildFilterChip(
                         label: 'Events',
                         icon: Icons.event,
                         color: HiPopColors.warningAmber,
@@ -455,7 +392,7 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
           ),
           
           // Bottom info card
-          if (_selectedMarket != null || _selectedVendorPost != null || _selectedEvent != null)
+          if (_selectedMarket != null || _selectedEvent != null)
             Positioned(
               left: 0,
               right: 0,
@@ -477,7 +414,7 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
           // Floating action buttons
           Positioned(
             right: 16,
-            bottom: _selectedMarket != null || _selectedVendorPost != null || _selectedEvent != null
+            bottom: _selectedMarket != null || _selectedEvent != null
                 ? 320
                 : 100,
             child: Column(
@@ -561,8 +498,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
   Widget _buildInfoCard() {
     if (_selectedMarket != null) {
       return _buildMarketCard(_selectedMarket!);
-    } else if (_selectedVendorPost != null) {
-      return _buildVendorCard(_selectedVendorPost!);
     } else if (_selectedEvent != null) {
       return _buildEventCard(_selectedEvent!);
     }
@@ -712,180 +647,6 @@ class _MapExplorerScreenState extends State<MapExplorerScreen> with TickerProvid
                     child: ElevatedButton(
                       onPressed: () {
                         context.pushNamed('marketDetail', extra: market);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: HiPopColors.shopperAccent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: const Text('View Details'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  
-  Widget _buildVendorCard(VendorPost post) {
-    return Container(
-      decoration: BoxDecoration(
-        color: HiPopColors.darkSurface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity( 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: HiPopColors.darkTextTertiary,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Header
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: HiPopColors.vendorAccent.withOpacity( 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Icon(
-                      Icons.store,
-                      color: HiPopColors.vendorAccent,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'VENDOR POP-UP',
-                          style: TextStyle(
-                            color: HiPopColors.vendorAccent,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          post.vendorName,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: HiPopColors.darkTextPrimary,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: _clearSelection,
-                    color: HiPopColors.darkTextTertiary,
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // Description
-              if (post.description != null && post.description!.isNotEmpty) ...[
-                Text(
-                  post.description!,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: HiPopColors.darkTextSecondary,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 12),
-              ],
-              
-              // Date and time
-              Row(
-                children: [
-                  Icon(Icons.access_time, size: 16, color: HiPopColors.darkTextTertiary),
-                  const SizedBox(width: 8),
-                  Text(
-                    DateTimeUtils.formatPostDateTime(post.popUpStartDateTime),
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: HiPopColors.darkTextSecondary,
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 8),
-              
-              // Location
-              Row(
-                children: [
-                  Icon(Icons.location_on, size: 16, color: HiPopColors.darkTextTertiary),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      post.locationName ?? 'Location unavailable',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: HiPopColors.darkTextSecondary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Action buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () async {
-                        await UrlLauncherService.launchMaps(
-                          post.locationName ?? 'Location unavailable',
-                          context: context,
-                        );
-                      },
-                      icon: const Icon(Icons.directions, size: 18),
-                      label: const Text('Directions'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: HiPopColors.shopperAccent,
-                        side: BorderSide(color: HiPopColors.shopperAccent),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.pushNamed('vendorPostDetail', extra: post);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: HiPopColors.shopperAccent,

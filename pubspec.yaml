@@ -72,6 +72,9 @@ dependencies:
   # UUID generation
   uuid: ^4.2.1
 
+  # Stripe payments
+  flutter_stripe: ^11.1.0
+
   # Calendar functionality
   table_calendar: ^3.1.2
 
@@ -229,12 +232,17 @@ flutter_launcher_icons:
 # Native splash screen configuration
 flutter_native_splash:
   color: "#FFFFFF"
-  image: assets/images/atv_events_logo.png
+  image: atv_splash.png
+
+  # Make the image fill more of the screen
+  android_gravity: fill
+  ios_content_mode: scaleAspectFill
+  web_image_mode: center
 
   # Android 12+ splash screen
   android_12:
     color: "#FFFFFF"
-    image: assets/images/atv_events_logo.png
+    image: atv_splash.png
 
   # iOS splash screen
   ios: true

@@ -1,6 +1,5 @@
 import 'package:atv_events/features/market/models/market.dart';
 import 'package:atv_events/features/shared/services/user/user_profile_service.dart';
-import 'package:atv_events/features/vendor/models/vendor_market_relationship.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class EmailService {

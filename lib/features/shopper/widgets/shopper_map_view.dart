@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:atv_events/features/market/models/market.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:atv_events/features/shared/models/event.dart';
 import 'package:atv_events/core/theme/atv_colors.dart';
 import 'package:atv_events/core/utils/date_time_utils.dart';

@@ -17,7 +17,6 @@ class ShopperFeedLoading extends ShopperFeedState {}
 /// Loaded state with feed data
 class ShopperFeedLoaded extends ShopperFeedState {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
   final FeedFilter filter;
   final String? location;
@@ -30,7 +29,6 @@ class ShopperFeedLoaded extends ShopperFeedState {
 
   const ShopperFeedLoaded({
     required this.markets,
-    required this.vendorPosts,
     required this.events,
     required this.filter,
     this.location,
@@ -43,7 +41,7 @@ class ShopperFeedLoaded extends ShopperFeedState {
   });
 
   /// Get total count of all items
-  int get totalItemCount => markets.length + vendorPosts.length + events.length;
+  int get totalItemCount => markets.length + events.length;
 
   /// Check if there are any items
   bool get hasItems => totalItemCount > 0;
@@ -52,7 +50,6 @@ class ShopperFeedLoaded extends ShopperFeedState {
   List<dynamic> get allItems {
     final items = <dynamic>[];
     items.addAll(markets);
-    items.addAll(vendorPosts);
     items.addAll(events);
     return items;
   }
@@ -60,7 +57,6 @@ class ShopperFeedLoaded extends ShopperFeedState {
   /// Create a copy with updated values
   ShopperFeedLoaded copyWith({
     List<Market>? markets,
-    List<VendorPost>? vendorPosts,
     List<Event>? events,
     FeedFilter? filter,
     String? location,
@@ -73,7 +69,6 @@ class ShopperFeedLoaded extends ShopperFeedState {
   }) {
     return ShopperFeedLoaded(
       markets: markets ?? this.markets,
-      vendorPosts: vendorPosts ?? this.vendorPosts,
       events: events ?? this.events,
       filter: filter ?? this.filter,
       location: location ?? this.location,
@@ -89,7 +84,6 @@ class ShopperFeedLoaded extends ShopperFeedState {
   @override
   List<Object?> get props => [
         markets,
-        vendorPosts,
         events,
         filter,
         location,

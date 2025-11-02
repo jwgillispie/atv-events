@@ -4,7 +4,6 @@ import 'package:atv_events/blocs/auth/auth_bloc.dart';
 import 'package:atv_events/blocs/auth/auth_state.dart';
 import 'package:atv_events/features/shared/models/analytics.dart';
 import 'package:atv_events/features/shared/services/analytics/analytics_service.dart';
-import 'package:atv_events/features/vendor/widgets/charts/vendor_registrations_chart.dart';
 import 'package:atv_events/features/premium/services/subscription_service.dart';
 import 'package:atv_events/features/premium/services/market_intelligence_service.dart';
 import 'package:atv_events/features/premium/services/advanced_reporting_service.dart';

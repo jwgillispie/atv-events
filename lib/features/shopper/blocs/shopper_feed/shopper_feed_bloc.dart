@@ -4,10 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:atv_events/features/market/models/market.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:atv_events/features/shared/models/event.dart';
 import 'package:atv_events/features/market/services/market_service.dart';
-import 'package:atv_events/repositories/vendor/vendor_posts_repository.dart';
 import 'package:atv_events/features/shared/services/data/event_service.dart';
 import 'package:atv_events/features/shared/services/data/cache_service.dart';
 
@@ -17,12 +15,10 @@ part 'shopper_feed_state.dart';
 /// BLoC for managing the shopper home feed with optimized performance
 /// Implements pagination, caching, and debouncing for a smooth user experience
 class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
-  final IVendorPostsRepository _vendorPostsRepository;
   final CacheService _cacheService;
 
   // Pagination tracking
   DocumentSnapshot? _lastMarketDoc;
-  DocumentSnapshot? _lastVendorPostDoc;
   DocumentSnapshot? _lastEventDoc;
 
   // Stream subscriptions
@@ -39,10 +35,8 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
   static const Duration _cacheDuration = Duration(minutes: 5);
 
   ShopperFeedBloc({
-    required IVendorPostsRepository vendorPostsRepository,
     required CacheService cacheService,
-  })  : _vendorPostsRepository = vendorPostsRepository,
-        _cacheService = cacheService,
+  })  : _cacheService = cacheService,
         super(ShopperFeedInitial()) {
     // Register event handlers with transformers
     on<LoadFeedRequested>(_onLoadFeedRequested);
@@ -69,7 +63,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
       if (cachedData != null) {
         emit(ShopperFeedLoaded(
           markets: (cachedData['markets'] as List).cast<Market>(),
-          vendorPosts: (cachedData['vendorPosts'] as List).cast<VendorPost>(),
           events: (cachedData['events'] as List).cast<Event>(),
           filter: event.filter,
           location: event.location,
@@ -114,7 +107,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
     try {
       // Clear pagination cursors
       _lastMarketDoc = null;
-      _lastVendorPostDoc = null;
       _lastEventDoc = null;
 
       // Clear cache for this query
@@ -162,12 +154,10 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
         );
 
         final hasReachedMax = newData.markets.length < _pageSize &&
-            newData.vendorPosts.length < _pageSize &&
             newData.events.length < _pageSize;
 
         emit(currentState.copyWith(
           markets: [...currentState.markets, ...newData.markets],
-          vendorPosts: [...currentState.vendorPosts, ...newData.vendorPosts],
           events: [...currentState.events, ...newData.events],
           hasReachedMax: hasReachedMax,
           isLoadingMore: false,
@@ -199,7 +189,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
     _searchDebounceTimer = Timer(_searchDebounceDuration, () async {
       // Reset pagination
       _lastMarketDoc = null;
-      _lastVendorPostDoc = null;
       _lastEventDoc = null;
 
       // Load data for new location
@@ -224,7 +213,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
 
     // Reset pagination
     _lastMarketDoc = null;
-    _lastVendorPostDoc = null;
     _lastEventDoc = null;
 
     emit(ShopperFeedLoading());
@@ -239,7 +227,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
   ) async {
     // Reset pagination
     _lastMarketDoc = null;
-    _lastVendorPostDoc = null;
     _lastEventDoc = null;
 
     emit(ShopperFeedLoading());
@@ -269,7 +256,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
         cacheKey,
         {
           'markets': data.markets,
-          'vendorPosts': data.vendorPosts,
           'events': data.events,
         },
         ttl: _cacheDuration,
@@ -277,12 +263,10 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
 
       emit(ShopperFeedLoaded(
         markets: data.markets,
-        vendorPosts: data.vendorPosts,
         events: data.events,
         filter: filter,
         location: location,
         hasReachedMax: data.markets.length < _pageSize &&
-            data.vendorPosts.length < _pageSize &&
             data.events.length < _pageSize,
         isFromCache: false,
       ));
@@ -319,7 +303,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
         cacheKey,
         {
           'markets': data.markets,
-          'vendorPosts': data.vendorPosts,
           'events': data.events,
         },
         ttl: _cacheDuration,
@@ -331,8 +314,7 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
         if (currentState.filter == filter && currentState.location == location) {
           emit(currentState.copyWith(
             markets: data.markets,
-            vendorPosts: data.vendorPosts,
-            events: data.events,
+                events: data.events,
             isFromCache: false,
           ));
         }
@@ -349,16 +331,11 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
     required bool isInitialLoad,
   }) async {
     List<Market> markets = [];
-    List<VendorPost> vendorPosts = [];
     List<Event> events = [];
 
     // Fetch based on filter
     if (filter == FeedFilter.all || filter == FeedFilter.markets) {
       markets = await _fetchMarkets(location, isInitialLoad);
-    }
-
-    if (filter == FeedFilter.all || filter == FeedFilter.vendors) {
-      vendorPosts = await _fetchVendorPosts(location, isInitialLoad);
     }
 
     if (filter == FeedFilter.all || filter == FeedFilter.events) {
@@ -367,7 +344,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
 
     return FeedData(
       markets: markets,
-      vendorPosts: vendorPosts,
       events: events,
     );
   }
@@ -413,35 +389,6 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
     }
   }
 
-  /// Fetch vendor posts with pagination
-  Future<List<VendorPost>> _fetchVendorPosts(String? location, bool isInitialLoad) async {
-    Stream<List<VendorPost>> postsStream;
-
-    if (location != null && location.isNotEmpty) {
-      postsStream = _vendorPostsRepository.searchPostsByLocation(location);
-    } else {
-      postsStream = _vendorPostsRepository.getAllActivePosts();
-    }
-
-    final allPosts = await postsStream.first;
-
-    // Filter current and future posts
-    final now = DateTime.now();
-    final activePosts = allPosts.where((post) => post.popUpEndDateTime.isAfter(now)).toList();
-
-    // Apply pagination
-    if (isInitialLoad) {
-      _lastVendorPostDoc = null;
-      return activePosts.take(_pageSize).toList();
-    } else {
-      // Find the index to start from
-      final startIndex = _lastVendorPostDoc != null
-        ? activePosts.indexWhere((p) => p.id == (_lastVendorPostDoc as DocumentSnapshot).id) + 1
-        : 0;
-
-      return activePosts.skip(startIndex).take(_pageSize).toList();
-    }
-  }
 
   /// Fetch events with pagination
   Future<List<Event>> _fetchEvents(String? location, bool isInitialLoad) async {
@@ -488,12 +435,10 @@ class ShopperFeedBloc extends Bloc<ShopperFeedEvent, ShopperFeedState> {
 /// Helper class for combined feed data
 class FeedData {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
 
   const FeedData({
     required this.markets,
-    required this.vendorPosts,
     required this.events,
   });
 }

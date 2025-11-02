@@ -56,6 +56,38 @@ exports.createTicketCheckoutSession = functions.https.onCall(async (data, contex
             ticketId: data.ticketId,
             quantity: data.quantity,
         });
+        // Get event to find organizer
+        const eventDoc = await db.collection('events').doc(data.eventId).get();
+        if (!eventDoc.exists) {
+            throw new functions.https.HttpsError('not-found', 'Event not found');
+        }
+        const eventData = eventDoc.data();
+        const organizerId = eventData.organizerId;
+        if (!organizerId) {
+            throw new functions.https.HttpsError('failed-precondition', 'Event organizer not found');
+        }
+        // Get organizer's Stripe Connect account
+        const organizerIntegrationDoc = await db
+            .collection('organizer_integrations')
+            .doc(organizerId)
+            .get();
+        if (!organizerIntegrationDoc.exists) {
+            throw new functions.https.HttpsError('failed-precondition', 'Organizer has not set up payment processing. Please contact the event organizer.');
+        }
+        const stripeAccountId = organizerIntegrationDoc.data()?.stripe?.accountId;
+        if (!stripeAccountId) {
+            throw new functions.https.HttpsError('failed-precondition', 'Organizer payment processing not configured. Please contact the event organizer.');
+        }
+        // Verify Stripe Connect account is active and can receive payments
+        const account = await stripe.accounts.retrieve(stripeAccountId);
+        if (!account.charges_enabled) {
+            throw new functions.https.HttpsError('failed-precondition', 'Organizer payment processing is not fully set up. Please contact the event organizer.');
+        }
+        functions.logger.info('✅ Organizer Stripe Connect verified', {
+            organizerId,
+            stripeAccountId,
+            chargesEnabled: account.charges_enabled,
+        });
         // Verify ticket availability
         const ticketRef = db
             .collection('events')
@@ -89,7 +121,7 @@ exports.createTicketCheckoutSession = functions.https.onCall(async (data, contex
                 },
             });
         }
-        // Create line items for checkout
+        // Create line items for checkout - ONLY the ticket price (total includes platform fee)
         const lineItems = [
             {
                 price_data: {
@@ -102,26 +134,12 @@ exports.createTicketCheckoutSession = functions.https.onCall(async (data, contex
                             ticketId: data.ticketId,
                         },
                     },
-                    unit_amount: Math.round(data.unitPrice * 100), // Convert to cents
+                    unit_amount: Math.round(data.totalAmount * 100), // Total amount in cents (includes platform fee)
                 },
-                quantity: data.quantity,
+                quantity: 1, // Single line item for total
             },
         ];
-        // Add platform fee as a separate line item
-        if (data.platformFee > 0) {
-            lineItems.push({
-                price_data: {
-                    currency: 'usd',
-                    product_data: {
-                        name: 'HiPop Platform Fee',
-                        description: '6% service fee to support HiPop Markets',
-                    },
-                    unit_amount: Math.round(data.platformFee * 100), // Convert to cents
-                },
-                quantity: 1,
-            });
-        }
-        // Create checkout session
+        // Create checkout session with Stripe Connect
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: lineItems,
@@ -131,7 +149,17 @@ exports.createTicketCheckoutSession = functions.https.onCall(async (data, contex
             cancel_url: data.cancelUrl,
             metadata: data.metadata,
             payment_intent_data: {
-                metadata: data.metadata,
+                application_fee_amount: Math.round(data.platformFee * 100),
+                transfer_data: {
+                    destination: stripeAccountId, // Organizer's Stripe Connect account
+                },
+                metadata: {
+                    ...data.metadata,
+                    organizerId,
+                    stripeAccountId,
+                    organizerPayout: data.subtotal.toString(),
+                    platformFee: data.platformFee.toString(),
+                },
             },
         });
         // Create pending ticket purchase record

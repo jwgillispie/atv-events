@@ -3,7 +3,6 @@ import 'package:atv_events/core/theme/atv_colors.dart';
 import 'package:atv_events/core/constants/ui_constants.dart';
 import 'package:atv_events/features/shared/widgets/common/favorite_button.dart';
 import 'package:atv_events/features/shared/widgets/share_button.dart';
-import 'package:atv_events/features/vendor/widgets/buttons/vendor_follow_button.dart';
 import 'package:atv_events/features/shared/widgets/feed_map_preview.dart';
 import 'package:atv_events/features/shared/widgets/common/vendor_items_widget.dart';
 import 'package:atv_events/features/shared/widgets/reviews/review_indicator.dart';

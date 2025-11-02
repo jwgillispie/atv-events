@@ -8,11 +8,7 @@ import 'package:atv_events/features/shared/services/analytics/real_time_analytic
 import 'package:atv_events/features/shared/widgets/common/error_widget.dart';
 import 'package:atv_events/features/shared/widgets/common/favorite_button.dart';
 import 'package:atv_events/features/shared/widgets/common/loading_widget.dart';
-import 'package:atv_events/features/shared/widgets/common/vendor_items_widget.dart';
 import 'package:atv_events/features/shared/widgets/share_button.dart';
-import 'package:atv_events/features/vendor/models/managed_vendor.dart';
-import 'package:atv_events/features/vendor/services/core/managed_vendor_service.dart';
-import 'package:atv_events/features/vendor/services/markets/vendor_market_items_service.dart';
 import '../../market/models/market.dart';
 import 'package:atv_events/core/theme/atv_colors.dart';
 import '../../shared/models/universal_review.dart';

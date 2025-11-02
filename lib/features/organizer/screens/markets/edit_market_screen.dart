@@ -14,11 +14,6 @@ import 'package:atv_events/features/shared/services/location/location_data_servi
 import 'package:atv_events/features/shared/services/utilities/photo_service.dart';
 import 'package:atv_events/features/shared/widgets/common/unified_location_search.dart';
 import 'package:atv_events/features/shared/widgets/common/photo_upload_widget.dart';
-import 'package:atv_events/features/vendor/models/managed_vendor.dart';
-import 'package:atv_events/features/vendor/models/unified_vendor.dart';
-import 'package:atv_events/features/vendor/models/vendor_application.dart';
-import 'package:atv_events/features/vendor/services/markets/vendor_application_service.dart';
-import 'package:atv_events/features/vendor/services/core/managed_vendor_service.dart';
 import 'package:atv_events/features/organizer/models/organizer_vendor_post.dart';
 import 'package:atv_events/features/organizer/services/vendor_management/vendor_post_service.dart';
 

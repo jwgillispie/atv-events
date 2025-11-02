@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:atv_events/features/market/models/market.dart';
-import 'package:atv_events/features/vendor/models/vendor_post.dart';
 import 'package:atv_events/features/shared/models/event.dart';
 
 part 'enhanced_map_event.dart';
