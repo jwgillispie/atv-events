@@ -747,7 +747,6 @@ class _ShopperHomeState extends State<ShopperHome> {
         // Only rebuild map when data changes
         if (previous is ShopperFeedLoaded && current is ShopperFeedLoaded) {
           return previous.markets != current.markets ||
-                 previous.vendorPosts != current.vendorPosts ||
                  previous.events != current.events;
         }
         return true;
@@ -777,7 +776,6 @@ class _ShopperHomeState extends State<ShopperHome> {
           context.read<EnhancedMapBloc>().add(
             UpdateMapData(
               markets: state.markets,
-              vendorPosts: state.vendorPosts,
               events: state.events,
             ),
           );
@@ -794,7 +792,6 @@ class _ShopperHomeState extends State<ShopperHome> {
                     borderRadius: BorderRadius.circular(12),
                     child: ShopperMapView(
                       markets: state.markets,
-                      vendorPosts: state.vendorPosts,
                       events: state.events,
                       selectedFilter: _getFilterString(),
                     ),
@@ -872,7 +869,6 @@ class _ShopperHomeState extends State<ShopperHome> {
             MaterialPageRoute(
               builder: (context) => MapExplorerScreen(
                 markets: state.markets,
-                vendorPosts: state.vendorPosts,
                 events: state.events,
                 selectedFilter: _getFilterString(),
               ),
@@ -952,11 +948,11 @@ class _ShopperHomeState extends State<ShopperHome> {
       // Mix all types
       items.addAll(state.markets.map((m) => _buildMarketCard(m)));
       items.addAll(state.events.map((e) => _buildEventCard(e)));
-      items.addAll(state.vendorPosts.map((p) => _buildVendorPostCard(p)));
+      // No vendor posts in ATV Events
     } else if (state.filter == FeedFilter.markets) {
       items.addAll(state.markets.map((m) => _buildMarketCard(m)));
     } else if (state.filter == FeedFilter.vendors) {
-      items.addAll(state.vendorPosts.map((p) => _buildVendorPostCard(p)));
+      // No vendor posts in ATV Events
     } else if (state.filter == FeedFilter.events) {
       items.addAll(state.events.map((e) => _buildEventCard(e)));
     }
@@ -1011,37 +1007,9 @@ class _ShopperHomeState extends State<ShopperHome> {
     );
   }
 
-  Widget _buildVendorPostCard(VendorPost post) {
-    return FutureBuilder<List<String>>(
-      key: ValueKey('vendor_post_${post.id}'),
-      future: _getVendorItemsForMarket(post.vendorId, post.marketId),
-      builder: (context, snapshot) {
-        final items = snapshot.data ?? [];
-
-        return Padding(
-          padding: const EdgeInsets.only(bottom: UIConstants.smallSpacing),
-          child: FeedCard.vendorPost(
-            id: post.id,
-            vendorId: post.vendorId,
-            vendorName: post.vendorName,
-            dateTime: DateTimeUtils.formatPostDateTime(post.popUpStartDateTime),
-            location: post.location,
-            description: post.description ?? '',
-            photoUrls: post.photoUrls,
-            latitude: post.latitude,
-            longitude: post.longitude,
-            instagramHandle: post.instagramHandle,
-            vendorItems: items,
-            onTap: () => _handleVendorPostTap(post),
-            onLocationTap: () => _launchMaps(post.location),
-            onInstagramTap: post.instagramHandle != null
-                ? () => _launchInstagram(post.instagramHandle!)
-                : null,
-            onGetShareContent: () async => _buildVendorPostShareContent(post),
-          ),
-        );
-      },
-    );
+  // [DEPRECATED] No vendor posts in ATV Events
+  Widget _buildVendorPostCard(dynamic post) {
+    return const SizedBox.shrink();
   }
 
   Widget _buildLoadingIndicator() {
@@ -1263,8 +1231,9 @@ class _ShopperHomeState extends State<ShopperHome> {
     );
   }
 
-  void _handleVendorPostTap(VendorPost post) {
-    context.pushNamed('vendorPostDetail', extra: post);
+  // [DEPRECATED] No vendor posts in ATV Events
+  void _handleVendorPostTap(dynamic post) {
+    // No vendor posts in ATV Events
   }
 
   Future<void> _launchMaps(String address) async {
@@ -1297,15 +1266,9 @@ class _ShopperHomeState extends State<ShopperHome> {
     }
   }
 
+  // [DEPRECATED] No vendor posts in ATV Events
   Future<List<String>> _getVendorItemsForMarket(String vendorId, String? marketId) async {
-    if (marketId == null) return [];
-
-    try {
-      final vendorItems = await VendorMarketItemsService.getVendorMarketItems(vendorId, marketId);
-      return vendorItems?.itemList ?? [];
-    } catch (e) {
-      return [];
-    }
+    return [];
   }
 
   String _buildMarketShareContent(Market market) {
@@ -1360,33 +1323,9 @@ class _ShopperHomeState extends State<ShopperHome> {
   }
 
 
-  String _buildVendorPostShareContent(VendorPost post) {
-    final buffer = StringBuffer();
-    buffer.writeln('Event at Atlanta Tech Village!');
-    buffer.writeln();
-    buffer.writeln(post.vendorName);
-
-    if (post.description != null && post.description!.isNotEmpty) {
-      buffer.writeln();
-      buffer.writeln(post.description!);
-    }
-
-    buffer.writeln();
-    buffer.writeln('Date/Time: ${DateTimeUtils.formatPostDateTime(post.popUpStartDateTime)} - ${DateTimeUtils.formatTime(post.popUpEndDateTime)}');
-
-    if (post.locationName != null && post.locationName!.isNotEmpty) {
-      buffer.writeln('Location: ${post.locationName}');
-    }
-
-    if (post.instagramHandle != null && post.instagramHandle!.isNotEmpty) {
-      buffer.writeln('Instagram: @${post.instagramHandle}');
-    }
-
-    buffer.writeln();
-    buffer.writeln('Join us at this exciting event!');
-    buffer.writeln('Shared via ATV Events');
-
-    return buffer.toString();
+  // [DEPRECATED] No vendor posts in ATV Events
+  String _buildVendorPostShareContent(dynamic post) {
+    return '';
   }
 }
 

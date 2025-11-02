@@ -207,17 +207,13 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
       // Convert all data to calendar events
       final favoriteCalendarEvents = await _generateCalendarEvents(
         markets: favoriteMarkets,
-        vendors: favoriteVendors,
-        vendorRelationships: vendorRelationships,
         events: favoriteEventsList,
         startDate: startDate,
         endDate: endDate,
       );
-      
+
       final nearbyCalendarEvents = await _generateCalendarEvents(
         markets: nearbyMarkets,
-        vendors: [],
-        vendorRelationships: {},
         events: nearbyEventsList,
         startDate: startDate,
         endDate: endDate,
@@ -230,7 +226,6 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
         setState(() {
           _favoriteMarkets = favoriteMarkets;
           _nearbyMarkets = nearbyMarkets;
-          _favoriteVendors = favoriteVendors;
           _favoriteEvents = favoriteEventsList;
           _nearbyEvents = nearbyEventsList;
           _favoriteCalendarEvents = groupedFavoriteEvents;
@@ -257,8 +252,6 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
   
   Future<List<CalendarEvent>> _generateCalendarEvents({
     required List<Market> markets,
-    required List<UserProfile> vendors,
-    required Map<String, List<VendorMarketRelationship>> vendorRelationships,
     required List<Event> events,
     required DateTime startDate,
     required DateTime endDate,
@@ -291,57 +284,8 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
       ));
     }
     
-    // Generate vendor popup events based on their market relationships
-    for (final vendor in vendors) {
-      final relationships = vendorRelationships[vendor.userId] ?? [];
-      
-      for (final relationship in relationships) {
-        if (relationship.isActive || relationship.isApproved) {
-          // Get the market for this relationship
-          try {
-            final market = await MarketService.getMarket(relationship.marketId);
-            if (market != null) {
-              // Generate events for this vendor at this market
-              final vendorMarketEvents = await MarketCalendarService.getMarketEventsForDateRange(
-                [market],
-                startDate,
-                endDate,
-              );
-              
-              for (final marketEvent in vendorMarketEvents) {
-                // Check if vendor operates on this day
-                final dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday',
-                                  'thursday', 'friday', 'saturday'][marketEvent.eventDate.weekday % 7];
-                if (relationship.operatingDays == null ||
-                    relationship.operatingDays!.isEmpty ||
-                    relationship.operatingDays!.contains(dayOfWeek)) {
-                  calendarEvents.add(CalendarEvent(
-                    id: '${vendor.userId}_${marketEvent.marketId}_${marketEvent.eventDate.millisecondsSinceEpoch}',
-                    name: '${vendor.businessName ?? vendor.displayName} at ${market.name}',
-                    type: 'vendor',
-                    startTime: _parseTimeString(marketEvent.eventDate, marketEvent.startTime),
-                    endTime: _parseTimeString(marketEvent.eventDate, marketEvent.endTime),
-                    location: market.address,
-                    vendorId: vendor.userId,
-                    marketId: relationship.marketId,
-                    accentColor: HiPopColors.vendorAccent,
-                    icon: Icons.store,
-                    description: vendor.bio ?? 'Visit ${vendor.businessName} at ${market.name}',
-                    metadata: {
-                      'boothNumber': relationship.boothNumber,
-                      'categories': vendor.categories,
-                      'instagramHandle': vendor.instagramHandle,
-                    },
-                  ));
-                }
-              }
-            }
-          } catch (e) {
-          }
-        }
-      }
-    }
-    
+    // No vendor events in ATV Events
+
     // Add standalone events
     for (final event in events) {
       if (event.startDateTime.isAfter(startDate) && event.startDateTime.isBefore(endDate)) {

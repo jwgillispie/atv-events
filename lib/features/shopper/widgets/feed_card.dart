@@ -346,22 +346,7 @@ class FeedCard extends StatelessWidget {
               ),
               const SizedBox(width: UIConstants.smallSpacing),
             ],
-            if (type == FeedCardType.vendor && vendorId != null && vendorName != null) ...[
-              VendorFollowButton(
-                vendorId: vendorId!,
-                vendorName: vendorName!,
-                isCompact: true,
-              ),
-              const SizedBox(width: UIConstants.smallSpacing),
-            ],
-            if (type == FeedCardType.market && vendorId != null && vendorName != null) ...[
-              VendorFollowButton(
-                vendorId: vendorId!,
-                vendorName: vendorName!,
-                isCompact: true,
-              ),
-              const SizedBox(width: UIConstants.smallSpacing),
-            ],
+            // No vendor follow button in ATV Events
             if (favoriteType != null)
               FavoriteButton(
                 itemId: id,
@@ -446,32 +431,9 @@ class FeedCard extends StatelessWidget {
     );
   }
 
+  // [DEPRECATED] No vendor items in ATV Events
   Widget _buildVendorItems(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Icon(
-              Icons.local_grocery_store,
-              size: 14,
-              color: Colors.green[600],
-            ),
-            const SizedBox(width: 4),
-            Text(
-              'Available items:',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: Colors.green[700],
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        VendorItemsWidget.compact(items: vendorItems!),
-      ],
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildTags(BuildContext context) {

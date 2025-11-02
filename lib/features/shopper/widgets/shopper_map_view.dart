@@ -11,14 +11,12 @@ import 'package:atv_events/features/shopper/widgets/custom_map_markers.dart';
 
 class ShopperMapView extends StatefulWidget {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
   final String selectedFilter;
-  
+
   const ShopperMapView({
     super.key,
     required this.markets,
-    required this.vendorPosts,
     required this.events,
     required this.selectedFilter,
   });
@@ -31,7 +29,6 @@ class _ShopperMapViewState extends State<ShopperMapView> {
   GoogleMapController? _mapController;
   Set<Marker> _markers = {};
   Market? _selectedMarket;
-  VendorPost? _selectedVendorPost;
   Event? _selectedEvent;
   bool _isLoadingMarkers = true;
   
@@ -45,7 +42,6 @@ class _ShopperMapViewState extends State<ShopperMapView> {
   void didUpdateWidget(ShopperMapView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.markets != widget.markets ||
-        oldWidget.vendorPosts != widget.vendorPosts ||
         oldWidget.events != widget.events ||
         oldWidget.selectedFilter != widget.selectedFilter) {
       _createMarkersAsync();
@@ -92,45 +88,7 @@ class _ShopperMapViewState extends State<ShopperMapView> {
         }
       }
       
-      if (widget.selectedFilter == 'all' || widget.selectedFilter == 'vendors') {
-        // Add vendor post markers with product-based icons
-        for (final post in widget.vendorPosts) {
-          if (post.latitude != null && post.longitude != null && post.latitude != 0 && post.longitude != 0) {
-            // Get vendor items for category determination
-            // For now, use description and vendor name to determine category
-            List<String> vendorItems = [];
-            if (post.description != null && post.description!.isNotEmpty) {
-              vendorItems.add(post.description!);
-            }
-            if (post.vendorName.isNotEmpty) {
-              vendorItems.add(post.vendorName);
-            }
-            // Add location name for context (might contain market type info)
-            if (post.locationName != null && post.locationName!.isNotEmpty) {
-              vendorItems.add(post.locationName!);
-            }
-            
-            final vendorIcon = await CustomMapMarkers.getVendorIcon(
-              vendorItems: vendorItems,
-            );
-            
-            newMarkers.add(
-              Marker(
-                markerId: MarkerId('vendor_${post.id}'),
-                position: LatLng(post.latitude!, post.longitude!),
-                onTap: () => _showVendorPostInfo(post),
-                icon: vendorIcon,
-                infoWindow: InfoWindow(
-                  title: post.vendorName,
-                  snippet: post.locationName ?? '',
-                ),
-                // Add zIndex to ensure markers appear on top
-                zIndex: 0.5,
-              ),
-            );
-          }
-        }
-      }
+      // No vendor posts in ATV Events
       
       if (widget.selectedFilter == 'all' || widget.selectedFilter == 'events') {
         // Add event markers with enhanced icons
@@ -190,7 +148,6 @@ class _ShopperMapViewState extends State<ShopperMapView> {
   void _showMarketInfo(Market market) {
     setState(() {
       _selectedMarket = market;
-      _selectedVendorPost = null;
       _selectedEvent = null;
     });
     
@@ -205,28 +162,14 @@ class _ShopperMapViewState extends State<ShopperMapView> {
     }
   }
   
-  void _showVendorPostInfo(VendorPost post) {
-    setState(() {
-      _selectedMarket = null;
-      _selectedVendorPost = post;
-      _selectedEvent = null;
-    });
-    
-    // Animate camera to the selected marker
-    if (_mapController != null && mounted && post.latitude != null && post.longitude != null && post.latitude != 0 && post.longitude != 0) {
-      _mapController!.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(post.latitude!, post.longitude!),
-          14.0,
-        ),
-      );
-    }
+  // [DEPRECATED] No vendor posts in ATV Events
+  void _showVendorPostInfo(dynamic post) {
+    // No vendor posts in ATV Events
   }
   
   void _showEventInfo(Event event) {
     setState(() {
       _selectedMarket = null;
-      _selectedVendorPost = null;
       _selectedEvent = event;
     });
     
@@ -380,7 +323,7 @@ class _ShopperMapViewState extends State<ShopperMapView> {
         ),
         
         // Info card for selected item
-        if (_selectedMarket != null || _selectedVendorPost != null || _selectedEvent != null)
+        if (_selectedMarket != null || _selectedEvent != null)
           Positioned(
             bottom: 16,
             left: 16,
@@ -394,8 +337,6 @@ class _ShopperMapViewState extends State<ShopperMapView> {
   Widget _buildInfoCard(BuildContext context) {
     if (_selectedMarket != null) {
       return _buildMarketInfoCard(context, _selectedMarket!);
-    } else if (_selectedVendorPost != null) {
-      return _buildVendorPostInfoCard(context, _selectedVendorPost!);
     } else if (_selectedEvent != null) {
       return _buildEventInfoCard(context, _selectedEvent!);
     }
@@ -518,123 +459,9 @@ class _ShopperMapViewState extends State<ShopperMapView> {
     );
   }
   
-  Widget _buildVendorPostInfoCard(BuildContext context, VendorPost post) {
-    return Card(
-      color: HiPopColors.darkSurface,
-      elevation: 8,
-      child: InkWell(
-        onTap: () => context.pushNamed('vendorPostDetail', extra: post),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: HiPopColors.infoBlueGray.withOpacity( 0.2),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      'VENDOR POP-UP',
-                      style: TextStyle(
-                        color: HiPopColors.infoBlueGray,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 20),
-                    onPressed: () {
-                      setState(() {
-                        _selectedVendorPost = null;
-                      });
-                    },
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                post.vendorName,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: HiPopColors.darkTextPrimary,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                DateTimeUtils.formatPostDateTime(post.popUpStartDateTime),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: HiPopColors.darkTextSecondary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(Icons.location_on, size: 16, color: HiPopColors.darkTextTertiary),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      post.locationName ?? 'Location not specified',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: HiPopColors.darkTextSecondary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () async {
-                        // TODO: Removed for ATV MVP - vendor posts don't have direct location
-                        if (post.locationName != null) {
-                          await UrlLauncherService.launchMaps(
-                            post.locationName!,
-                            context: context,
-                          );
-                        }
-                      },
-                      icon: const Icon(Icons.directions, size: 16),
-                      label: const Text('Directions'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: HiPopColors.shopperAccent,
-                        side: BorderSide(color: HiPopColors.shopperAccent),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => context.pushNamed('vendorPostDetail', extra: post),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: HiPopColors.shopperAccent,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      child: const Text('View Details'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  // [DEPRECATED] No vendor posts in ATV Events
+  Widget _buildVendorPostInfoCard(BuildContext context, dynamic post) {
+    return const SizedBox.shrink();
   }
   
   Widget _buildEventInfoCard(BuildContext context, Event event) {
