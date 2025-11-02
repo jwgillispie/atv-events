@@ -22,7 +22,6 @@ class EnhancedMapLoaded extends EnhancedMapState {
   final MarkerType? selectedMarkerType;
   final dynamic selectedItem;
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
   final bool isUpdating;
   final String? error;
@@ -34,7 +33,6 @@ class EnhancedMapLoaded extends EnhancedMapState {
     this.selectedMarkerType,
     this.selectedItem,
     required this.markets,
-    required this.vendorPosts,
     required this.events,
     this.isUpdating = false,
     this.error,
@@ -54,7 +52,6 @@ class EnhancedMapLoaded extends EnhancedMapState {
     MarkerType? selectedMarkerType,
     dynamic selectedItem,
     List<Market>? markets,
-    List<VendorPost>? vendorPosts,
     List<Event>? events,
     bool? isUpdating,
     String? error,
@@ -66,7 +63,6 @@ class EnhancedMapLoaded extends EnhancedMapState {
       selectedMarkerType: selectedMarkerType,
       selectedItem: selectedItem,
       markets: markets ?? this.markets,
-      vendorPosts: vendorPosts ?? this.vendorPosts,
       events: events ?? this.events,
       isUpdating: isUpdating ?? this.isUpdating,
       error: error,
@@ -81,7 +77,6 @@ class EnhancedMapLoaded extends EnhancedMapState {
         selectedMarkerType,
         selectedItem,
         markets,
-        vendorPosts,
         events,
         isUpdating,
         error,

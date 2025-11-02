@@ -144,17 +144,15 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
       
       // Load all favorite data from BLoC state
       List<Market> favoriteMarkets = [];
-      List<UserProfile> favoriteVendors = [];
       List<Event> favoriteEventsList = [];
-      Map<String, List<VendorMarketRelationship>> vendorRelationships = {};
-      
+
       if (authState is Authenticated) {
         // Ensure favorites are loaded in BLoC
         context.read<FavoritesBloc>().add(LoadFavorites(userId: authState.user.uid));
-        
+
         // Get favorites from BLoC state
         final favoritesState = context.read<FavoritesBloc>().state;
-        
+
         // Load favorite markets using batch query
         // This reduces Firebase reads by up to 90%
         try {
@@ -164,34 +162,8 @@ class _ShopperCalendarScreenState extends State<ShopperCalendarScreen>
           favoriteMarkets.addAll(markets);
         } catch (e) {
         }
-        
-        // Load favorite vendors and their market relationships
-        for (final vendorId in favoritesState.favoriteVendorIds) {
-          try {
-            final vendorProfile = await UserProfileService().getUserProfile(vendorId);
-            if (vendorProfile != null && vendorProfile.userType == 'vendor') {
-              favoriteVendors.add(vendorProfile);
-              
-              // Load vendor's market relationships to get their schedules
-              try {
-                final querySnapshot = await FirebaseFirestore.instance
-                    .collection('vendor_market_relationships')
-                    .where('vendorId', isEqualTo: vendorId)
-                    .where('status', whereIn: ['active', 'approved'])
-                    .get();
-                
-                final relationships = querySnapshot.docs
-                    .map((doc) => VendorMarketRelationship.fromFirestore(doc))
-                    .toList();
-                
-                vendorRelationships[vendorId] = relationships;
-              } catch (e) {
-                vendorRelationships[vendorId] = [];
-              }
-            }
-          } catch (e) {
-          }
-        }
+
+        // No vendor favorites in ATV Events
         
         // Load favorite events
         for (final eventId in favoritesState.favoriteEventIds) {

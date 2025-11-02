@@ -8,12 +8,10 @@ abstract class MapEvent {}
 
 class LoadMapData extends MapEvent {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
-  
+
   LoadMapData({
     required this.markets,
-    required this.vendorPosts,
     required this.events,
   });
 }
@@ -120,26 +118,8 @@ class MapBloc extends Bloc<MapEvent, MapState> {
         );
             }
       
-      // Add vendor post markers
-      for (final post in event.vendorPosts) {
-        if (post.latitude != null && post.longitude != null) {
-          markers.add(
-            Marker(
-              markerId: MarkerId('vendor_${post.id}'),
-              position: LatLng(post.latitude!, post.longitude!),
-              infoWindow: InfoWindow(
-                title: post.vendorName,
-                snippet: post.locationName ?? post.location,
-                onTap: () {
-                  // Handle marker tap
-                },
-              ),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-            ),
-          );
-        }
-      }
-      
+      // No vendor posts in ATV Events
+
       // Add event markers
       for (final evt in event.events) {
         markers.add(

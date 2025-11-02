@@ -47,7 +47,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
       // Generate initial markers
       final markers = await _generateMarkers(
         markets: event.markets,
-        vendorPosts: event.vendorPosts,
+        
         events: event.events,
         zoomLevel: 10.0,
       );
@@ -55,7 +55,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
       // Calculate initial camera position
       final cameraPosition = _calculateInitialCamera(
         markets: event.markets,
-        vendorPosts: event.vendorPosts,
+        
         events: event.events,
       );
 
@@ -63,7 +63,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
         markers: markers,
         cameraPosition: cameraPosition,
         markets: event.markets,
-        vendorPosts: event.vendorPosts,
+        
         events: event.events,
       ));
     } catch (error) {
@@ -82,7 +82,6 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
 
     // Only update if data has changed
     if (listEquals(currentState.markets, event.markets) &&
-        listEquals(currentState.vendorPosts, event.vendorPosts) &&
         listEquals(currentState.events, event.events)) {
       return;
     }
@@ -95,7 +94,6 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
         _generateMarkersInIsolate,
         {
           'markets': event.markets,
-          'vendorPosts': event.vendorPosts,
           'events': event.events,
           'zoomLevel': currentState.cameraPosition.zoom,
         },
@@ -104,7 +102,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
       emit(currentState.copyWith(
         markers: markers.toSet(),
         markets: event.markets,
-        vendorPosts: event.vendorPosts,
+        
         events: event.events,
         isUpdating: false,
       ));
@@ -136,13 +134,8 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
         selectedItem = null;
       }
     } else if (event.type == MarkerType.vendor) {
-      try {
-        selectedItem = currentState.vendorPosts.firstWhere(
-          (p) => p.id == event.markerId,
-        );
-      } catch (_) {
-        selectedItem = null;
-      }
+      // No vendors in ATV Events
+      selectedItem = null;
     } else if (event.type == MarkerType.event) {
       try {
         selectedItem = currentState.events.firstWhere(
@@ -206,7 +199,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
         if (zoomChanged) {
           add(UpdateMapData(
             markets: currentState.markets,
-            vendorPosts: currentState.vendorPosts,
+            
             events: currentState.events,
           ));
         } else {
@@ -227,7 +220,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
   /// Generate markers with clustering support
   Future<Set<Marker>> _generateMarkers({
     required List<Market> markets,
-    required List<VendorPost> vendorPosts,
+    
     required List<Event> events,
     required double zoomLevel,
   }) async {
@@ -237,7 +230,6 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
     if (zoomLevel < 12) {
       final clusteredMarkers = _clusterManager.clusterMarkers(
         markets: markets,
-        vendorPosts: vendorPosts,
         events: events,
         zoomLevel: zoomLevel,
       );
@@ -263,24 +255,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
         }
       }
 
-      // Add vendor post markers
-      for (final post in vendorPosts) {
-        if (post.latitude != null && post.longitude != null) {
-          final icon = await _getMarkerIcon('vendor', null);
-          markers.add(
-            Marker(
-              markerId: MarkerId('vendor_${post.id}'),
-              position: LatLng(post.latitude!, post.longitude!),
-              icon: icon,
-              infoWindow: InfoWindow(
-                title: post.vendorName,
-                snippet: post.locationName ?? post.location,
-              ),
-              onTap: () => add(SelectMarker('vendor_${post.id}', MarkerType.vendor)),
-            ),
-          );
-        }
-      }
+      // No vendor posts in ATV Events
 
       // Add event markers
       for (final event in events) {
@@ -335,10 +310,10 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
   /// Calculate initial camera position
   CameraPosition _calculateInitialCamera({
     required List<Market> markets,
-    required List<VendorPost> vendorPosts,
+    
     required List<Event> events,
   }) {
-    if (markets.isEmpty && vendorPosts.isEmpty && events.isEmpty) {
+    if (markets.isEmpty && events.isEmpty) {
       return CameraPosition(target: defaultPosition, zoom: 10.0);
     }
 
@@ -354,13 +329,7 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
       }
     }
 
-    for (final post in vendorPosts) {
-      if (post.latitude != null && post.longitude != null) {
-        totalLat += post.latitude!;
-        totalLng += post.longitude!;
-        count++;
-      }
-    }
+    // No vendor posts in ATV Events
 
     for (final event in events) {
       if (event.latitude != 0 && event.longitude != 0) {
@@ -384,11 +353,10 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
   LatLng? _getItemPosition(dynamic item) {
     if (item is Market) {
       return LatLng(item.latitude, item.longitude);
-    } else if (item is VendorPost && item.latitude != null && item.longitude != null) {
-      return LatLng(item.latitude!, item.longitude!);
     } else if (item is Event) {
       return LatLng(item.latitude, item.longitude);
     }
+    // No vendor posts in ATV Events
     return null;
   }
 
@@ -403,7 +371,6 @@ class EnhancedMapBloc extends Bloc<EnhancedMapEvent, EnhancedMapState> {
 /// Isolate function for marker generation
 List<Marker> _generateMarkersInIsolate(Map<String, dynamic> data) {
   final markets = data['markets'] as List<Market>;
-  final vendorPosts = data['vendorPosts'] as List<VendorPost>;
   final events = data['events'] as List<Event>;
   // final zoomLevel = data['zoomLevel'] as double; // Reserved for future clustering logic
 
@@ -426,21 +393,7 @@ List<Marker> _generateMarkersInIsolate(Map<String, dynamic> data) {
     }
   }
 
-  for (final post in vendorPosts) {
-    if (post.latitude != null && post.longitude != null) {
-      markers.add(
-        Marker(
-          markerId: MarkerId('vendor_${post.id}'),
-          position: LatLng(post.latitude!, post.longitude!),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
-          infoWindow: InfoWindow(
-            title: post.vendorName,
-            snippet: post.locationName ?? post.location,
-          ),
-        ),
-      );
-    }
-  }
+  // No vendor posts in ATV Events
 
   for (final event in events) {
     if (event.latitude != 0 && event.longitude != 0) {
@@ -467,7 +420,7 @@ class MarkerClusterManager {
 
   Set<Marker> clusterMarkers({
     required List<Market> markets,
-    required List<VendorPost> vendorPosts,
+    
     required List<Event> events,
     required double zoomLevel,
   }) {
@@ -486,16 +439,7 @@ class MarkerClusterManager {
       }
     }
 
-    for (final post in vendorPosts) {
-      if (post.latitude != null && post.longitude != null) {
-        allMarkers.add(_MarkerData(
-          id: 'vendor_${post.id}',
-          position: LatLng(post.latitude!, post.longitude!),
-          type: MarkerType.vendor,
-          title: post.vendorName,
-        ));
-      }
-    }
+    // No vendor posts in ATV Events
 
     for (final event in events) {
       if (event.latitude != 0 && event.longitude != 0) {

@@ -14,33 +14,29 @@ abstract class EnhancedMapEvent extends Equatable {
 /// Initialize map with data
 class InitializeMap extends EnhancedMapEvent {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
 
   const InitializeMap({
     required this.markets,
-    required this.vendorPosts,
     required this.events,
   });
 
   @override
-  List<Object> get props => [markets, vendorPosts, events];
+  List<Object> get props => [markets, events];
 }
 
 /// Update map with new data
 class UpdateMapData extends EnhancedMapEvent {
   final List<Market> markets;
-  final List<VendorPost> vendorPosts;
   final List<Event> events;
 
   const UpdateMapData({
     required this.markets,
-    required this.vendorPosts,
     required this.events,
   });
 
   @override
-  List<Object> get props => [markets, vendorPosts, events];
+  List<Object> get props => [markets, events];
 }
 
 /// Select a marker on the map
