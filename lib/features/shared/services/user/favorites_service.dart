@@ -152,46 +152,14 @@ class FavoritesService {
 
   // Get user's favorite vendor IDs only (fast for BLoC state)
   static Future<List<String>> getUserFavoriteVendorIds(String userId) async {
-    try {
-      final favoritesSnapshot = await _favoritesCollection
-          .where('userId', isEqualTo: userId)
-          .where('type', isEqualTo: FavoriteType.vendor.name)
-          .get();
-
-      return favoritesSnapshot.docs
-          .map((doc) => UserFavorite.fromFirestore(doc).itemId)
-          .toList();
-    } catch (e) {
-      throw Exception('Failed to get favorite vendor IDs: $e');
-    }
+    // No vendors in ATV Events - return empty list
+    return [];
   }
 
   // Get user's favorite vendors with full vendor data
-  static Future<List<ManagedVendor>> getUserFavoriteVendors(String userId) async {
-    try {
-      final favoritesSnapshot = await _favoritesCollection
-          .where('userId', isEqualTo: userId)
-          .where('type', isEqualTo: FavoriteType.vendor.name)
-          .orderBy('createdAt', descending: true)
-          .get();
-
-      final vendors = <ManagedVendor>[];
-      
-      for (final doc in favoritesSnapshot.docs) {
-        final favorite = UserFavorite.fromFirestore(doc);
-        try {
-          final vendor = await ManagedVendorService.getVendor(favorite.itemId);
-          if (vendor != null) {
-            vendors.add(vendor);
-          }
-        } catch (e) {
-        }
-      }
-
-      return vendors;
-    } catch (e) {
-      throw Exception('Failed to get favorite vendors: $e');
-    }
+  static Future<List<dynamic>> getUserFavoriteVendors(String userId) async {
+    // No vendors in ATV Events - return empty list
+    return [];
   }
 
   // Get user's favorite market IDs only (fast for BLoC state)
@@ -239,28 +207,9 @@ class FavoritesService {
   }
 
   // Stream user's favorite vendors
-  static Stream<List<ManagedVendor>> streamUserFavoriteVendors(String userId) {
-    return _favoritesCollection
-        .where('userId', isEqualTo: userId)
-        .where('type', isEqualTo: FavoriteType.vendor.name)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .asyncMap((snapshot) async {
-      final vendors = <ManagedVendor>[];
-      
-      for (final doc in snapshot.docs) {
-        final favorite = UserFavorite.fromFirestore(doc);
-        try {
-          final vendor = await ManagedVendorService.getVendor(favorite.itemId);
-          if (vendor != null) {
-            vendors.add(vendor);
-          }
-        } catch (e) {
-        }
-      }
-      
-      return vendors;
-    });
+  static Stream<List<dynamic>> streamUserFavoriteVendors(String userId) {
+    // No vendors in ATV Events - return empty stream
+    return Stream.value([]);
   }
 
   // Stream user's favorite markets
